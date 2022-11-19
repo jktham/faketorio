@@ -1,6 +1,5 @@
 package faketorio;
 
-import org.joml.Matrix4f;
 import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.*;
 import org.lwjgl.system.MemoryStack;
@@ -11,9 +10,9 @@ import static org.lwjgl.opengl.GL33.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
 import java.io.IOException;
-import java.nio.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 
 public class App {
 	long window;
@@ -22,13 +21,10 @@ public class App {
 	int vertexShader;
 	int fragmentShader;
 	int shaderProgram;
-	int vao;
-	int vbo;
-	Matrix4f model;
-	Matrix4f view;
-	Matrix4f projection;
 	double time;
 	double deltaTime;
+	Camera camera;
+	ArrayList<Entity> entities;
 
 	public static void main(String[] args) {
 		new App().run();
@@ -61,7 +57,7 @@ public class App {
 		});
 
 		glfwMakeContextCurrent(window);
-		glfwSwapInterval(1);
+		glfwSwapInterval(0);
 		glfwShowWindow(window);
 
 		GL.createCapabilities();
@@ -94,64 +90,54 @@ public class App {
 		glBindFragDataLocation(shaderProgram, 0, "fragColor");
 		glLinkProgram(shaderProgram);
 
-		vao = glGenVertexArrays();
-		glBindVertexArray(vao);
-
-		vbo = glGenBuffers();
-		glBindBuffer(GL_ARRAY_BUFFER, vbo);
-
-		try (MemoryStack stack = MemoryStack.stackPush()) {
-			FloatBuffer vertices = stack.mallocFloat(3 * 6);
-			vertices.put(-0.5f).put(-0.5f).put(0f).put(1f).put(0f).put(0f);
-			vertices.put(0.5f).put(-0.5f).put(0f).put(0f).put(1f).put(0f);
-			vertices.put(0f).put(0.8f).put(0f).put(0f).put(0f).put(1f);
-			vertices.flip();
-
-			glBufferData(GL_ARRAY_BUFFER, vertices, GL_STATIC_DRAW);
-		}
-
-		int floatSize = 4;
-		int aPos = glGetAttribLocation(shaderProgram, "position");
-		glEnableVertexAttribArray(aPos);
-		glVertexAttribPointer(aPos, 3, GL_FLOAT, false, 6 * floatSize, 0);
-
-		int aCol = glGetAttribLocation(shaderProgram, "color");
-		glEnableVertexAttribArray(aCol);
-		glVertexAttribPointer(aCol, 3, GL_FLOAT, false, 6 * floatSize, 3 * floatSize);
-
-		glBindVertexArray(0);
-
-		model = new Matrix4f();
-		view = new Matrix4f().translate(0f, 0f, -1f);
-		projection = new Matrix4f().perspective(90f, width/height, 0f, 100f);
-
+		camera = new Camera();
+		entities = new ArrayList<Entity>();
+		entities.add(new Entity(shaderProgram));
+		entities.add(new Entity(shaderProgram));
+		entities.get(1).model.translate(0f, 1f, 0f);
 	}
 
 	private void loop() {
 		while ( !glfwWindowShouldClose(window) ) {
 			deltaTime = glfwGetTime() - time;
 			time = glfwGetTime();
-			System.out.println((String.format("%.4f", time) + ", " + String.format("%.4f", deltaTime)));
+			System.out.println((String.format("%.6f", time) + ", " + String.format("%.6f", deltaTime)));
 
-			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-			glUseProgram(shaderProgram);
-			glBindVertexArray(vao);
+			camera.update(window, deltaTime);
 			
-			try (MemoryStack stack = MemoryStack.stackPush()) {
-				glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "model"), false, model.get(stack.mallocFloat(16)));
-				glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "view"), false, view.get(stack.mallocFloat(16)));
-				glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "projection"), false, projection.get(stack.mallocFloat(16)));
+			for (Entity entity : entities) {
+				entity.update(deltaTime);
 			}
 
-			glDrawArrays(GL_TRIANGLES, 0, 3);
+			draw();
 
-			glBindVertexArray(0);
-			glUseProgram(0);
-
-			glfwSwapBuffers(window);
 			glfwPollEvents();
 		}
+	}
+
+	private void draw() {
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		glUseProgram(shaderProgram);
+		
+		try (MemoryStack stack = MemoryStack.stackPush()) {
+			glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "view"), false, camera.view.get(stack.mallocFloat(16)));
+			glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "projection"), false, camera.projection.get(stack.mallocFloat(16)));
+		}
+
+		for (Entity entity : entities) {
+			try (MemoryStack stack = MemoryStack.stackPush()) {
+				glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "model"), false, entity.model.get(stack.mallocFloat(16)));
+			}
+			
+			glBindVertexArray(entity.vao);
+			glDrawArrays(GL_TRIANGLES, 0, 3);
+			glBindVertexArray(0);
+		}
+
+		glUseProgram(0);
+		
+		glfwSwapBuffers(window);
 	}
 
 	private void cleanup() {
