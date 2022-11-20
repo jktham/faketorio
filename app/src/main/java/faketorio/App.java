@@ -5,7 +5,6 @@ import org.joml.Vector3f;
 import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.*;
 import org.lwjgl.system.Configuration;
-import org.lwjgl.system.MemoryStack;
 
 import static org.lwjgl.glfw.Callbacks.*;
 import static org.lwjgl.glfw.GLFW.*;
@@ -45,7 +44,7 @@ public class App {
 	}
 	
 	private void init() {
-		Configuration.STACK_SIZE.set(2048);
+		Configuration.STACK_SIZE.set(10000);
 
 		GLFWErrorCallback.createPrint(System.err).set();
 
@@ -163,7 +162,6 @@ public class App {
 			System.out.println((String.format("%.6f", time) + ", " + String.format("%.6f", deltaTime)));
 
 			update();
-
 			draw();
 
 			glfwPollEvents();
@@ -182,20 +180,11 @@ public class App {
 	private void draw() {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		glUseProgram(shaderProgram);
-		
-		try (MemoryStack stack = MemoryStack.stackPush()) {
-			glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "view"), false, camera.view.get(stack.mallocFloat(16)));
-			glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "projection"), false, camera.projection.get(stack.mallocFloat(16)));
-		}
-
 		world.draw();
 		player.draw();
 		for (Entity entity : entities) {
 			entity.draw();
 		}
-
-		glUseProgram(0);
 
 		glfwSwapBuffers(window);
 	}

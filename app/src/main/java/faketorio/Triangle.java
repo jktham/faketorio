@@ -7,11 +7,11 @@ import org.lwjgl.system.MemoryStack;
 
 public class Triangle extends Entity {
 	public FloatBuffer generateMesh(MemoryStack stack) {
-		vertCount = 6;
-		FloatBuffer mesh = stack.mallocFloat(3 * vertCount);
-		mesh.put(-0.25f).put(0.433f).put(0f).put(1f).put(0f).put(0f);
-		mesh.put(-0.25f).put(-0.433f).put(0f).put(0f).put(1f).put(0f);
-		mesh.put(0.5f).put(0f).put(0f).put(0f).put(0f).put(1f);
+		vertCount = 3;
+		FloatBuffer mesh = stack.mallocFloat(9 * vertCount);
+		mesh.put(-0.25f).put(0.433f).put(0f).put(0f).put(0f).put(1f).put(1f).put(0f).put(0f);
+		mesh.put(-0.25f).put(-0.433f).put(0f).put(0f).put(0f).put(1f).put(0f).put(1f).put(0f);
+		mesh.put(0.5f).put(0f).put(0f).put(0f).put(0f).put(1f).put(0f).put(0f).put(1f);
 		mesh.flip();
 		return mesh;
 	}

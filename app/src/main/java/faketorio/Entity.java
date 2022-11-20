@@ -10,6 +10,7 @@ import java.nio.FloatBuffer;
 public class Entity {
 	int vao = 0;
 	int vbo = 0;
+	int shaderProgram = App.shaderProgram;
 	
 	int vertCount = 0;
 
@@ -31,19 +32,23 @@ public class Entity {
 		}
 
 		int floatSize = 4;
-		int aPos = glGetAttribLocation(App.shaderProgram, "position");
-		glEnableVertexAttribArray(aPos);
-		glVertexAttribPointer(aPos, 3, GL_FLOAT, false, 6 * floatSize, 0);
+		int aPosition = glGetAttribLocation(App.shaderProgram, "position");
+		glEnableVertexAttribArray(aPosition);
+		glVertexAttribPointer(aPosition, 3, GL_FLOAT, false, 9 * floatSize, 0);
 
-		int aCol = glGetAttribLocation(App.shaderProgram, "color");
-		glEnableVertexAttribArray(aCol);
-		glVertexAttribPointer(aCol, 3, GL_FLOAT, false, 6 * floatSize, 3 * floatSize);
+		int aNormal = glGetAttribLocation(App.shaderProgram, "normal");
+		glEnableVertexAttribArray(aNormal);
+		glVertexAttribPointer(aNormal, 3, GL_FLOAT, false, 9 * floatSize, 3 * floatSize);
+
+		int aColor = glGetAttribLocation(App.shaderProgram, "color");
+		glEnableVertexAttribArray(aColor);
+		glVertexAttribPointer(aColor, 3, GL_FLOAT, false, 9 * floatSize, 6 * floatSize);
 
 		glBindVertexArray(0);
 	}
 
 	public FloatBuffer generateMesh(MemoryStack stack) {
-		FloatBuffer mesh = stack.mallocFloat(3 * vertCount);
+		FloatBuffer mesh = stack.mallocFloat(9 * vertCount);
 		return mesh;
 	}
 
@@ -52,8 +57,14 @@ public class Entity {
 	}
 
 	public void draw() {
+		if (glGetInteger(GL_CURRENT_PROGRAM) != shaderProgram) {
+			glUseProgram(shaderProgram);
+		}
+
 		try (MemoryStack stack = MemoryStack.stackPush()) {
-			glUniformMatrix4fv(glGetUniformLocation(App.shaderProgram, "model"), false, model.get(stack.mallocFloat(16)));
+			glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "model"), false, model.get(stack.mallocFloat(16)));
+			glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "view"), false, App.camera.view.get(stack.mallocFloat(16)));
+			glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "projection"), false, App.camera.projection.get(stack.mallocFloat(16)));
 		}
 		
 		glBindVertexArray(vao);
