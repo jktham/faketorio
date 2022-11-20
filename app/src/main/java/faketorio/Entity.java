@@ -8,41 +8,57 @@ import static org.lwjgl.opengl.GL33.*;
 import java.nio.FloatBuffer;
 
 public class Entity {
-	int vao;
-	int vbo;
+	int vao = 0;
+	int vbo = 0;
+	
+	int vertCount = 0;
+
 	Matrix4f model = new Matrix4f();
 
-	public Entity(int shaderProgram) {
+	public Entity() {
 		vao = glGenVertexArrays();
-		glBindVertexArray(vao);
-
 		vbo = glGenBuffers();
+		updateMesh();
+	}
+
+	public void updateMesh() {
+		glBindVertexArray(vao);
 		glBindBuffer(GL_ARRAY_BUFFER, vbo);
 
 		try (MemoryStack stack = MemoryStack.stackPush()) {
-			FloatBuffer vertices = stack.mallocFloat(3 * 6);
-			vertices.put(-0.5f).put(-0.43f).put(0f).put(1f).put(0f).put(0f);
-			vertices.put(0.5f).put(-0.43f).put(0f).put(0f).put(1f).put(0f);
-			vertices.put(0f).put(0.43f).put(0f).put(0f).put(0f).put(1f);
-			vertices.flip();
-
-			glBufferData(GL_ARRAY_BUFFER, vertices, GL_STATIC_DRAW);
+			FloatBuffer mesh = generateMesh(stack);
+			glBufferData(GL_ARRAY_BUFFER, mesh, GL_STATIC_DRAW);
 		}
 
 		int floatSize = 4;
-		int aPos = glGetAttribLocation(shaderProgram, "position");
+		int aPos = glGetAttribLocation(App.shaderProgram, "position");
 		glEnableVertexAttribArray(aPos);
 		glVertexAttribPointer(aPos, 3, GL_FLOAT, false, 6 * floatSize, 0);
 
-		int aCol = glGetAttribLocation(shaderProgram, "color");
+		int aCol = glGetAttribLocation(App.shaderProgram, "color");
 		glEnableVertexAttribArray(aCol);
 		glVertexAttribPointer(aCol, 3, GL_FLOAT, false, 6 * floatSize, 3 * floatSize);
 
 		glBindVertexArray(0);
 	}
 
-	public void update(double deltaTime) {
-		model.rotate((float)(0.5f * deltaTime), 0f, 0f, 1f);
+	public FloatBuffer generateMesh(MemoryStack stack) {
+		FloatBuffer mesh = stack.mallocFloat(3 * vertCount);
+		return mesh;
+	}
+
+	public void update() {
+
+	}
+
+	public void draw() {
+		try (MemoryStack stack = MemoryStack.stackPush()) {
+			glUniformMatrix4fv(glGetUniformLocation(App.shaderProgram, "model"), false, model.get(stack.mallocFloat(16)));
+		}
+		
+		glBindVertexArray(vao);
+		glDrawArrays(GL_TRIANGLES, 0, vertCount);
+		glBindVertexArray(0);
 	}
 
 }
