@@ -2,6 +2,7 @@ package faketorio;
 
 import org.lwjgl.system.MemoryStack;
 import org.joml.Matrix4f;
+import org.joml.Vector3f;
 
 import static org.lwjgl.opengl.GL33.*;
 
@@ -10,15 +11,17 @@ import java.nio.FloatBuffer;
 public class Entity {
 	int vao = 0;
 	int vbo = 0;
-	int shaderProgram = App.shaderProgram;
-	
+	int shaderProgram = 0;
 	int vertCount = 0;
 
+	Vector3f position = new Vector3f(0f, 0f, 0f);
 	Matrix4f model = new Matrix4f();
 
-	public Entity() {
+	public void init() {
+		model = new Matrix4f().translate(position);
 		vao = glGenVertexArrays();
 		vbo = glGenBuffers();
+		shaderProgram = App.shaderProgram;
 		updateMesh();
 	}
 
@@ -48,6 +51,7 @@ public class Entity {
 	}
 
 	public FloatBuffer generateMesh(MemoryStack stack) {
+		vertCount = 0;
 		FloatBuffer mesh = stack.mallocFloat(9 * vertCount);
 		return mesh;
 	}

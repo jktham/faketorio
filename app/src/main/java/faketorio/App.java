@@ -1,6 +1,7 @@
 package faketorio;
 
 import org.joml.Vector2f;
+import org.joml.Vector2i;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.*;
@@ -83,7 +84,9 @@ public class App {
 		glfwSetMouseButtonCallback(window, (window, button, action, mods) -> {
 			if (button == GLFW_MOUSE_BUTTON_1 && action == GLFW_PRESS) {
 				Cube cube = new Cube();
-				cube.model.translate(new Vector3f(player.position).floor());
+				cube.position = new Vector3f(player.position).floor();
+				cube.color = new Vector3f(0f, 0f, 1f);
+				cube.init();
 				entities.add(cube);
 			}
 			if (button == GLFW_MOUSE_BUTTON_3 && action == GLFW_PRESS) {
@@ -142,16 +145,23 @@ public class App {
 		glLinkProgram(shaderProgram);
 
 		world = new World();
+		world.size = new Vector2i(100, 100);
+		world.init();
 		player = new Player();
+		player.color = new Vector3f(1f, 0f, 0f);
+		player.init();
 		camera = new Camera();
 		entities = new ArrayList<Entity>();
 
-		Entity testTriangle = new Triangle();
-		testTriangle.model.translate(0f, 0f, 1f);
+		Triangle testTriangle = new Triangle();
+		testTriangle.position = new Vector3f(0f, 0f, 1f);
+		testTriangle.init();
 		entities.add(testTriangle);
 
-		Entity testCube = new Cube();
-		testCube.model.translate(4f, 8f, 0f);
+		Cube testCube = new Cube();
+		testCube.position = new Vector3f(4f, 8f, 0f);
+		testCube.color = new Vector3f(0f, 0f, 1f);
+		testCube.init();
 		entities.add(testCube);
 	}
 

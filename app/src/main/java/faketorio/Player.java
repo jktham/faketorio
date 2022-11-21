@@ -10,7 +10,7 @@ import java.nio.FloatBuffer;
 
 public class Player extends Entity {
 	float speed = 5.0f;
-	Vector3f position = new Vector3f(0f, 0f, 0f);
+	Vector3f color = new Vector3f(1f, 1f, 1f);
 
 	public void update() {
 		float deltaMove = speed * App.deltaTime;
@@ -34,7 +34,6 @@ public class Player extends Entity {
 
 	public FloatBuffer generateMesh(MemoryStack stack) {
 		vertCount = 36;
-		Vector3f color = new Vector3f(1f, 0f, 0f);
 		FloatBuffer mesh = stack.mallocFloat(9 * vertCount);
 		mesh.put(-0.5f).put(-0.5f).put(0f).put(-1f).put(0f).put(0f).put(color.x).put(color.y).put(color.z);
 		mesh.put(-0.5f).put(-0.5f).put(2f).put(-1f).put(0f).put(0f).put(color.x).put(color.y).put(color.z);
