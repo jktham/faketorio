@@ -15,7 +15,6 @@ import static org.lwjgl.system.MemoryUtil.*;
 import java.util.Scanner;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
 
 public class App {
 	public static long window = 0;
@@ -32,7 +31,6 @@ public class App {
 	public static World world;
 	public static Player player;
 	public static Camera camera;
-	public static ArrayList<Entity> entities;
 
 	public static void main(String[] args) {
 		new App().run();
@@ -64,10 +62,19 @@ public class App {
 			if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
 				glfwSetWindowShouldClose(window, true);
 			}
+			if (key == GLFW_KEY_0 && action == GLFW_PRESS) {
+				player.item = 0;
+			}
+			if (key == GLFW_KEY_1 && action == GLFW_PRESS) {
+				player.item = 1;
+			}
+			if (key == GLFW_KEY_2 && action == GLFW_PRESS) {
+				player.item = 2;
+			}
 		});
 
 		glfwSetCursorPosCallback(window, (window, xpos, ypos) -> {
-			if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_2) == GLFW_PRESS) {
+			if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_3) == GLFW_PRESS) {
 				camera.rotation -= ((float)xpos - cursorPos.x) * 0.005f;
 				camera.angle -= ((float)ypos - cursorPos.y) * 0.005f;
 				if (camera.angle > (float)Math.PI / 2f - 0.1f) {
@@ -77,21 +84,47 @@ public class App {
 				}
 			}
 
-			cursorPos.x = (float)xpos;
-			cursorPos.y = (float)ypos;
+			cursorPos = new Vector2f((float)xpos, (float)ypos);
 		});
 
 		glfwSetMouseButtonCallback(window, (window, button, action, mods) -> {
 			if (button == GLFW_MOUSE_BUTTON_1 && action == GLFW_PRESS) {
-				Cube cube = new Cube();
-				cube.position = new Vector3f(player.position).floor();
-				cube.color = new Vector3f(0f, 0f, 1f);
-				cube.init();
-				entities.add(cube);
+				Vector3f worldPos = camera.getCursorWorldPos();
+				if (worldPos != null) {
+					Vector3f tilePos = new Vector3f(worldPos).floor();
+					if (world.tiles[(int)tilePos.x+world.size.x/2][(int)tilePos.y+world.size.y/2].free) {
+						if (player.item == 1) {
+							Cube cube = new Cube();
+							cube.position = new Vector3f(tilePos.x, tilePos.y, 0f);
+							cube.color = new Vector3f(0f, 0f, 1f);
+							cube.init();
+							world.entities.add(cube);
+							world.tiles[(int)tilePos.x+world.size.x/2][(int)tilePos.y+world.size.y/2].free = false;
+						} else if (player.item == 2) {
+							Triangle triangle = new Triangle();
+							triangle.position = new Vector3f(tilePos.x, tilePos.y, 0f);
+							triangle.color = new Vector3f(-1f, -1f, -1f);
+							triangle.init();
+							world.entities.add(triangle);
+							world.tiles[(int)tilePos.x+world.size.x/2][(int)tilePos.y+world.size.y/2].free = false;
+						}
+					}
+				}
 			}
-			if (button == GLFW_MOUSE_BUTTON_3 && action == GLFW_PRESS) {
-				camera.rotation = -(float)Math.PI / 2f;
-				camera.angle = (float)Math.PI / 4f;
+			if (button == GLFW_MOUSE_BUTTON_2 && action == GLFW_PRESS) {
+				Vector3f worldPos = camera.getCursorWorldPos();
+				if (worldPos != null) {
+					Vector3f tilePos = new Vector3f(worldPos).floor();
+					if (!world.tiles[(int)tilePos.x+world.size.x/2][(int)tilePos.y+world.size.y/2].free) {
+						for (Entity e : world.entities) {
+							if (new Vector2f(e.position.x, e.position.y).floor().equals(new Vector2f(tilePos.x, tilePos.y))) {
+								world.entities.remove(e);
+								world.tiles[(int)tilePos.x+world.size.x/2][(int)tilePos.y+world.size.y/2].free = true;
+								break;
+							}
+						}
+					}
+				}
 			}
 		});
 		
@@ -151,18 +184,19 @@ public class App {
 		player.color = new Vector3f(1f, 0f, 0f);
 		player.init();
 		camera = new Camera();
-		entities = new ArrayList<Entity>();
 
 		Triangle testTriangle = new Triangle();
-		testTriangle.position = new Vector3f(0f, 0f, 1f);
+		testTriangle.position = new Vector3f(0f, 0f, 0f);
 		testTriangle.init();
-		entities.add(testTriangle);
+		world.entities.add(testTriangle);
+		world.tiles[(int)Math.floor(testTriangle.position.x)+world.size.x/2][(int)Math.floor(testTriangle.position.y)+world.size.y/2].free = false;
 
 		Cube testCube = new Cube();
 		testCube.position = new Vector3f(4f, 8f, 0f);
 		testCube.color = new Vector3f(0f, 0f, 1f);
 		testCube.init();
-		entities.add(testCube);
+		world.entities.add(testCube);
+		world.tiles[(int)Math.floor(testCube.position.x)+world.size.x/2][(int)Math.floor(testCube.position.y)+world.size.y/2].free = false;
 	}
 
 	private void loop() {
@@ -170,6 +204,7 @@ public class App {
 			deltaTime = (float)glfwGetTime() - time;
 			time = (float)glfwGetTime();
 			System.out.println((String.format("%.6f", time) + ", " + String.format("%.6f", deltaTime)));
+			// System.out.println(world.entities.size());
 
 			update();
 			draw();
@@ -182,9 +217,6 @@ public class App {
 		world.update();
 		player.update();
 		camera.update();
-		for (Entity entity : entities) {
-			entity.update();
-		}
 	}
 
 	private void draw() {
@@ -192,9 +224,6 @@ public class App {
 
 		world.draw();
 		player.draw();
-		for (Entity entity : entities) {
-			entity.draw();
-		}
 
 		glfwSwapBuffers(window);
 	}

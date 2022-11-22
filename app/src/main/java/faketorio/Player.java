@@ -11,6 +11,7 @@ import java.nio.FloatBuffer;
 public class Player extends Entity {
 	float speed = 5.0f;
 	Vector3f color = new Vector3f(1f, 1f, 1f);
+	int item = 1;
 
 	public void update() {
 		float deltaMove = speed * App.deltaTime;
