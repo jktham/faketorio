@@ -11,7 +11,7 @@ void main() {
     vec3 lightColor = vec3(1.0, 1.0, 1.0);
 
     vec3 ambient = lightColor * 0.4;
-    vec3 diffuse = lightColor * max(dot(normal, lightDir), 0.0) * 0.8;
+    vec3 diffuse = lightColor * max(dot(normal, lightDir), 0.0) * 0.5;
 
     vec3 color = vertColor * (ambient + diffuse);
     fragColor = vec4(color, 1.0);

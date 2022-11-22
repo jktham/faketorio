@@ -84,6 +84,12 @@ public class World {
 					ghostTriangle.color = new Vector3f(1f, 1f, 1f);
 					ghostTriangle.init();
 					ghost.add(ghostTriangle);
+				} else if (App.player.item == 3) {
+					Sphere ghostSphere = new Sphere();
+					ghostSphere.position = new Vector3f(tilePos.x, tilePos.y, 0f);
+					ghostSphere.color = new Vector3f(1f, 1f, 1f);
+					ghostSphere.init();
+					ghost.add(ghostSphere);
 				}
 			}
 		}

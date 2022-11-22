@@ -6,7 +6,7 @@ import org.joml.Vector3f;
 import org.lwjgl.system.MemoryStack;
 
 public class Cube extends Entity {
-	Vector3f color = new Vector3f(1f, 1f, 1f);
+	Vector3f color = new Vector3f();
 
 	public FloatBuffer generateMesh(MemoryStack stack) {
 		vertCount = 36;

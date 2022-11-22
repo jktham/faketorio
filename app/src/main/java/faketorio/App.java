@@ -71,6 +71,9 @@ public class App {
 			if (key == GLFW_KEY_2 && action == GLFW_PRESS) {
 				player.item = 2;
 			}
+			if (key == GLFW_KEY_3 && action == GLFW_PRESS) {
+				player.item = 3;
+			}
 		});
 
 		glfwSetCursorPosCallback(window, (window, xpos, ypos) -> {
@@ -106,6 +109,13 @@ public class App {
 							triangle.color = new Vector3f(-1f, -1f, -1f);
 							triangle.init();
 							world.entities.add(triangle);
+							world.tiles[(int)tilePos.x+world.size.x/2][(int)tilePos.y+world.size.y/2].free = false;
+						} else if (player.item == 3) {
+							Sphere sphere = new Sphere();
+							sphere.position = new Vector3f(tilePos.x, tilePos.y, 0f);
+							sphere.color = new Vector3f(1f, 0f, 1f);
+							sphere.init();
+							world.entities.add(sphere);
 							world.tiles[(int)tilePos.x+world.size.x/2][(int)tilePos.y+world.size.y/2].free = false;
 						}
 					}
@@ -187,6 +197,7 @@ public class App {
 
 		Triangle testTriangle = new Triangle();
 		testTriangle.position = new Vector3f(0f, 0f, 0f);
+		testTriangle.color = new Vector3f(-1f, -1f, -1f);
 		testTriangle.init();
 		world.entities.add(testTriangle);
 		world.tiles[(int)Math.floor(testTriangle.position.x)+world.size.x/2][(int)Math.floor(testTriangle.position.y)+world.size.y/2].free = false;
@@ -197,6 +208,13 @@ public class App {
 		testCube.init();
 		world.entities.add(testCube);
 		world.tiles[(int)Math.floor(testCube.position.x)+world.size.x/2][(int)Math.floor(testCube.position.y)+world.size.y/2].free = false;
+		
+		Sphere testSphere = new Sphere();
+		testSphere.position = new Vector3f(5f, 3f, 0f);
+		testSphere.color = new Vector3f(1f, 0f, 1f);
+		testSphere.init();
+		world.entities.add(testSphere);
+		world.tiles[(int)Math.floor(testSphere.position.x)+world.size.x/2][(int)Math.floor(testSphere.position.y)+world.size.y/2].free = false;
 	}
 
 	private void loop() {

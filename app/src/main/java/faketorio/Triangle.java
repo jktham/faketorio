@@ -7,7 +7,7 @@ import org.joml.Vector3f;
 import org.lwjgl.system.MemoryStack;
 
 public class Triangle extends Entity {
-	Vector3f color = new Vector3f(-1f, -1f, -1f);
+	Vector3f color = new Vector3f();
 	public FloatBuffer generateMesh(MemoryStack stack) {
 		vertCount = 3;
 		FloatBuffer mesh = stack.mallocFloat(9 * vertCount);
