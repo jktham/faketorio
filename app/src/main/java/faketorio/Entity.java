@@ -9,19 +9,21 @@ import static org.lwjgl.opengl.GL33.*;
 import java.nio.FloatBuffer;
 
 public class Entity {
-	int vao = 0;
-	int vbo = 0;
-	int shaderProgram = 0;
-	int vertCount = 0;
+	int vao;
+	int vbo;
+	int shader;
+	int vertCount;
 
 	Vector3f position = new Vector3f(0f, 0f, 0f);
 	Matrix4f model = new Matrix4f();
+
+	Vector3f tint = new Vector3f(-1f);
 
 	public void init() {
 		model = new Matrix4f().translate(position);
 		vao = glGenVertexArrays();
 		vbo = glGenBuffers();
-		shaderProgram = App.shaderProgram;
+		shader = App.baseShader;
 		updateMesh();
 	}
 
@@ -35,15 +37,15 @@ public class Entity {
 		}
 
 		int floatSize = 4;
-		int aPosition = glGetAttribLocation(App.shaderProgram, "position");
+		int aPosition = glGetAttribLocation(shader, "position");
 		glEnableVertexAttribArray(aPosition);
 		glVertexAttribPointer(aPosition, 3, GL_FLOAT, false, 9 * floatSize, 0);
 
-		int aNormal = glGetAttribLocation(App.shaderProgram, "normal");
+		int aNormal = glGetAttribLocation(shader, "normal");
 		glEnableVertexAttribArray(aNormal);
 		glVertexAttribPointer(aNormal, 3, GL_FLOAT, false, 9 * floatSize, 3 * floatSize);
 
-		int aColor = glGetAttribLocation(App.shaderProgram, "color");
+		int aColor = glGetAttribLocation(shader, "color");
 		glEnableVertexAttribArray(aColor);
 		glVertexAttribPointer(aColor, 3, GL_FLOAT, false, 9 * floatSize, 6 * floatSize);
 
@@ -61,14 +63,15 @@ public class Entity {
 	}
 
 	public void draw() {
-		if (glGetInteger(GL_CURRENT_PROGRAM) != shaderProgram) {
-			glUseProgram(shaderProgram);
+		if (glGetInteger(GL_CURRENT_PROGRAM) != shader) {
+			glUseProgram(shader);
 		}
 
 		try (MemoryStack stack = MemoryStack.stackPush()) {
-			glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "model"), false, model.get(stack.mallocFloat(16)));
-			glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "view"), false, App.camera.view.get(stack.mallocFloat(16)));
-			glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "projection"), false, App.camera.projection.get(stack.mallocFloat(16)));
+			glUniform3f(glGetUniformLocation(shader, "tint"), tint.x, tint.y, tint.z);
+			glUniformMatrix4fv(glGetUniformLocation(shader, "model"), false, model.get(stack.mallocFloat(16)));
+			glUniformMatrix4fv(glGetUniformLocation(shader, "view"), false, App.camera.view.get(stack.mallocFloat(16)));
+			glUniformMatrix4fv(glGetUniformLocation(shader, "projection"), false, App.camera.projection.get(stack.mallocFloat(16)));
 		}
 		
 		glBindVertexArray(vao);

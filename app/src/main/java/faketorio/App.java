@@ -21,7 +21,8 @@ public class App {
 	public static int width = 1920;
 	public static int height = 1080;
 
-	public static int shaderProgram = 0;
+	public static int baseShader = 0;
+	public static int instanceShader = 0;
 
 	public static float time = 0.0f;
 	public static float deltaTime = 0.0f;
@@ -54,9 +55,15 @@ public class App {
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 		glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
-		glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+		glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
 
 		window = glfwCreateWindow(width, height, "test", NULL, NULL);
+
+		glfwSetFramebufferSizeCallback(window, (window, width, height) -> {
+			App.width = width;
+			App.height = height;
+			glViewport(0, 0, width, height);
+		});
 
 		glfwSetKeyCallback(window, (window, key, scancode, action, mods) -> {
 			if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
@@ -99,21 +106,21 @@ public class App {
 						if (player.item == 1) {
 							Cube cube = new Cube();
 							cube.position = new Vector3f(tilePos.x, tilePos.y, 0f);
-							cube.color = new Vector3f(0f, 0f, 1f);
+							cube.tint = new Vector3f(0f, 0f, 1f);
 							cube.init();
 							world.entities.add(cube);
 							world.tiles[(int)tilePos.x+world.size.x/2][(int)tilePos.y+world.size.y/2].free = false;
 						} else if (player.item == 2) {
 							Triangle triangle = new Triangle();
 							triangle.position = new Vector3f(tilePos.x, tilePos.y, 0f);
-							triangle.color = new Vector3f(-1f, -1f, -1f);
+							triangle.tint = new Vector3f(-1f, -1f, -1f);
 							triangle.init();
 							world.entities.add(triangle);
 							world.tiles[(int)tilePos.x+world.size.x/2][(int)tilePos.y+world.size.y/2].free = false;
 						} else if (player.item == 3) {
 							Sphere sphere = new Sphere();
 							sphere.position = new Vector3f(tilePos.x, tilePos.y, 0f);
-							sphere.color = new Vector3f(1f, 0f, 1f);
+							sphere.tint = new Vector3f(1f, 0f, 1f);
 							sphere.init();
 							world.entities.add(sphere);
 							world.tiles[(int)tilePos.x+world.size.x/2][(int)tilePos.y+world.size.y/2].free = false;
@@ -147,7 +154,7 @@ public class App {
 		});
 
 		glfwMakeContextCurrent(window);
-		glfwSwapInterval(0);
+		glfwSwapInterval(1);
 		glfwShowWindow(window);
 
 		GL.createCapabilities();
@@ -155,63 +162,34 @@ public class App {
 		glViewport(0, 0, width, height);
 		glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
-		String vertexSource = "";
-		try {
-			Scanner scanner = new Scanner(new File("app/src/main/resources/shader.vs"));
-			vertexSource = scanner.useDelimiter("\\Z").next();
-			scanner.close();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
-		int vertexShader = glCreateShader(GL_VERTEX_SHADER);
-		glShaderSource(vertexShader, vertexSource);
-		glCompileShader(vertexShader);
-
-		String fragmentSource = "";
-		try {
-			Scanner scanner = new Scanner(new File("app/src/main/resources/shader.fs"));
-			fragmentSource = scanner.useDelimiter("\\Z").next();
-			scanner.close();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
-		int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-		glShaderSource(fragmentShader, fragmentSource);
-		glCompileShader(fragmentShader);
-
-		shaderProgram = glCreateProgram();
-		glAttachShader(shaderProgram, vertexShader);
-		glAttachShader(shaderProgram, fragmentShader);
-		glDeleteShader(vertexShader);
-		glDeleteShader(fragmentShader);
-		glBindFragDataLocation(shaderProgram, 0, "fragColor");
-		glLinkProgram(shaderProgram);
+		baseShader = compileShader("baseShader");
+		instanceShader = compileShader("instanceShader");
 
 		world = new World();
 		world.size = new Vector2i(100, 100);
 		world.init();
 		player = new Player();
-		player.color = new Vector3f(1f, 0f, 0f);
+		player.tint = new Vector3f(1f, 0f, 0f);
 		player.init();
 		camera = new Camera();
 
 		Triangle testTriangle = new Triangle();
 		testTriangle.position = new Vector3f(0f, 0f, 0f);
-		testTriangle.color = new Vector3f(-1f, -1f, -1f);
+		testTriangle.tint = new Vector3f(-1f, -1f, -1f);
 		testTriangle.init();
 		world.entities.add(testTriangle);
 		world.tiles[(int)Math.floor(testTriangle.position.x)+world.size.x/2][(int)Math.floor(testTriangle.position.y)+world.size.y/2].free = false;
 
 		Cube testCube = new Cube();
 		testCube.position = new Vector3f(4f, 8f, 0f);
-		testCube.color = new Vector3f(0f, 0f, 1f);
+		testCube.tint = new Vector3f(0f, 0f, 1f);
 		testCube.init();
 		world.entities.add(testCube);
 		world.tiles[(int)Math.floor(testCube.position.x)+world.size.x/2][(int)Math.floor(testCube.position.y)+world.size.y/2].free = false;
 		
 		Sphere testSphere = new Sphere();
 		testSphere.position = new Vector3f(5f, 3f, 0f);
-		testSphere.color = new Vector3f(1f, 0f, 1f);
+		testSphere.tint = new Vector3f(1f, 0f, 1f);
 		testSphere.init();
 		world.entities.add(testSphere);
 		world.tiles[(int)Math.floor(testSphere.position.x)+world.size.x/2][(int)Math.floor(testSphere.position.y)+world.size.y/2].free = false;
@@ -255,6 +233,42 @@ public class App {
 		if (cb != null) {
 			cb.free();
 		}
+	}
+
+	private int compileShader(String file) {
+		String vertexSource = "";
+		try {
+			Scanner scanner = new Scanner(new File("app/src/main/resources/" + file + ".vs"));
+			vertexSource = scanner.useDelimiter("\\Z").next();
+			scanner.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		int vertexShader = glCreateShader(GL_VERTEX_SHADER);
+		glShaderSource(vertexShader, vertexSource);
+		glCompileShader(vertexShader);
+
+		String fragmentSource = "";
+		try {
+			Scanner scanner = new Scanner(new File("app/src/main/resources/" + file + ".fs"));
+			fragmentSource = scanner.useDelimiter("\\Z").next();
+			scanner.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+		glShaderSource(fragmentShader, fragmentSource);
+		glCompileShader(fragmentShader);
+
+		int shaderProgram = glCreateProgram();
+		glAttachShader(shaderProgram, vertexShader);
+		glAttachShader(shaderProgram, fragmentShader);
+		glDeleteShader(vertexShader);
+		glDeleteShader(fragmentShader);
+		glBindFragDataLocation(shaderProgram, 0, "fragColor");
+		glLinkProgram(shaderProgram);
+
+		return shaderProgram;
 	}
 
 }

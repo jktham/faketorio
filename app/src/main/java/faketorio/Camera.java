@@ -16,6 +16,8 @@ public class Camera {
 	Vector3f position = new Vector3f(0f, 0f, 0f);
 
 	public void update() {
+		projection = new Matrix4f().perspective(1.2f, (float)App.width/(float)App.height, 0.1f, 1000f);
+
 		Vector3f offset = new Vector3f();
 		offset.add((float)Math.cos(rotation), (float)Math.sin(rotation), 1f);
 		offset.mul((float)Math.sin(angle), (float)Math.sin(angle), (float)Math.cos(angle));
