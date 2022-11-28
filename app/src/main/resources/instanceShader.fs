@@ -15,7 +15,7 @@ void main() {
     vec3 diffuse = lightColor * max(dot(normal, lightDir), 0.0) * 0.5;
 
     vec3 baseColor = vec3(1.0, 1.0, 1.0);
-    if (vertTint.x > -1.0) {
+    if (vertTint.x >= 0.0) {
         baseColor = vertTint;
     } else {
         baseColor = vertColor;

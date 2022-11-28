@@ -31,6 +31,10 @@ public class World {
 	ArrayList<Entity> ghost;
 	ArrayList<Entity> entities;
 
+	Vector3f prevDestructPosition;
+	Vector3f prevDestructTint;
+
+	@SuppressWarnings("unchecked")
 	public void init() {
 		model = new Matrix4f();
 
@@ -62,6 +66,7 @@ public class World {
 		tileTints = new Vector3f[tileTypes];
 		tileTints[0] = new Vector3f(0.1f);
 		tileTints[1] = new Vector3f(0.12f);
+
 
 		tileOffsets = (ArrayList<Vector3f>[]) new ArrayList[tileTypes];
 		tileOffsets[0] = new ArrayList<Vector3f>();
@@ -128,28 +133,44 @@ public class World {
 
 	public void update() {
 		Vector3f worldPos = App.camera.getCursorWorldPos();
+		worldPos.z = 0f;
 		ghost.clear();
+		if (prevDestructPosition != null) {
+			for (int i=0;i<entities.size();i++) {
+				if (new Vector3f(entities.get(i).position).floor().equals(new Vector3f(prevDestructPosition).floor())) {
+					entities.get(i).tint = prevDestructTint;
+				}
+			}
+		}
 		if (worldPos != null) {
 			Vector3f tilePos = new Vector3f(worldPos).floor();
 			if (tiles[(int)tilePos.x+size.x/2][(int)tilePos.y+size.y/2].free) {
 				if (App.player.item == 1) {
 					Cube ghostCube = new Cube();
 					ghostCube.position = new Vector3f(tilePos.x, tilePos.y, 0f);
-					ghostCube.tint = new Vector3f(1f, 1f, 1f);
+					ghostCube.tint = new Vector3f(0f, 1f, 0f);
 					ghostCube.init();
 					ghost.add(ghostCube);
 				} else if (App.player.item == 2) {
 					Triangle ghostTriangle = new Triangle();
 					ghostTriangle.position = new Vector3f(tilePos.x, tilePos.y, 0f);
-					ghostTriangle.tint = new Vector3f(1f, 1f, 1f);
+					ghostTriangle.tint = new Vector3f(0f, 1f, 0f);
 					ghostTriangle.init();
 					ghost.add(ghostTriangle);
 				} else if (App.player.item == 3) {
 					Sphere ghostSphere = new Sphere();
 					ghostSphere.position = new Vector3f(tilePos.x, tilePos.y, 0f);
-					ghostSphere.tint = new Vector3f(1f, 1f, 1f);
+					ghostSphere.tint = new Vector3f(0f, 1f, 0f);
 					ghostSphere.init();
 					ghost.add(ghostSphere);
+				}
+			} else {
+				for (int i=0;i<entities.size();i++) {
+					if (new Vector3f(entities.get(i).position).floor().equals(new Vector3f(worldPos).floor())) {
+						prevDestructPosition = new Vector3f(entities.get(i).position).floor();
+						prevDestructTint = new Vector3f(entities.get(i).tint);
+						entities.get(i).tint = new Vector3f(1f, 0f, 0f);
+					}
 				}
 			}
 		}
