@@ -132,8 +132,6 @@ public class World {
 	}
 
 	public void update() {
-		Vector3f worldPos = App.camera.getCursorWorldPos();
-		worldPos.z = 0f;
 		ghost.clear();
 		if (prevDestructPosition != null) {
 			for (int i=0;i<entities.size();i++) {
@@ -142,7 +140,9 @@ public class World {
 				}
 			}
 		}
+		Vector3f worldPos = App.camera.getCursorWorldPos();
 		if (worldPos != null) {
+			worldPos.z = 0f;
 			Vector3f tilePos = new Vector3f(worldPos).floor();
 			if (tiles[(int)tilePos.x+size.x/2][(int)tilePos.y+size.y/2].free) {
 				if (App.player.item == 1) {

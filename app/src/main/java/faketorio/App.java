@@ -23,6 +23,7 @@ public class App {
 
 	public static int baseShader = 0;
 	public static int instanceShader = 0;
+	public static int uiShader = 0;
 
 	public static float time = 0.0f;
 	public static float deltaTime = 0.0f;
@@ -32,6 +33,7 @@ public class App {
 	public static World world;
 	public static Player player;
 	public static Camera camera;
+	public static Ui ui;
 
 	public static void main(String[] args) {
 		new App().run();
@@ -159,11 +161,14 @@ public class App {
 
 		GL.createCapabilities();
 		glEnable(GL_DEPTH_TEST);
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glViewport(0, 0, width, height);
 		glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
 		baseShader = compileShader("baseShader");
 		instanceShader = compileShader("instanceShader");
+		uiShader = compileShader("uiShader");
 
 		world = new World();
 		world.size = new Vector2i(100, 100);
@@ -172,6 +177,15 @@ public class App {
 		player.tint = new Vector3f(1f, 0f, 0f);
 		player.init();
 		camera = new Camera();
+		ui = new Ui();
+		ui.init();
+
+		Square testSquare = new Square();
+		testSquare.position = new Vector3f(100f, 100f, 0f);
+		testSquare.size = new Vector3f(100f, 100f, 0f);
+		testSquare.tint = new Vector3f(1f, 1f, 0f);
+		testSquare.init();
+		ui.elements.add(testSquare);
 
 		Triangle testTriangle = new Triangle();
 		testTriangle.position = new Vector3f(0f, 0f, 0f);
@@ -213,6 +227,7 @@ public class App {
 		world.update();
 		player.update();
 		camera.update();
+		ui.update();
 	}
 
 	private void draw() {
@@ -220,6 +235,7 @@ public class App {
 
 		world.draw();
 		player.draw();
+		ui.draw();
 
 		glfwSwapBuffers(window);
 	}
