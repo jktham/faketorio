@@ -3,6 +3,7 @@ package faketorio;
 import java.util.ArrayList;
 
 import org.joml.Matrix4f;
+import static org.lwjgl.opengl.GL33.*;
 
 public class Ui {
 	ArrayList<Element> elements;
@@ -23,9 +24,11 @@ public class Ui {
 	}
 
 	public void draw() {
+		glDisable(GL_DEPTH_TEST);
 		for (Element e : elements) {
 			e.draw();
 		}
+		glEnable(GL_DEPTH_TEST);
 	}
 
 

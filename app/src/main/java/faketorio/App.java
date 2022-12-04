@@ -6,15 +6,19 @@ import org.joml.Vector3f;
 import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.*;
 import org.lwjgl.system.Configuration;
+import org.lwjgl.system.MemoryStack;
 
 import static org.lwjgl.glfw.Callbacks.*;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL33.*;
+import static org.lwjgl.stb.STBImage.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
 import java.util.Scanner;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.nio.ByteBuffer;
+import java.nio.IntBuffer;
 
 public class App {
 	public static long window = 0;
@@ -24,6 +28,10 @@ public class App {
 	public static int baseShader = 0;
 	public static int instanceShader = 0;
 	public static int uiShader = 0;
+	public static int uiTexturedShader = 0;
+
+	public static int testTexture = 0;
+	public static int arialAtlas = 0;
 
 	public static float time = 0.0f;
 	public static float deltaTime = 0.0f;
@@ -166,9 +174,13 @@ public class App {
 		glViewport(0, 0, width, height);
 		glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
-		baseShader = compileShader("baseShader");
-		instanceShader = compileShader("instanceShader");
-		uiShader = compileShader("uiShader");
+		baseShader = compileShader("shaders/world_base");
+		instanceShader = compileShader("shaders/world_instanced");
+		uiShader = compileShader("shaders/ui_base");
+		uiTexturedShader = compileShader("shaders/ui_textured");
+
+		testTexture = loadTexture("textures/test.png");
+		arialAtlas = loadTexture("fonts/arial.png");
 
 		world = new World();
 		world.size = new Vector2i(100, 100);
@@ -180,12 +192,29 @@ public class App {
 		ui = new Ui();
 		ui.init();
 
-		Square testSquare = new Square();
-		testSquare.position = new Vector3f(100f, 100f, 0f);
-		testSquare.size = new Vector3f(100f, 100f, 0f);
-		testSquare.tint = new Vector3f(1f, 1f, 0f);
-		testSquare.init();
-		ui.elements.add(testSquare);
+		Quad testQuad = new Quad();
+		testQuad.position = new Vector3f(100f, 100f, 0f);
+		testQuad.size = new Vector3f(100f, 100f, 0f);
+		testQuad.tint = new Vector3f(1f, 1f, 0f);
+		testQuad.init();
+		ui.elements.add(testQuad);
+		
+		TexturedQuad testTexturedQuad = new TexturedQuad();
+		testTexturedQuad.position = new Vector3f(300f, 100f, 0f);
+		testTexturedQuad.size = new Vector3f(100f, 100f, 0f);
+		testTexturedQuad.tint = new Vector3f(0f, 1f, 1f);
+		testTexturedQuad.texture = testTexture;
+		testTexturedQuad.init();
+		ui.elements.add(testTexturedQuad);
+
+		Label testLabel = new Label();
+		testLabel.position = new Vector3f(100f, 300f, 0f);
+		testLabel.size = new Vector3f(100f, 100f, 0f);
+		testLabel.tint = new Vector3f(1f, 0f, 1f);
+		testLabel.fontAtlas = arialAtlas;
+		testLabel.text = "test - ijkl \n123! %$[;]";
+		testLabel.init();
+		ui.elements.add(testLabel);
 
 		Triangle testTriangle = new Triangle();
 		testTriangle.position = new Vector3f(0f, 0f, 0f);
@@ -285,6 +314,37 @@ public class App {
 		glLinkProgram(shaderProgram);
 
 		return shaderProgram;
+	}
+
+	private int loadTexture(String file) {
+		ByteBuffer image;
+        int width, height;
+		String path = new File("app/src/main/resources/" + file).getAbsolutePath();
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            IntBuffer w = stack.mallocInt(1);
+            IntBuffer h = stack.mallocInt(1);
+            IntBuffer comp = stack.mallocInt(1);
+
+            //stbi_set_flip_vertically_on_load(true);
+            image = stbi_load(path, w, h, comp, 4);
+
+            width = w.get();
+            height = h.get();
+        }
+
+		int texture = glGenTextures();
+		glBindTexture(GL_TEXTURE_2D, texture);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
+		glGenerateMipmap(GL_TEXTURE_2D);
+		glBindTexture(GL_TEXTURE_2D, 0);
+		
+		stbi_image_free(image);
+
+		return texture;
 	}
 
 }
