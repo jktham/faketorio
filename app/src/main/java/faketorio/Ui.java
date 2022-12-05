@@ -31,5 +31,8 @@ public class Ui {
 		glEnable(GL_DEPTH_TEST);
 	}
 
+	public void addElement(Element element) {
+		elements.add(element);
+	}
 
 }

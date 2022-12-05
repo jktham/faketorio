@@ -31,8 +31,8 @@ public class World {
 	ArrayList<Entity> ghost;
 	ArrayList<Entity> entities;
 
-	Vector3f prevDestructPosition;
-	Vector3f prevDestructTint;
+	Vector2i prevGhostPosition;
+	Vector3f prevGhostTint;
 
 	@SuppressWarnings("unchecked")
 	public void init() {
@@ -66,7 +66,6 @@ public class World {
 		tileTints = new Vector3f[tileTypes];
 		tileTints[0] = new Vector3f(0.1f);
 		tileTints[1] = new Vector3f(0.12f);
-
 
 		tileOffsets = (ArrayList<Vector3f>[]) new ArrayList[tileTypes];
 		tileOffsets[0] = new ArrayList<Vector3f>();
@@ -132,48 +131,9 @@ public class World {
 	}
 
 	public void update() {
-		ghost.clear();
-		if (prevDestructPosition != null) {
-			for (int i=0;i<entities.size();i++) {
-				if (new Vector3f(entities.get(i).position).floor().equals(new Vector3f(prevDestructPosition).floor())) {
-					entities.get(i).tint = prevDestructTint;
-				}
-			}
-		}
 		Vector3f worldPos = App.camera.screenToWorldPos(App.cursorPos);
-		if (worldPos != null) {
-			worldPos.z = 0f;
-			Vector3f tilePos = new Vector3f(worldPos).floor();
-			if (tiles[(int)tilePos.x+size.x/2][(int)tilePos.y+size.y/2].free) {
-				if (App.player.item == 1) {
-					Cube ghostCube = new Cube();
-					ghostCube.position = new Vector3f(tilePos.x, tilePos.y, 0f);
-					ghostCube.tint = new Vector3f(0f, 1f, 0f);
-					ghostCube.init();
-					ghost.add(ghostCube);
-				} else if (App.player.item == 2) {
-					Triangle ghostTriangle = new Triangle();
-					ghostTriangle.position = new Vector3f(tilePos.x, tilePos.y, 0f);
-					ghostTriangle.tint = new Vector3f(0f, 1f, 0f);
-					ghostTriangle.init();
-					ghost.add(ghostTriangle);
-				} else if (App.player.item == 3) {
-					Sphere ghostSphere = new Sphere();
-					ghostSphere.position = new Vector3f(tilePos.x, tilePos.y, 0f);
-					ghostSphere.tint = new Vector3f(0f, 1f, 0f);
-					ghostSphere.init();
-					ghost.add(ghostSphere);
-				}
-			} else {
-				for (int i=0;i<entities.size();i++) {
-					if (new Vector3f(entities.get(i).position).floor().equals(new Vector3f(worldPos).floor())) {
-						prevDestructPosition = new Vector3f(entities.get(i).position).floor();
-						prevDestructTint = new Vector3f(entities.get(i).tint);
-						entities.get(i).tint = new Vector3f(1f, 0f, 0f);
-					}
-				}
-			}
-		}
+		Vector2i tilePos = worldToTilePos(worldPos);
+		moveGhost(tilePos, App.player.item);
 		
 		for (Entity g : ghost) {
 			g.update();
@@ -223,4 +183,114 @@ public class World {
 		}
 	}
 
+	public void placeNew(Vector2i tilePos, int type) {
+		Tile tile = getTile(tilePos);
+		if (tile.free) {
+			if (type == 1) {
+				Cube cube = new Cube();
+				cube.position = new Vector3f(tilePos.x, tilePos.y, 0f);
+				cube.tint = new Vector3f(0f, 0f, 1f);
+				cube.init();
+				entities.add(cube);
+				tile.free = false;
+			} else if (type == 2) {
+				Triangle triangle = new Triangle();
+				triangle.position = new Vector3f(tilePos.x, tilePos.y, 0f);
+				triangle.tint = new Vector3f(-1f, -1f, -1f);
+				triangle.init();
+				entities.add(triangle);
+				tile.free = false;
+			} else if (type == 3) {
+				Sphere sphere = new Sphere();
+				sphere.position = new Vector3f(tilePos.x, tilePos.y, 0f);
+				sphere.tint = new Vector3f(1f, 0f, 1f);
+				sphere.init();
+				entities.add(sphere);
+				tile.free = false;
+			}
+		}
+	}
+
+	public void placeEntity(Vector2i tilePos, Entity entity) {
+		Tile tile = getTile(tilePos);
+		entities.add(entity);
+		tile.free = false;
+	}
+
+	public void destroy(Vector2i tilePos) {
+		Tile tile = getTile(tilePos);
+		if (!tile.free) {
+			for (Entity entity : entities) {
+				if (worldToTilePos(entity.position).equals(tilePos)) {
+					entities.remove(entity);
+					tile.free = true;
+					for (Element element : App.ui.elements) {
+						if (element.tether == entity) {
+							App.ui.elements.remove(element);
+							break;
+						}
+					}
+					break;
+				}
+			}
+		}
+	}
+
+	public void interact(Vector2i tilePos) {
+		
+	}
+
+	public void moveGhost(Vector2i tilePos, int type) {
+		ghost.clear();
+		if (prevGhostPosition != null) {
+			for (Entity e : entities) {
+				if (worldToTilePos(e.position).equals(prevGhostPosition)) {
+					e.tint = prevGhostTint;
+				}
+			}
+		}
+		if (tilePos != null) {
+			Tile tile = getTile(tilePos);
+			if (tile.free) {
+				if (App.player.item == 1) {
+					Cube ghostCube = new Cube();
+					ghostCube.position = new Vector3f(tilePos.x, tilePos.y, 0f);
+					ghostCube.tint = new Vector3f(0f, 1f, 0f);
+					ghostCube.init();
+					ghost.add(ghostCube);
+				} else if (App.player.item == 2) {
+					Triangle ghostTriangle = new Triangle();
+					ghostTriangle.position = new Vector3f(tilePos.x, tilePos.y, 0f);
+					ghostTriangle.tint = new Vector3f(0f, 1f, 0f);
+					ghostTriangle.init();
+					ghost.add(ghostTriangle);
+				} else if (App.player.item == 3) {
+					Sphere ghostSphere = new Sphere();
+					ghostSphere.position = new Vector3f(tilePos.x, tilePos.y, 0f);
+					ghostSphere.tint = new Vector3f(0f, 1f, 0f);
+					ghostSphere.init();
+					ghost.add(ghostSphere);
+				}
+			} else {
+				for (Entity entity : entities) {
+					if (worldToTilePos(entity.position).equals(tilePos)) {
+						prevGhostPosition = worldToTilePos(entity.position);
+						prevGhostTint = new Vector3f(entity.tint);
+						entity.tint = new Vector3f(1f, 0f, 0f);
+					}
+				}
+			}
+		}
+	}
+
+	public Tile getTile(Vector2i tilePos) {
+		return tiles[(int)tilePos.x+size.x/2][(int)tilePos.y+size.y/2];
+	}
+
+	public Vector2i worldToTilePos(Vector3f worldPos) {
+		if (worldPos == null) {
+			return null;
+		}
+		return new Vector2i((int)worldPos.floor().x, (int)worldPos.floor().y);
+	}
 }

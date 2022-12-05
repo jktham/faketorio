@@ -110,47 +110,16 @@ public class App {
 		glfwSetMouseButtonCallback(window, (window, button, action, mods) -> {
 			if (button == GLFW_MOUSE_BUTTON_1 && action == GLFW_PRESS) {
 				Vector3f worldPos = camera.screenToWorldPos(cursorPos);
-				if (worldPos != null) {
-					Vector3f tilePos = new Vector3f(worldPos).floor();
-					if (world.tiles[(int)tilePos.x+world.size.x/2][(int)tilePos.y+world.size.y/2].free) {
-						if (player.item == 1) {
-							Cube cube = new Cube();
-							cube.position = new Vector3f(tilePos.x, tilePos.y, 0f);
-							cube.tint = new Vector3f(0f, 0f, 1f);
-							cube.init();
-							world.entities.add(cube);
-							world.tiles[(int)tilePos.x+world.size.x/2][(int)tilePos.y+world.size.y/2].free = false;
-						} else if (player.item == 2) {
-							Triangle triangle = new Triangle();
-							triangle.position = new Vector3f(tilePos.x, tilePos.y, 0f);
-							triangle.tint = new Vector3f(-1f, -1f, -1f);
-							triangle.init();
-							world.entities.add(triangle);
-							world.tiles[(int)tilePos.x+world.size.x/2][(int)tilePos.y+world.size.y/2].free = false;
-						} else if (player.item == 3) {
-							Sphere sphere = new Sphere();
-							sphere.position = new Vector3f(tilePos.x, tilePos.y, 0f);
-							sphere.tint = new Vector3f(1f, 0f, 1f);
-							sphere.init();
-							world.entities.add(sphere);
-							world.tiles[(int)tilePos.x+world.size.x/2][(int)tilePos.y+world.size.y/2].free = false;
-						}
-					}
+				Vector2i tilePos = world.worldToTilePos(worldPos);
+				if (tilePos != null) {
+					world.placeNew(tilePos, App.player.item);
 				}
 			}
 			if (button == GLFW_MOUSE_BUTTON_2 && action == GLFW_PRESS) {
 				Vector3f worldPos = camera.screenToWorldPos(cursorPos);
-				if (worldPos != null) {
-					Vector3f tilePos = new Vector3f(worldPos).floor();
-					if (!world.tiles[(int)tilePos.x+world.size.x/2][(int)tilePos.y+world.size.y/2].free) {
-						for (Entity e : world.entities) {
-							if (new Vector2f(e.position.x, e.position.y).floor().equals(new Vector2f(tilePos.x, tilePos.y))) {
-								world.entities.remove(e);
-								world.tiles[(int)tilePos.x+world.size.x/2][(int)tilePos.y+world.size.y/2].free = true;
-								break;
-							}
-						}
-					}
+				Vector2i tilePos = world.worldToTilePos(worldPos);
+				if (tilePos != null) {
+					world.destroy(tilePos);
 				}
 			}
 		});
@@ -197,7 +166,7 @@ public class App {
 		testQuad.size = new Vector3f(100f, 100f, 0f);
 		testQuad.tint = new Vector3f(1f, 1f, 0f);
 		testQuad.init();
-		ui.elements.add(testQuad);
+		ui.addElement(testQuad);
 		
 		TexturedQuad testTexturedQuad = new TexturedQuad();
 		testTexturedQuad.position = new Vector3f(300f, 100f, 0f);
@@ -205,7 +174,7 @@ public class App {
 		testTexturedQuad.tint = new Vector3f(0f, 1f, 1f);
 		testTexturedQuad.texture = testTexture;
 		testTexturedQuad.init();
-		ui.elements.add(testTexturedQuad);
+		ui.addElement(testTexturedQuad);
 
 		Label testLabel = new Label();
 		testLabel.position = new Vector3f(100f, 300f, 0f);
@@ -214,28 +183,25 @@ public class App {
 		testLabel.fontAtlas = arialAtlas;
 		testLabel.text = "test - ijkl \n123! %$[;]";
 		testLabel.init();
-		ui.elements.add(testLabel);
+		ui.addElement(testLabel);
 
 		Triangle testTriangle = new Triangle();
 		testTriangle.position = new Vector3f(0f, 0f, 0f);
 		testTriangle.tint = new Vector3f(-1f, -1f, -1f);
 		testTriangle.init();
-		world.entities.add(testTriangle);
-		world.tiles[(int)Math.floor(testTriangle.position.x)+world.size.x/2][(int)Math.floor(testTriangle.position.y)+world.size.y/2].free = false;
+		world.placeEntity(new Vector2i((int)Math.floor(testTriangle.position.x), (int)Math.floor(testTriangle.position.y)), testTriangle);
 
 		Cube testCube = new Cube();
 		testCube.position = new Vector3f(4f, 8f, 0f);
 		testCube.tint = new Vector3f(0f, 0f, 1f);
 		testCube.init();
-		world.entities.add(testCube);
-		world.tiles[(int)Math.floor(testCube.position.x)+world.size.x/2][(int)Math.floor(testCube.position.y)+world.size.y/2].free = false;
+		world.placeEntity(new Vector2i((int)Math.floor(testCube.position.x), (int)Math.floor(testCube.position.y)), testCube);
 		
 		Sphere testSphere = new Sphere();
 		testSphere.position = new Vector3f(5f, 3f, 0f);
 		testSphere.tint = new Vector3f(1f, 0f, 1f);
 		testSphere.init();
-		world.entities.add(testSphere);
-		world.tiles[(int)Math.floor(testSphere.position.x)+world.size.x/2][(int)Math.floor(testSphere.position.y)+world.size.y/2].free = false;
+		world.placeEntity(new Vector2i((int)Math.floor(testSphere.position.x), (int)Math.floor(testSphere.position.y)), testSphere);
 		
 		Label testTetheredLabel = new Label();
 		testTetheredLabel.position = new Vector3f(100f, 300f, 0f);
@@ -246,7 +212,7 @@ public class App {
 		testTetheredLabel.tether = testSphere;
 		testTetheredLabel.tetherWorldOffset = new Vector3f(0f, 0f, 1f);
 		testTetheredLabel.init();
-		ui.elements.add(testTetheredLabel);
+		ui.addElement(testTetheredLabel);
 	}
 
 	private void loop() {
