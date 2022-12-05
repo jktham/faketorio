@@ -13,7 +13,6 @@ import static org.lwjgl.opengl.GL33.*;
 public class Label extends Element {
 	String text = "";
 	int fontAtlas;
-
 	ArrayList<Glyph> glyphs;
 	
 	public void init() {

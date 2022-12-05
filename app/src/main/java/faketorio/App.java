@@ -109,7 +109,7 @@ public class App {
 
 		glfwSetMouseButtonCallback(window, (window, button, action, mods) -> {
 			if (button == GLFW_MOUSE_BUTTON_1 && action == GLFW_PRESS) {
-				Vector3f worldPos = camera.getCursorWorldPos();
+				Vector3f worldPos = camera.screenToWorldPos(cursorPos);
 				if (worldPos != null) {
 					Vector3f tilePos = new Vector3f(worldPos).floor();
 					if (world.tiles[(int)tilePos.x+world.size.x/2][(int)tilePos.y+world.size.y/2].free) {
@@ -139,7 +139,7 @@ public class App {
 				}
 			}
 			if (button == GLFW_MOUSE_BUTTON_2 && action == GLFW_PRESS) {
-				Vector3f worldPos = camera.getCursorWorldPos();
+				Vector3f worldPos = camera.screenToWorldPos(cursorPos);
 				if (worldPos != null) {
 					Vector3f tilePos = new Vector3f(worldPos).floor();
 					if (!world.tiles[(int)tilePos.x+world.size.x/2][(int)tilePos.y+world.size.y/2].free) {
@@ -236,6 +236,17 @@ public class App {
 		testSphere.init();
 		world.entities.add(testSphere);
 		world.tiles[(int)Math.floor(testSphere.position.x)+world.size.x/2][(int)Math.floor(testSphere.position.y)+world.size.y/2].free = false;
+		
+		Label testTetheredLabel = new Label();
+		testTetheredLabel.position = new Vector3f(100f, 300f, 0f);
+		testTetheredLabel.size = new Vector3f(24f, 24f, 0f);
+		testTetheredLabel.tint = new Vector3f(1f, 1f, 1f);
+		testTetheredLabel.fontAtlas = arialAtlas;
+		testTetheredLabel.text = "this is a funky ball\nlook at him go!";
+		testTetheredLabel.tether = testSphere;
+		testTetheredLabel.tetherWorldOffset = new Vector3f(0f, 0f, 1f);
+		testTetheredLabel.init();
+		ui.elements.add(testTetheredLabel);
 	}
 
 	private void loop() {

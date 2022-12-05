@@ -2,7 +2,9 @@ package faketorio;
 
 import org.lwjgl.system.MemoryStack;
 import org.joml.Matrix4f;
+import org.joml.Vector2f;
 import org.joml.Vector3f;
+import org.joml.Vector4f;
 
 import static org.lwjgl.opengl.GL33.*;
 
@@ -13,6 +15,10 @@ public class Element {
 	int vbo;
 	int shader;
 	int vertCount;
+
+	Entity tether = null;
+	Vector3f tetherWorldOffset = new Vector3f();
+	Vector2f tetherScreenOffset = new Vector2f();;
 
 	Vector3f position = new Vector3f(0f);
 	Vector3f size = new Vector3f(0f);
@@ -61,7 +67,12 @@ public class Element {
 	}
 
 	public void update() {
-
+		if (tether != null) {
+			Vector4f tetherPos = new Vector4f(0f, 0f, 0f, 1f).mul(tether.model);
+			Vector2f screenTetherPos = App.camera.worldToScreenPos(new Vector3f(tetherPos.x, tetherPos.y, tetherPos.z).add(tetherWorldOffset)).add(tetherScreenOffset);
+			position = new Vector3f(screenTetherPos.x, screenTetherPos.y, 0f);
+		}
+		model = new Matrix4f().translate(position).scale(size);
 	}
 
 	public void draw() {

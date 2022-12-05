@@ -1,6 +1,7 @@
 package faketorio;
 
 import org.joml.Matrix4f;
+import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 
@@ -30,8 +31,8 @@ public class Camera {
 		view.translate(new Vector3f(position).negate());
 	}
 
-	public Vector3f getCursorWorldPos() {
-		Vector4f clickPos = new Vector4f((App.cursorPos.x / (float)App.width) * 2f - 1f, 1f - (App.cursorPos.y / (float)App.height) * 2f, -1f, 1f);
+	public Vector3f screenToWorldPos(Vector2f screenPos) {
+		Vector4f clickPos = new Vector4f((screenPos.x / (float)App.width) * 2f - 1f, 1f - (screenPos.y / (float)App.height) * 2f, -1f, 1f);
 		clickPos.mul(new Matrix4f(projection).invert());
 		clickPos.z = -1f;
 		clickPos.w = 0f;
@@ -51,5 +52,12 @@ public class Camera {
 			return null;
 		}
 		return worldPos;
+	}
+
+	public Vector2f worldToScreenPos(Vector3f worldPos) {
+		Vector4f clipPos = new Vector4f(worldPos.x, worldPos.y, worldPos.z, 1.0f).mul(view).mul(projection);
+		Vector3f ndcPos = new Vector3f(clipPos.x, clipPos.y, clipPos.z).div(clipPos.w);
+		Vector2f screenPos = new Vector2f((ndcPos.x + 1f) / 2f * App.width, App.height - (ndcPos.y + 1f) / 2f * App.height);
+		return screenPos;
 	}
 }

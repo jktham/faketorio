@@ -140,7 +140,7 @@ public class World {
 				}
 			}
 		}
-		Vector3f worldPos = App.camera.getCursorWorldPos();
+		Vector3f worldPos = App.camera.screenToWorldPos(App.cursorPos);
 		if (worldPos != null) {
 			worldPos.z = 0f;
 			Vector3f tilePos = new Vector3f(worldPos).floor();
