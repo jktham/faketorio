@@ -1,22 +1,27 @@
 #version 330 core
 
-layout (location = 0) in vec3 position;
-layout (location = 1) in vec3 normal;
-layout (location = 2) in vec3 color;
+layout (location = 0) in vec3 aPosition;
+layout (location = 1) in vec3 aNormal;
+layout (location = 2) in vec3 aColor;
 
-out vec3 vertTint;
-out vec3 vertNormal;
-out vec3 vertColor;
+uniform vec3 uColor;
+uniform vec3 uTint;
+uniform mat4 uModel;
+uniform mat4 uView;
+uniform mat4 uProjection;
 
-uniform vec3 tint;
-uniform mat4 model;
-uniform mat4 view;
-uniform mat4 projection;
+out vec3 faNormal;
+out vec3 faColor;
+
+out vec3 fuColor;
+out vec3 fuTint;
 
 void main() {
-    vertTint = tint;
-    vertNormal = mat3(transpose(inverse(model))) * normal;
-    vertColor = color;
-    mat4 mvp = projection * view * model;
-    gl_Position = mvp * vec4(position, 1.0);
+    faNormal = mat3(transpose(inverse(uModel))) * aNormal;
+    faColor = aColor;
+
+    fuColor = uColor;
+    fuTint = uTint;
+    mat4 mvp = uProjection * uView * uModel;
+    gl_Position = mvp * vec4(aPosition, 1.0);
 }

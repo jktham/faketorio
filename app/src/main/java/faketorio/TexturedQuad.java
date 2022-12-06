@@ -28,13 +28,13 @@ public class TexturedQuad extends Element {
 		}
 
 		int floatSize = 4;
-		int aPosition = glGetAttribLocation(shader, "position");
+		int aPosition = glGetAttribLocation(shader, "aPosition");
 		glEnableVertexAttribArray(aPosition);
 		glVertexAttribPointer(aPosition, 3, GL_FLOAT, false, 5 * floatSize, 0);
 
-		int aUv = glGetAttribLocation(shader, "uv");
-		glEnableVertexAttribArray(aUv);
-		glVertexAttribPointer(aUv, 2, GL_FLOAT, false, 5 * floatSize, 3 * floatSize);
+		int aTexCoords = glGetAttribLocation(shader, "aTexCoords");
+		glEnableVertexAttribArray(aTexCoords);
+		glVertexAttribPointer(aTexCoords, 2, GL_FLOAT, false, 5 * floatSize, 3 * floatSize);
 
 		glBindVertexArray(0);
 	}
@@ -58,10 +58,11 @@ public class TexturedQuad extends Element {
 		}
 
 		try (MemoryStack stack = MemoryStack.stackPush()) {
-			glUniform3f(glGetUniformLocation(shader, "tint"), tint.x, tint.y, tint.z);
-			glUniformMatrix4fv(glGetUniformLocation(shader, "model"), false, model.get(stack.mallocFloat(16)));
-			glUniformMatrix4fv(glGetUniformLocation(shader, "view"), false, App.ui.view.get(stack.mallocFloat(16)));
-			glUniformMatrix4fv(glGetUniformLocation(shader, "projection"), false, App.ui.projection.get(stack.mallocFloat(16)));
+			glUniform3f(glGetUniformLocation(shader, "uColor"), color.x, color.y, color.z);
+			glUniform3f(glGetUniformLocation(shader, "uTint"), tint.x, tint.y, tint.z);
+			glUniformMatrix4fv(glGetUniformLocation(shader, "uModel"), false, model.get(stack.mallocFloat(16)));
+			glUniformMatrix4fv(glGetUniformLocation(shader, "uView"), false, App.ui.view.get(stack.mallocFloat(16)));
+			glUniformMatrix4fv(glGetUniformLocation(shader, "uProjection"), false, App.ui.projection.get(stack.mallocFloat(16)));
 		}
 		
 		glBindTexture(GL_TEXTURE_2D, texture);

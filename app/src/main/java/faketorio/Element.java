@@ -25,6 +25,7 @@ public class Element {
 
 	Matrix4f model = new Matrix4f();
 
+	Vector3f color = new Vector3f(-1f);
 	Vector3f tint = new Vector3f(-1f);
 
 	public void init() {
@@ -45,15 +46,15 @@ public class Element {
 		}
 
 		int floatSize = 4;
-		int aPosition = glGetAttribLocation(shader, "position");
+		int aPosition = glGetAttribLocation(shader, "aPosition");
 		glEnableVertexAttribArray(aPosition);
 		glVertexAttribPointer(aPosition, 3, GL_FLOAT, false, 9 * floatSize, 0);
 
-		int aNormal = glGetAttribLocation(shader, "normal");
+		int aNormal = glGetAttribLocation(shader, "aNormal");
 		glEnableVertexAttribArray(aNormal);
 		glVertexAttribPointer(aNormal, 3, GL_FLOAT, false, 9 * floatSize, 3 * floatSize);
 
-		int aColor = glGetAttribLocation(shader, "color");
+		int aColor = glGetAttribLocation(shader, "aColor");
 		glEnableVertexAttribArray(aColor);
 		glVertexAttribPointer(aColor, 3, GL_FLOAT, false, 9 * floatSize, 6 * floatSize);
 
@@ -81,10 +82,11 @@ public class Element {
 		}
 
 		try (MemoryStack stack = MemoryStack.stackPush()) {
-			glUniform3f(glGetUniformLocation(shader, "tint"), tint.x, tint.y, tint.z);
-			glUniformMatrix4fv(glGetUniformLocation(shader, "model"), false, model.get(stack.mallocFloat(16)));
-			glUniformMatrix4fv(glGetUniformLocation(shader, "view"), false, App.ui.view.get(stack.mallocFloat(16)));
-			glUniformMatrix4fv(glGetUniformLocation(shader, "projection"), false, App.ui.projection.get(stack.mallocFloat(16)));
+			glUniform3f(glGetUniformLocation(shader, "uColor"), color.x, color.y, color.z);
+			glUniform3f(glGetUniformLocation(shader, "uTint"), tint.x, tint.y, tint.z);
+			glUniformMatrix4fv(glGetUniformLocation(shader, "uModel"), false, model.get(stack.mallocFloat(16)));
+			glUniformMatrix4fv(glGetUniformLocation(shader, "uView"), false, App.ui.view.get(stack.mallocFloat(16)));
+			glUniformMatrix4fv(glGetUniformLocation(shader, "uProjection"), false, App.ui.projection.get(stack.mallocFloat(16)));
 		}
 		
 		glBindVertexArray(vao);

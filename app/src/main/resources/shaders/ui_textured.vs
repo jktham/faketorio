@@ -1,19 +1,24 @@
 #version 330 core
 
-layout (location = 0) in vec3 position;
-layout (location = 1) in vec2 uv;
+layout (location = 0) in vec3 aPosition;
+layout (location = 1) in vec2 aTexCoords;
 
-out vec3 vertTint;
-out vec2 vertUv;
+uniform vec3 uColor;
+uniform vec3 uTint;
+uniform mat4 uModel;
+uniform mat4 uView;
+uniform mat4 uProjection;
 
-uniform vec3 tint;
-uniform mat4 model;
-uniform mat4 view;
-uniform mat4 projection;
+out vec2 faTexCoords;
+
+out vec3 fuColor;
+out vec3 fuTint;
 
 void main() {
-    vertTint = tint;
-    vertUv = uv;
-    mat4 mvp = projection * view * model;
-    gl_Position = mvp * vec4(position.xy, 0.0, 1.0);
+    faTexCoords = aTexCoords;
+
+    fuColor = uColor;
+    fuTint = uTint;
+    mat4 mvp = uProjection * uView * uModel;
+    gl_Position = mvp * vec4(aPosition, 1.0);
 }

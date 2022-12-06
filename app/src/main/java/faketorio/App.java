@@ -155,7 +155,7 @@ public class App {
 		world.size = new Vector2i(100, 100);
 		world.init();
 		player = new Player();
-		player.tint = new Vector3f(1f, 0f, 0f);
+		player.color = new Vector3f(1f, 0f, 0f);
 		player.init();
 		camera = new Camera();
 		ui = new Ui();
@@ -164,14 +164,14 @@ public class App {
 		Quad testQuad = new Quad();
 		testQuad.position = new Vector3f(100f, 100f, 0f);
 		testQuad.size = new Vector3f(100f, 100f, 0f);
-		testQuad.tint = new Vector3f(1f, 1f, 0f);
+		testQuad.color = new Vector3f(1f, 1f, 0f);
 		testQuad.init();
 		ui.addElement(testQuad);
 		
 		TexturedQuad testTexturedQuad = new TexturedQuad();
 		testTexturedQuad.position = new Vector3f(300f, 100f, 0f);
 		testTexturedQuad.size = new Vector3f(100f, 100f, 0f);
-		testTexturedQuad.tint = new Vector3f(0f, 1f, 1f);
+		testTexturedQuad.color = new Vector3f(0f, 1f, 1f);
 		testTexturedQuad.texture = testTexture;
 		testTexturedQuad.init();
 		ui.addElement(testTexturedQuad);
@@ -179,7 +179,7 @@ public class App {
 		Label testLabel = new Label();
 		testLabel.position = new Vector3f(100f, 300f, 0f);
 		testLabel.size = new Vector3f(100f, 100f, 0f);
-		testLabel.tint = new Vector3f(1f, 0f, 1f);
+		testLabel.color = new Vector3f(1f, 0f, 1f);
 		testLabel.fontAtlas = arialAtlas;
 		testLabel.text = "test - ijkl \n123! %$[;]";
 		testLabel.init();
@@ -187,26 +187,26 @@ public class App {
 
 		Triangle testTriangle = new Triangle();
 		testTriangle.position = new Vector3f(0f, 0f, 0f);
-		testTriangle.tint = new Vector3f(-1f, -1f, -1f);
+		testTriangle.color = new Vector3f(-1f, -1f, -1f);
 		testTriangle.init();
 		world.placeEntity(new Vector2i((int)Math.floor(testTriangle.position.x), (int)Math.floor(testTriangle.position.y)), testTriangle);
 
 		Cube testCube = new Cube();
 		testCube.position = new Vector3f(4f, 8f, 0f);
-		testCube.tint = new Vector3f(0f, 0f, 1f);
+		testCube.color = new Vector3f(0f, 0f, 1f);
 		testCube.init();
 		world.placeEntity(new Vector2i((int)Math.floor(testCube.position.x), (int)Math.floor(testCube.position.y)), testCube);
 		
 		Sphere testSphere = new Sphere();
 		testSphere.position = new Vector3f(5f, 3f, 0f);
-		testSphere.tint = new Vector3f(1f, 0f, 1f);
+		testSphere.color = new Vector3f(1f, 0f, 1f);
 		testSphere.init();
 		world.placeEntity(new Vector2i((int)Math.floor(testSphere.position.x), (int)Math.floor(testSphere.position.y)), testSphere);
 		
 		Label testTetheredLabel = new Label();
 		testTetheredLabel.position = new Vector3f(100f, 300f, 0f);
 		testTetheredLabel.size = new Vector3f(24f, 24f, 0f);
-		testTetheredLabel.tint = new Vector3f(1f, 1f, 1f);
+		testTetheredLabel.color = new Vector3f(1f, 1f, 1f);
 		testTetheredLabel.fontAtlas = arialAtlas;
 		testTetheredLabel.text = "this is a funky ball\nlook at him go!";
 		testTetheredLabel.tether = testSphere;

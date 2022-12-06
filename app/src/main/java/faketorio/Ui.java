@@ -18,15 +18,15 @@ public class Ui {
 	public void update() {
 		projection = new Matrix4f().ortho(0f, App.width, App.height, 0, 1f, -1f);
 
-		for (Element e : elements) {
-			e.update();
+		for (Element element : elements) {
+			element.update();
 		}
 	}
 
 	public void draw() {
 		glDisable(GL_DEPTH_TEST);
-		for (Element e : elements) {
-			e.draw();
+		for (Element element : elements) {
+			element.draw();
 		}
 		glEnable(GL_DEPTH_TEST);
 	}
