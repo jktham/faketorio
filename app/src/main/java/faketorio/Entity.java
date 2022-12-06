@@ -60,6 +60,10 @@ public class Entity {
 	}
 
 	public void update() {
+		instanceUpdate();
+	}
+	
+	public void instanceUpdate() {
 
 	}
 

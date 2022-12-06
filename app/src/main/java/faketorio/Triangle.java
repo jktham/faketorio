@@ -21,5 +21,6 @@ public class Triangle extends Entity {
 	public void update() {
 		model = new Matrix4f().translate(position).translate(0.5f, 0.5f, 1f);
 		model.rotate(0.5f * App.time, new Vector3f(0f, 0f, 1f));
+		instanceUpdate();
 	}
 }

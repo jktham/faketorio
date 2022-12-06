@@ -20,8 +20,8 @@ public class Element {
 	Vector3f tetherWorldOffset = new Vector3f();
 	Vector2f tetherScreenOffset = new Vector2f();;
 
-	Vector3f position = new Vector3f(0f);
-	Vector3f size = new Vector3f(0f);
+	Vector2f position = new Vector2f(0f);
+	Vector2f size = new Vector2f(0f);
 
 	Matrix4f model = new Matrix4f();
 
@@ -29,7 +29,7 @@ public class Element {
 	Vector3f tint = new Vector3f(-1f);
 
 	public void init() {
-		model = new Matrix4f().translate(position).scale(size);
+		model = new Matrix4f().translate(new Vector3f(position.x, position.y, 1f)).scale(new Vector3f(size.x, size.y, 1f));
 		vao = glGenVertexArrays();
 		vbo = glGenBuffers();
 		shader = App.uiShader;
@@ -71,9 +71,14 @@ public class Element {
 		if (tether != null) {
 			Vector4f tetherPos = new Vector4f(0f, 0f, 0f, 1f).mul(tether.model);
 			Vector2f screenTetherPos = App.camera.worldToScreenPos(new Vector3f(tetherPos.x, tetherPos.y, tetherPos.z).add(tetherWorldOffset)).add(tetherScreenOffset);
-			position = new Vector3f(screenTetherPos.x, screenTetherPos.y, 0f);
+			position = new Vector2f(screenTetherPos.x, screenTetherPos.y);
 		}
-		model = new Matrix4f().translate(position).scale(size);
+		model = new Matrix4f().translate(new Vector3f(position.x, position.y, 1f)).scale(new Vector3f(size.x, size.y, 1f));
+		instanceUpdate();
+	}
+
+	public void instanceUpdate() {
+
 	}
 
 	public void draw() {

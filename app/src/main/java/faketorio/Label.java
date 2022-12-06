@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 import org.joml.Matrix4f;
+import org.joml.Vector3f;
 import org.lwjgl.system.MemoryStack;
 import static org.lwjgl.opengl.GL33.*;
 
@@ -16,7 +17,7 @@ public class Label extends Element {
 	ArrayList<Glyph> glyphs;
 	
 	public void init() {
-		model = new Matrix4f().translate(position).scale(size);
+		model = new Matrix4f().translate(new Vector3f(position.x, position.y, 1f)).scale(new Vector3f(size.x, size.y, 1f));
 		vao = glGenVertexArrays();
 		vbo = glGenBuffers();
 		shader = App.uiTexturedShader;

@@ -14,6 +14,7 @@ import static org.lwjgl.opengl.GL33.*;
 import static org.lwjgl.stb.STBImage.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
+import java.util.ArrayList;
 import java.util.Scanner;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -35,8 +36,10 @@ public class App {
 
 	public static float time = 0.0f;
 	public static float deltaTime = 0.0f;
+	public static ArrayList<Float> frames = new ArrayList<Float>();
+	public static float frameRate = 0.0f;
 
-	public static Vector2f cursorPos = new Vector2f(0f, 0f);
+	public static Vector2i cursorPos = new Vector2i(0);
 
 	public static World world;
 	public static Player player;
@@ -104,7 +107,7 @@ public class App {
 				}
 			}
 
-			cursorPos = new Vector2f((float)xpos, (float)ypos);
+			cursorPos = new Vector2i((int)xpos, (int)ypos);
 		});
 
 		glfwSetMouseButtonCallback(window, (window, button, action, mods) -> {
@@ -129,6 +132,12 @@ public class App {
 				camera.radius *= 0.8f;
 			} else if (yoffset < 0) {
 				camera.radius *= 1.25f;
+			}
+		});
+
+		glfwSetCursorEnterCallback(window, (window, entered) -> {
+			if (!entered) {
+				cursorPos = null;
 			}
 		});
 
@@ -162,23 +171,23 @@ public class App {
 		ui.init();
 
 		Quad testQuad = new Quad();
-		testQuad.position = new Vector3f(100f, 100f, 0f);
-		testQuad.size = new Vector3f(100f, 100f, 0f);
+		testQuad.position = new Vector2f(50f, 600f);
+		testQuad.size = new Vector2f(100f, 100f);
 		testQuad.color = new Vector3f(1f, 1f, 0f);
 		testQuad.init();
 		ui.addElement(testQuad);
 		
 		TexturedQuad testTexturedQuad = new TexturedQuad();
-		testTexturedQuad.position = new Vector3f(300f, 100f, 0f);
-		testTexturedQuad.size = new Vector3f(100f, 100f, 0f);
+		testTexturedQuad.position = new Vector2f(50f, 750f);
+		testTexturedQuad.size = new Vector2f(100f, 100f);
 		testTexturedQuad.color = new Vector3f(0f, 1f, 1f);
 		testTexturedQuad.texture = testTexture;
 		testTexturedQuad.init();
 		ui.addElement(testTexturedQuad);
 
 		Label testLabel = new Label();
-		testLabel.position = new Vector3f(100f, 300f, 0f);
-		testLabel.size = new Vector3f(100f, 100f, 0f);
+		testLabel.position = new Vector2f(50f, 900f);
+		testLabel.size = new Vector2f(50f, 50f);
 		testLabel.color = new Vector3f(1f, 0f, 1f);
 		testLabel.fontAtlas = arialAtlas;
 		testLabel.text = "test - ijkl \n123! %$[;]";
@@ -204,8 +213,8 @@ public class App {
 		world.placeEntity(new Vector2i((int)Math.floor(testSphere.position.x), (int)Math.floor(testSphere.position.y)), testSphere);
 		
 		Label testTetheredLabel = new Label();
-		testTetheredLabel.position = new Vector3f(100f, 300f, 0f);
-		testTetheredLabel.size = new Vector3f(24f, 24f, 0f);
+		testTetheredLabel.position = new Vector2f(100f, 300f);
+		testTetheredLabel.size = new Vector2f(24f, 24f);
 		testTetheredLabel.color = new Vector3f(1f, 1f, 1f);
 		testTetheredLabel.fontAtlas = arialAtlas;
 		testTetheredLabel.text = "this is a funky ball\nlook at him go!";
@@ -213,14 +222,68 @@ public class App {
 		testTetheredLabel.tetherWorldOffset = new Vector3f(0f, 0f, 1f);
 		testTetheredLabel.init();
 		ui.addElement(testTetheredLabel);
+
+		Label infoLabel = new Label() {
+			public void instanceUpdate() {
+				text = "";
+				text += String.format("%.6f", time) + ", " + String.format("%.6f", deltaTime) + ", " + String.format("%.6f", frameRate) + "\n";
+				text += String.format("%.3f", player.position.x) + ", " + String.format("%.3f", player.position.y) + "\n";
+
+				if (cursorPos != null) {
+					text += cursorPos.x + ", " + cursorPos.y + "\n";
+				} else {
+					text += "null\n";
+				}
+
+				Vector3f worldPos = camera.screenToWorldPos(cursorPos);
+				if (worldPos != null) {
+					text += String.format("%.3f", worldPos.x) + ", " + String.format("%.3f", worldPos.y) + "\n";
+				} else {
+					text += "null\n";
+				}
+
+				Vector2i tilePos = world.worldToTilePos(worldPos);
+				if (tilePos != null) {
+					text += tilePos.x + ", " + tilePos.y + "\n";
+				} else {
+					text += "null\n";
+				}
+
+				Tile tile = world.getTile(tilePos);
+				if (tile != null) {
+					text += tile.type + ", " + tile.free + "\n";
+				} else {
+					text += "null\n";
+				}
+
+				text += player.item + "\n";
+				text += world.entities.size() + "\n";
+
+				updateMesh();
+			}
+		};
+		infoLabel.position = new Vector2f(10f);
+		infoLabel.size = new Vector2f(40f);
+		infoLabel.color = new Vector3f(1f);
+		infoLabel.fontAtlas = arialAtlas;
+		infoLabel.init();
+		ui.addElement(infoLabel);
+
 	}
 
 	private void loop() {
 		while ( !glfwWindowShouldClose(window) ) {
 			deltaTime = (float)glfwGetTime() - time;
 			time = (float)glfwGetTime();
-			System.out.println((String.format("%.6f", time) + ", " + String.format("%.6f", deltaTime)));
-			// System.out.println(world.entities.size());
+			frames.add(deltaTime);
+			if (frames.size() > 60) {
+				frames.remove(0);
+			}
+			float sum = 0f;
+			for (int i=0;i<frames.size();i++) {
+				sum += frames.get(i);
+			}
+			frameRate = 1f / (sum / (float)frames.size());
 
 			update();
 			draw();

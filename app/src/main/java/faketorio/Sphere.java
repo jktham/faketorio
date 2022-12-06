@@ -13,6 +13,7 @@ public class Sphere extends Entity {
 		model.translate(0f, 0f, 0.25f * (float)Math.sin(App.time));
 		model.rotate(-0.75f * App.time, new Vector3f(0f, 0f, 1f));
 		model.scale(0.5f);
+		instanceUpdate();
 	}
 	
 	public FloatBuffer generateMesh(MemoryStack stack) {

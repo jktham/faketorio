@@ -2,6 +2,7 @@ package faketorio;
 
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
+import org.joml.Vector2i;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 
@@ -31,8 +32,11 @@ public class Camera {
 		view.translate(new Vector3f(position).negate());
 	}
 
-	public Vector3f screenToWorldPos(Vector2f screenPos) {
-		Vector4f clickPos = new Vector4f((screenPos.x / (float)App.width) * 2f - 1f, 1f - (screenPos.y / (float)App.height) * 2f, -1f, 1f);
+	public Vector3f screenToWorldPos(Vector2i screenPos) {
+		if (screenPos == null) {
+			return null;
+		}
+		Vector4f clickPos = new Vector4f(((float)screenPos.x / (float)App.width) * 2f - 1f, 1f - ((float)screenPos.y / (float)App.height) * 2f, -1f, 1f);
 		clickPos.mul(new Matrix4f(projection).invert());
 		clickPos.z = -1f;
 		clickPos.w = 0f;
