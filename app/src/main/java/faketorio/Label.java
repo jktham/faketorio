@@ -102,6 +102,10 @@ public class Label extends Element {
 	}
 
 	public void draw() {
+		if (hidden) {
+			return;
+		}
+		
 		if (glGetInteger(GL_CURRENT_PROGRAM) != shader) {
 			glUseProgram(shader);
 		}

@@ -27,6 +27,7 @@ public class Element {
 
 	Vector3f color = new Vector3f(-1f);
 	Vector3f tint = new Vector3f(-1f);
+	boolean hidden = false;
 
 	public void init() {
 		model = new Matrix4f().translate(new Vector3f(position.x, position.y, 1f)).scale(new Vector3f(size.x, size.y, 1f));
@@ -82,6 +83,10 @@ public class Element {
 	}
 
 	public void draw() {
+		if (hidden) {
+			return;
+		}
+		
 		if (glGetInteger(GL_CURRENT_PROGRAM) != shader) {
 			glUseProgram(shader);
 		}

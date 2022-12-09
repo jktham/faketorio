@@ -38,9 +38,13 @@ public class App {
 	public static float deltaTime = 0.0f;
 	public static ArrayList<Float> frames = new ArrayList<Float>();
 	public static float frameRate = 0.0f;
+	public static int tick = 0;
+	public static float lastTick = 0.0f;
+	public static float desiredTickRate = 10.0f;
 
 	public static Vector2i cursorPos = new Vector2i(0);
 
+	public static ArrayList<Item> items;
 	public static World world;
 	public static Player player;
 	public static Camera camera;
@@ -94,6 +98,9 @@ public class App {
 			if (key == GLFW_KEY_3 && action == GLFW_PRESS) {
 				player.item = 3;
 			}
+			if (key == GLFW_KEY_4 && action == GLFW_PRESS) {
+				player.item = 4;
+			}
 		});
 
 		glfwSetCursorPosCallback(window, (window, xpos, ypos) -> {
@@ -115,7 +122,11 @@ public class App {
 				Vector3f worldPos = camera.screenToWorldPos(cursorPos);
 				Vector2i tilePos = world.worldToTilePos(worldPos);
 				if (tilePos != null) {
-					world.placeNew(tilePos, App.player.item);
+					if (player.item == 0) {
+						world.interact(tilePos);
+					} else {
+						world.placeNew(tilePos, App.player.item);
+					}
 				}
 			}
 			if (button == GLFW_MOUSE_BUTTON_2 && action == GLFW_PRESS) {
@@ -160,73 +171,32 @@ public class App {
 		testTexture = loadTexture("textures/test.png");
 		arialAtlas = loadTexture("fonts/arial.png");
 
+		items = new ArrayList<Item>();
+		Item item = new Item();
+		item.id = 0;
+		item.name = "iron ore";
+		items.add(item);
+		item = new Item();
+		item.id = 1;
+		item.name = "copper ore";
+		items.add(item);
+
+		ui = new Ui();
+		ui.init();
 		world = new World();
 		world.size = new Vector2i(100, 100);
 		world.init();
 		player = new Player();
 		player.color = new Vector3f(1f, 0f, 0f);
+		player.name = "player";
 		player.init();
 		camera = new Camera();
-		ui = new Ui();
-		ui.init();
-
-		Quad testQuad = new Quad();
-		testQuad.position = new Vector2f(50f, 600f);
-		testQuad.size = new Vector2f(100f, 100f);
-		testQuad.color = new Vector3f(1f, 1f, 0f);
-		testQuad.init();
-		ui.addElement(testQuad);
-		
-		TexturedQuad testTexturedQuad = new TexturedQuad();
-		testTexturedQuad.position = new Vector2f(50f, 750f);
-		testTexturedQuad.size = new Vector2f(100f, 100f);
-		testTexturedQuad.color = new Vector3f(0f, 1f, 1f);
-		testTexturedQuad.texture = testTexture;
-		testTexturedQuad.init();
-		ui.addElement(testTexturedQuad);
-
-		Label testLabel = new Label();
-		testLabel.position = new Vector2f(50f, 900f);
-		testLabel.size = new Vector2f(50f, 50f);
-		testLabel.color = new Vector3f(1f, 0f, 1f);
-		testLabel.fontAtlas = arialAtlas;
-		testLabel.text = "test - ijkl \n123! %$[;]";
-		testLabel.init();
-		ui.addElement(testLabel);
-
-		Triangle testTriangle = new Triangle();
-		testTriangle.position = new Vector3f(0f, 0f, 0f);
-		testTriangle.color = new Vector3f(-1f, -1f, -1f);
-		testTriangle.init();
-		world.placeEntity(new Vector2i((int)Math.floor(testTriangle.position.x), (int)Math.floor(testTriangle.position.y)), testTriangle);
-
-		Cube testCube = new Cube();
-		testCube.position = new Vector3f(4f, 8f, 0f);
-		testCube.color = new Vector3f(0f, 0f, 1f);
-		testCube.init();
-		world.placeEntity(new Vector2i((int)Math.floor(testCube.position.x), (int)Math.floor(testCube.position.y)), testCube);
-		
-		Sphere testSphere = new Sphere();
-		testSphere.position = new Vector3f(5f, 3f, 0f);
-		testSphere.color = new Vector3f(1f, 0f, 1f);
-		testSphere.init();
-		world.placeEntity(new Vector2i((int)Math.floor(testSphere.position.x), (int)Math.floor(testSphere.position.y)), testSphere);
-		
-		Label testTetheredLabel = new Label();
-		testTetheredLabel.position = new Vector2f(100f, 300f);
-		testTetheredLabel.size = new Vector2f(24f, 24f);
-		testTetheredLabel.color = new Vector3f(1f, 1f, 1f);
-		testTetheredLabel.fontAtlas = arialAtlas;
-		testTetheredLabel.text = "this is a funky ball\nlook at him go!";
-		testTetheredLabel.tether = testSphere;
-		testTetheredLabel.tetherWorldOffset = new Vector3f(0f, 0f, 1f);
-		testTetheredLabel.init();
-		ui.addElement(testTetheredLabel);
 
 		Label infoLabel = new Label() {
 			public void instanceUpdate() {
 				text = "";
 				text += String.format("%.6f", time) + ", " + String.format("%.6f", deltaTime) + ", " + String.format("%.6f", frameRate) + "\n";
+				text += tick + ", " + String.format("%.6f", lastTick) + "\n";
 				text += String.format("%.3f", player.position.x) + ", " + String.format("%.3f", player.position.y) + "\n";
 
 				if (cursorPos != null) {
@@ -258,6 +228,7 @@ public class App {
 
 				text += player.item + "\n";
 				text += world.entities.size() + "\n";
+				text += ui.elements.size() + "\n";
 
 				updateMesh();
 			}
@@ -279,11 +250,16 @@ public class App {
 			if (frames.size() > 60) {
 				frames.remove(0);
 			}
-			float sum = 0f;
+			float frameSum = 0f;
 			for (int i=0;i<frames.size();i++) {
-				sum += frames.get(i);
+				frameSum += frames.get(i);
 			}
-			frameRate = 1f / (sum / (float)frames.size());
+			frameRate = 1f / (frameSum / (float)frames.size());
+
+			if (time - lastTick >= 1f / desiredTickRate) {
+				tick += 1;
+				lastTick = time;
+			}
 
 			update();
 			draw();

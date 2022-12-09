@@ -43,11 +43,31 @@ public class World {
 				Tile tile = new Tile();
 				tile.position = new Vector2i(x-size.x/2, y-size.y/2);
 				if ((x + y % 2) % 2 == 0) {
-					tile.type = 0;
+					tile.type = -1;
+					tile.name = "empty tile";
 					tile.color = new Vector3f(0.10f);
 				} else {
-					tile.type = 1;
+					tile.type = -1;
+					tile.name = "empty tile";
 					tile.color = new Vector3f(0.12f);
+				}
+				if ((x > size.x/2 + 10 && x < size.x/2 + 20 && y > size.y/2 + 10 && y < size.y/2 + 20)) {
+					tile.type = 0;
+					tile.name = "iron tile";
+					ItemStack itemStack = new ItemStack();
+					itemStack.item = App.items.get(0);
+					itemStack.amount = 200;
+					tile.inventory.add(itemStack);
+					tile.color = new Vector3f(0.6f, 0.6f, 1f);
+				}
+				if ((x > size.x/2 + 20 && x < size.x/2 + 30 && y > size.y/2 + 10 && y < size.y/2 + 20)) {
+					tile.type = 1;
+					tile.name = "copper tile";
+					ItemStack itemStack = new ItemStack();
+					itemStack.item = App.items.get(1);
+					itemStack.amount = 200;
+					tile.inventory.add(itemStack);
+					tile.color = new Vector3f(1f, 0.6f, 0.6f);
 				}
 				tiles.add(tile);
 			}
@@ -174,6 +194,7 @@ public class World {
 				Cube cube = new Cube();
 				cube.position = new Vector3f(tilePos.x, tilePos.y, 0f);
 				cube.color = new Vector3f(0f, 0f, 1f);
+				cube.name = "cube";
 				cube.init();
 				entities.add(cube);
 				tile.free = false;
@@ -181,6 +202,7 @@ public class World {
 				Triangle triangle = new Triangle();
 				triangle.position = new Vector3f(tilePos.x, tilePos.y, 0f);
 				triangle.color = new Vector3f(-1f, -1f, -1f);
+				triangle.name = "triangle";
 				triangle.init();
 				entities.add(triangle);
 				tile.free = false;
@@ -188,8 +210,17 @@ public class World {
 				Sphere sphere = new Sphere();
 				sphere.position = new Vector3f(tilePos.x, tilePos.y, 0f);
 				sphere.color = new Vector3f(1f, 0f, 1f);
+				sphere.name = "sphere";
 				sphere.init();
 				entities.add(sphere);
+				tile.free = false;
+			} else if (type == 4) {
+				Miner miner = new Miner();
+				miner.position = new Vector3f(tilePos.x, tilePos.y, 0f);
+				miner.color = new Vector3f(1f, 0f, 0f);
+				miner.name = "miner";
+				miner.init();
+				entities.add(miner);
 				tile.free = false;
 			}
 		}
@@ -224,10 +255,23 @@ public class World {
 	}
 
 	public void interact(Vector2i tilePos) {
-		
+		Tile tile = getTile(tilePos);
+		if (!tile.free) {
+			for (Entity entity : entities) {
+				if (worldToTilePos(entity.position).equals(tilePos)) {
+					entity.entityLabel.hidden = !entity.entityLabel.hidden;	
+				}
+			}
+		}
 	}
 
 	public void moveGhost(Vector2i tilePos, int type) {
+		for (Element element : App.ui.elements) {
+			if (element.tether == ghost && ghost != null) {
+				App.ui.elements.remove(element);
+				break;
+			}
+		}
 		ghost = null;
 		if (prevGhostPosition != null) {
 			for (Entity entity : entities) {
@@ -243,20 +287,30 @@ public class World {
 					Cube ghostCube = new Cube();
 					ghostCube.position = new Vector3f(tilePos.x, tilePos.y, 0f);
 					ghostCube.color = new Vector3f(1f, 1f, 1f);
+					ghostCube.name = "ghost cube";
 					ghostCube.init();
 					ghost = ghostCube;
 				} else if (App.player.item == 2) {
 					Triangle ghostTriangle = new Triangle();
 					ghostTriangle.position = new Vector3f(tilePos.x, tilePos.y, 0f);
 					ghostTriangle.color = new Vector3f(1f, 1f, 1f);
+					ghostTriangle.name = "ghost triangle";
 					ghostTriangle.init();
 					ghost = ghostTriangle;
 				} else if (App.player.item == 3) {
 					Sphere ghostSphere = new Sphere();
 					ghostSphere.position = new Vector3f(tilePos.x, tilePos.y, 0f);
 					ghostSphere.color = new Vector3f(1f, 1f, 1f);
+					ghostSphere.name = "ghost sphere";
 					ghostSphere.init();
 					ghost = ghostSphere;
+				} else if (App.player.item == 4) {
+					Miner ghostminer = new Miner();
+					ghostminer.position = new Vector3f(tilePos.x, tilePos.y, 0f);
+					ghostminer.color = new Vector3f(1f, 1f, 1f);
+					ghostminer.name = "ghost miner";
+					ghostminer.init();
+					ghost = ghostminer;
 				}
 			} else {
 				for (Entity entity : entities) {
