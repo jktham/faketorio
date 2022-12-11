@@ -51,23 +51,32 @@ public class World {
 					tile.name = "empty tile";
 					tile.color = new Vector3f(0.12f);
 				}
-				if ((x > size.x/2 + 10 && x < size.x/2 + 20 && y > size.y/2 + 10 && y < size.y/2 + 20)) {
+				if ((x > size.x/2 && x < size.x/2 + 10 && y > size.y/2 && y < size.y/2 + 10)) {
 					tile.type = 0;
 					tile.name = "iron tile";
 					ItemStack itemStack = new ItemStack();
 					itemStack.item = App.items.get(0);
-					itemStack.amount = 200;
+					itemStack.amount = 1000;
 					tile.inventory.add(itemStack);
-					tile.color = new Vector3f(0.6f, 0.6f, 1f);
+					tile.color = new Vector3f(0.2f, 0.2f, 0.5f);
 				}
-				if ((x > size.x/2 + 20 && x < size.x/2 + 30 && y > size.y/2 + 10 && y < size.y/2 + 20)) {
+				if ((x > size.x/2 + 10 && x < size.x/2 + 20 && y > size.y/2 && y < size.y/2 + 10)) {
 					tile.type = 1;
 					tile.name = "copper tile";
 					ItemStack itemStack = new ItemStack();
 					itemStack.item = App.items.get(1);
-					itemStack.amount = 200;
+					itemStack.amount = 1000;
 					tile.inventory.add(itemStack);
-					tile.color = new Vector3f(1f, 0.6f, 0.6f);
+					tile.color = new Vector3f(0.5f, 0.2f, 0.2f);
+				}
+				if ((x > size.x/2 + 20 && x < size.x/2 + 30 && y > size.y/2 && y < size.y/2 + 10)) {
+					tile.type = 2;
+					tile.name = "coal tile";
+					ItemStack itemStack = new ItemStack();
+					itemStack.item = App.items.get(2);
+					itemStack.amount = 1000;
+					tile.inventory.add(itemStack);
+					tile.color = new Vector3f(0.05f, 0.05f, 0.05f);
 				}
 				tiles.add(tile);
 			}
@@ -222,6 +231,14 @@ public class World {
 				miner.init();
 				entities.add(miner);
 				tile.free = false;
+			} else if (type == 5) {
+				Monke monke = new Monke();
+				monke.position = new Vector3f(tilePos.x, tilePos.y, 0f);
+				monke.color = new Vector3f(1f, 0f, 0f);
+				monke.name = "monke";
+				monke.init();
+				entities.add(monke);
+				tile.free = false;
 			}
 		}
 	}
@@ -311,6 +328,13 @@ public class World {
 					ghostminer.name = "ghost miner";
 					ghostminer.init();
 					ghost = ghostminer;
+				} else if (App.player.item == 5) {
+					Monke ghostMonke = new Monke();
+					ghostMonke.position = new Vector3f(tilePos.x, tilePos.y, 0f);
+					ghostMonke.color = new Vector3f(1f, 1f, 1f);
+					ghostMonke.name = "ghost monke";
+					ghostMonke.init();
+					ghost = ghostMonke;
 				}
 			} else {
 				for (Entity entity : entities) {

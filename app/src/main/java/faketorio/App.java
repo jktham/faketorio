@@ -33,6 +33,8 @@ public class App {
 
 	public static int testTexture = 0;
 	public static int arialAtlas = 0;
+	
+	public static ArrayList<ArrayList<Float>> monkeVerts;
 
 	public static float time = 0.0f;
 	public static float deltaTime = 0.0f;
@@ -74,7 +76,7 @@ public class App {
 		glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
 		glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
 
-		window = glfwCreateWindow(width, height, "test", NULL, NULL);
+		window = glfwCreateWindow(width, height, "faketorio", NULL, NULL);
 
 		glfwSetFramebufferSizeCallback(window, (window, width, height) -> {
 			App.width = width;
@@ -100,6 +102,9 @@ public class App {
 			}
 			if (key == GLFW_KEY_4 && action == GLFW_PRESS) {
 				player.item = 4;
+			}
+			if (key == GLFW_KEY_5 && action == GLFW_PRESS) {
+				player.item = 5;
 			}
 		});
 
@@ -171,6 +176,8 @@ public class App {
 		testTexture = loadTexture("textures/test.png");
 		arialAtlas = loadTexture("fonts/arial.png");
 
+		monkeVerts = loadModel("models/monke.obj");
+
 		items = new ArrayList<Item>();
 		Item item = new Item();
 		item.id = 0;
@@ -179,6 +186,10 @@ public class App {
 		item = new Item();
 		item.id = 1;
 		item.name = "copper ore";
+		items.add(item);
+		item = new Item();
+		item.id = 2;
+		item.name = "coal";
 		items.add(item);
 
 		ui = new Ui();
@@ -361,6 +372,61 @@ public class App {
 		stbi_image_free(image);
 
 		return texture;
+	}
+
+	public static ArrayList<ArrayList<Float>> loadModel(String file) {
+		ArrayList<ArrayList<Float>> positions = new ArrayList<ArrayList<Float>>();
+		ArrayList<ArrayList<Float>> normals = new ArrayList<ArrayList<Float>>();
+		ArrayList<ArrayList<Float>> verts = new ArrayList<ArrayList<Float>>();
+		try {
+			Scanner scanner = new Scanner(new File("app/src/main/resources/" + file));
+			while (scanner.hasNextLine()) {
+				Scanner line = new Scanner(scanner.nextLine());
+				if (line.hasNext()) {
+					String lineType = line.next();
+					if (lineType.equals("v")) {
+						ArrayList<Float> position = new ArrayList<Float>();
+						position.add(line.nextFloat());
+						position.add(line.nextFloat());
+						position.add(line.nextFloat());
+						positions.add(position);
+					} else if (lineType.equals("vn")) {
+						ArrayList<Float> normal = new ArrayList<Float>();
+						normal.add(line.nextFloat());
+						normal.add(line.nextFloat());
+						normal.add(line.nextFloat());
+						normals.add(normal);
+					} else if (lineType.equals("f")) {
+						for (int i=0;i<3;i++) {
+							ArrayList<Float> vert = new ArrayList<Float>();
+							String vertIndex = line.next();
+
+							int positionIndex = Integer.parseInt(vertIndex.split("/")[0]);
+							vert.add(positions.get(positionIndex-1).get(0));
+							vert.add(positions.get(positionIndex-1).get(1));
+							vert.add(positions.get(positionIndex-1).get(2));
+		
+							int normalIndex = Integer.parseInt(vertIndex.split("/")[2]);
+							vert.add(normals.get(normalIndex-1).get(0));
+							vert.add(normals.get(normalIndex-1).get(1));
+							vert.add(normals.get(normalIndex-1).get(2));
+		
+							vert.add(1f);
+							vert.add(1f);
+							vert.add(1f);
+		
+							verts.add(vert);
+						}
+					}
+				}
+				line.close();
+			}
+			scanner.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+
+		return verts;
 	}
 
 }

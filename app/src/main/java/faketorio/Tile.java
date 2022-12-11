@@ -7,7 +7,7 @@ import org.joml.Vector3f;
 
 public class Tile {
 	int type = 0;
-	String name = "";
+	String name = "tile";
 	boolean free = true;
 	ArrayList<ItemStack> inventory = new ArrayList<ItemStack>();
 

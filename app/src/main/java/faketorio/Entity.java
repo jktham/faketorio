@@ -35,13 +35,13 @@ public class Entity {
 			public void instanceUpdate() {
 				text = "" + name + "\n";
 				for (ItemStack itemStack : inventory) {
-					text += itemStack.item.id + ", " + itemStack.item.name + ": " + itemStack.amount + "\n";
+					text += itemStack.item.id + ": " + itemStack.item.name + ": " + itemStack.amount + "\n";
 				}
 				Tile tile = App.world.getTile(App.world.worldToTilePos(Entity.this.position));
 				if (tile != null) {
 					text += tile.name + "\n";
 					for (ItemStack itemStack : tile.inventory) {
-						text += itemStack.item.id + ", " + itemStack.item.name + ": " + itemStack.amount + "\n";
+						text += itemStack.item.id + ": " + itemStack.item.name + ": " + itemStack.amount + "\n";
 					}
 				}
 				updateMesh();
