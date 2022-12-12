@@ -20,7 +20,7 @@ public class Label extends Element {
 		model = new Matrix4f().translate(new Vector3f(position.x, position.y, 1f)).scale(new Vector3f(size.x, size.y, 1f));
 		vao = glGenVertexArrays();
 		vbo = glGenBuffers();
-		shader = App.uiTexturedShader;
+		shader = App.resources.uiTexturedShader;
 
 		glyphs = new ArrayList<Glyph>();
 		for (int i=0;i<256;i++) {

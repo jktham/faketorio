@@ -6,35 +6,18 @@ import org.joml.Vector3f;
 import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.*;
 import org.lwjgl.system.Configuration;
-import org.lwjgl.system.MemoryStack;
 
 import static org.lwjgl.glfw.Callbacks.*;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL33.*;
-import static org.lwjgl.stb.STBImage.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
 import java.util.ArrayList;
-import java.util.Scanner;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.nio.ByteBuffer;
-import java.nio.IntBuffer;
 
 public class App {
 	public static long window = 0;
 	public static int width = 1920;
 	public static int height = 1080;
-
-	public static int baseShader = 0;
-	public static int instanceShader = 0;
-	public static int uiShader = 0;
-	public static int uiTexturedShader = 0;
-
-	public static int testTexture = 0;
-	public static int arialAtlas = 0;
-	
-	public static ArrayList<ArrayList<Float>> monkeVerts;
 
 	public static float time = 0.0f;
 	public static float deltaTime = 0.0f;
@@ -46,6 +29,7 @@ public class App {
 
 	public static Vector2i cursorPos = new Vector2i(0);
 
+	public static Resources resources;
 	public static ArrayList<Item> items;
 	public static World world;
 	public static Player player;
@@ -168,15 +152,8 @@ public class App {
 		glViewport(0, 0, width, height);
 		glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
-		baseShader = compileShader("shaders/world_base");
-		instanceShader = compileShader("shaders/world_instanced");
-		uiShader = compileShader("shaders/ui_base");
-		uiTexturedShader = compileShader("shaders/ui_textured");
-
-		testTexture = loadTexture("textures/test.png");
-		arialAtlas = loadTexture("fonts/arial.png");
-
-		monkeVerts = loadModel("models/monke.obj");
+		resources = new Resources();
+		resources.init();
 
 		items = new ArrayList<Item>();
 		Item item = new Item();
@@ -247,7 +224,7 @@ public class App {
 		infoLabel.position = new Vector2f(10f);
 		infoLabel.size = new Vector2f(40f);
 		infoLabel.color = new Vector3f(1f);
-		infoLabel.fontAtlas = arialAtlas;
+		infoLabel.fontAtlas = resources.arialTexture;
 		infoLabel.init();
 		ui.addElement(infoLabel);
 
@@ -305,128 +282,6 @@ public class App {
 		if (cb != null) {
 			cb.free();
 		}
-	}
-
-	private int compileShader(String file) {
-		String vertexSource = "";
-		try {
-			Scanner scanner = new Scanner(new File("app/src/main/resources/" + file + ".vs"));
-			vertexSource = scanner.useDelimiter("\\Z").next();
-			scanner.close();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
-		int vertexShader = glCreateShader(GL_VERTEX_SHADER);
-		glShaderSource(vertexShader, vertexSource);
-		glCompileShader(vertexShader);
-
-		String fragmentSource = "";
-		try {
-			Scanner scanner = new Scanner(new File("app/src/main/resources/" + file + ".fs"));
-			fragmentSource = scanner.useDelimiter("\\Z").next();
-			scanner.close();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
-		int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-		glShaderSource(fragmentShader, fragmentSource);
-		glCompileShader(fragmentShader);
-
-		int shaderProgram = glCreateProgram();
-		glAttachShader(shaderProgram, vertexShader);
-		glAttachShader(shaderProgram, fragmentShader);
-		glDeleteShader(vertexShader);
-		glDeleteShader(fragmentShader);
-		glBindFragDataLocation(shaderProgram, 0, "fragColor");
-		glLinkProgram(shaderProgram);
-
-		return shaderProgram;
-	}
-
-	private int loadTexture(String file) {
-		ByteBuffer image;
-        int width, height;
-		String path = new File("app/src/main/resources/" + file).getAbsolutePath();
-        try (MemoryStack stack = MemoryStack.stackPush()) {
-            IntBuffer w = stack.mallocInt(1);
-            IntBuffer h = stack.mallocInt(1);
-            IntBuffer comp = stack.mallocInt(1);
-
-            //stbi_set_flip_vertically_on_load(true);
-            image = stbi_load(path, w, h, comp, 4);
-
-            width = w.get();
-            height = h.get();
-        }
-
-		int texture = glGenTextures();
-		glBindTexture(GL_TEXTURE_2D, texture);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
-		glGenerateMipmap(GL_TEXTURE_2D);
-		glBindTexture(GL_TEXTURE_2D, 0);
-		
-		stbi_image_free(image);
-
-		return texture;
-	}
-
-	public static ArrayList<ArrayList<Float>> loadModel(String file) {
-		ArrayList<ArrayList<Float>> positions = new ArrayList<ArrayList<Float>>();
-		ArrayList<ArrayList<Float>> normals = new ArrayList<ArrayList<Float>>();
-		ArrayList<ArrayList<Float>> verts = new ArrayList<ArrayList<Float>>();
-		try {
-			Scanner scanner = new Scanner(new File("app/src/main/resources/" + file));
-			while (scanner.hasNextLine()) {
-				Scanner line = new Scanner(scanner.nextLine());
-				if (line.hasNext()) {
-					String lineType = line.next();
-					if (lineType.equals("v")) {
-						ArrayList<Float> position = new ArrayList<Float>();
-						position.add(line.nextFloat());
-						position.add(line.nextFloat());
-						position.add(line.nextFloat());
-						positions.add(position);
-					} else if (lineType.equals("vn")) {
-						ArrayList<Float> normal = new ArrayList<Float>();
-						normal.add(line.nextFloat());
-						normal.add(line.nextFloat());
-						normal.add(line.nextFloat());
-						normals.add(normal);
-					} else if (lineType.equals("f")) {
-						for (int i=0;i<3;i++) {
-							ArrayList<Float> vert = new ArrayList<Float>();
-							String vertIndex = line.next();
-
-							int positionIndex = Integer.parseInt(vertIndex.split("/")[0]);
-							vert.add(positions.get(positionIndex-1).get(0));
-							vert.add(positions.get(positionIndex-1).get(1));
-							vert.add(positions.get(positionIndex-1).get(2));
-		
-							int normalIndex = Integer.parseInt(vertIndex.split("/")[2]);
-							vert.add(normals.get(normalIndex-1).get(0));
-							vert.add(normals.get(normalIndex-1).get(1));
-							vert.add(normals.get(normalIndex-1).get(2));
-		
-							vert.add(1f);
-							vert.add(1f);
-							vert.add(1f);
-		
-							verts.add(vert);
-						}
-					}
-				}
-				line.close();
-			}
-			scanner.close();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
-
-		return verts;
 	}
 
 }

@@ -9,8 +9,8 @@ import org.lwjgl.system.MemoryStack;
 
 public class Monke extends Entity {
 	public FloatBuffer generateMesh(MemoryStack stack) {
-		ArrayList<ArrayList<Float>> verts = App.monkeVerts;
-		
+		ArrayList<ArrayList<Float>> verts = App.resources.monkeVerts;
+
 		vertCount = verts.size();
 		FloatBuffer mesh = stack.mallocFloat(9 * verts.size());
 		for (int i=0;i<verts.size();i++) {

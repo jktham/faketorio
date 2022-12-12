@@ -15,7 +15,7 @@ public class TexturedQuad extends Element {
 		model = new Matrix4f().translate(new Vector3f(position.x, position.y, 1f)).scale(new Vector3f(size.x, size.y, 1f));
 		vao = glGenVertexArrays();
 		vbo = glGenBuffers();
-		shader = App.uiTexturedShader;
+		shader = App.resources.uiTexturedShader;
 		updateMesh();
 	}
 	

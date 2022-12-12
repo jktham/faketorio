@@ -35,7 +35,7 @@ public class World {
 	public void init() {
 		model = new Matrix4f();
 
-		shader = App.instanceShader;
+		shader = App.resources.worldInstancedShader;
 
 		tiles = new ArrayList<Tile>();
 		for (int x=0;x<size.x;x++) {

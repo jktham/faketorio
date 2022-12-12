@@ -30,7 +30,7 @@ public class Entity {
 		model = new Matrix4f().translate(position);
 		vao = glGenVertexArrays();
 		vbo = glGenBuffers();
-		shader = App.baseShader;
+		shader = App.resources.worldBaseShader;
 		entityLabel = new Label() {
 			public void instanceUpdate() {
 				text = "" + name + "\n";
@@ -51,7 +51,7 @@ public class Entity {
 		entityLabel.size = new Vector2f(24f);
 		entityLabel.tether = this;
 		entityLabel.color = new Vector3f(1f);
-		entityLabel.fontAtlas = App.arialAtlas;
+		entityLabel.fontAtlas = App.resources.arialTexture;
 		entityLabel.hidden = false;
 		entityLabel.init();
 		App.ui.elements.add(entityLabel);
