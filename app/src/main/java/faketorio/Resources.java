@@ -10,19 +10,25 @@ import java.util.Scanner;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.nio.ByteBuffer;
+import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
 public class Resources {
-	
-	public int worldBaseShader = 0;
-	public int worldInstancedShader = 0;
-	public int uiBaseShader = 0;
-	public int uiTexturedShader = 0;
+	public int worldBaseShader;
+	public int worldInstancedShader;
+	public int uiBaseShader;
+	public int uiTexturedShader;
 
-	public int testTexture = 0;
-	public int arialTexture = 0;
+	public int testTexture;
+	public int arialTexture;
 	
-	public ArrayList<ArrayList<Float>> monkeVerts;
+	public Model emptyModel;
+	public Model cubeModel;
+	public Model playerModel;
+	public Model triangleModel;
+	public Model sphereModel;
+	public Model minerModel;
+	public Model monkeModel;
 	
 	public void init() {
 		worldBaseShader = compileShader("shaders/world_base");
@@ -33,13 +39,19 @@ public class Resources {
 		testTexture = loadTexture("textures/test.png");
 		arialTexture = loadTexture("fonts/arial.png");
 
-		monkeVerts = loadModel("models/monke.obj");
+		emptyModel = new Model();
+		cubeModel = loadModel(worldBaseShader, "models/cube.obj");
+		playerModel = loadModel(worldBaseShader, "models/player.obj");
+		triangleModel = loadModel(worldBaseShader, "models/triangle.obj");
+		sphereModel = loadModel(worldBaseShader, "models/sphere.obj");
+		minerModel = loadModel(worldBaseShader, "models/miner.obj");
+		monkeModel = loadModel(worldBaseShader, "models/monke.obj");
 	}
 
-	public int compileShader(String file) {
+	public int compileShader(String path) {
 		String vertexSource = "";
 		try {
-			Scanner scanner = new Scanner(new File("app/src/main/resources/" + file + ".vs"));
+			Scanner scanner = new Scanner(new File("app/src/main/resources/" + path + ".vs"));
 			vertexSource = scanner.useDelimiter("\\Z").next();
 			scanner.close();
 		} catch (FileNotFoundException e) {
@@ -51,7 +63,7 @@ public class Resources {
 
 		String fragmentSource = "";
 		try {
-			Scanner scanner = new Scanner(new File("app/src/main/resources/" + file + ".fs"));
+			Scanner scanner = new Scanner(new File("app/src/main/resources/" + path + ".fs"));
 			fragmentSource = scanner.useDelimiter("\\Z").next();
 			scanner.close();
 		} catch (FileNotFoundException e) {
@@ -72,17 +84,17 @@ public class Resources {
 		return shaderProgram;
 	}
 
-	public int loadTexture(String file) {
+	public int loadTexture(String path) {
 		ByteBuffer image;
         int width, height;
-		String path = new File("app/src/main/resources/" + file).getAbsolutePath();
+		String absPath = new File("app/src/main/resources/" + path).getAbsolutePath();
         try (MemoryStack stack = MemoryStack.stackPush()) {
             IntBuffer w = stack.mallocInt(1);
             IntBuffer h = stack.mallocInt(1);
             IntBuffer comp = stack.mallocInt(1);
 
             //stbi_set_flip_vertically_on_load(true);
-            image = stbi_load(path, w, h, comp, 4);
+            image = stbi_load(absPath, w, h, comp, 4);
 
             width = w.get();
             height = h.get();
@@ -103,12 +115,47 @@ public class Resources {
 		return texture;
 	}
 
-	public ArrayList<ArrayList<Float>> loadModel(String file) {
+	public Model loadModel(int shader, String meshPath) {
+		Model model = new Model();
+
+		model.shader = shader;
+		model.vao = glGenVertexArrays();
+		model.vbo = glGenBuffers();
+
+		glBindVertexArray(model.vao);
+		glBindBuffer(GL_ARRAY_BUFFER, model.vbo);
+
+		try (MemoryStack stack = MemoryStack.stackPush()) {
+			FloatBuffer mesh = loadMesh(stack, meshPath);
+			glBufferData(GL_ARRAY_BUFFER, mesh, GL_STATIC_DRAW);
+			model.vertCount = mesh.capacity() / 9;
+		}
+
+		int floatSize = 4;
+		int aPosition = glGetAttribLocation(shader, "aPosition");
+		glEnableVertexAttribArray(aPosition);
+		glVertexAttribPointer(aPosition, 3, GL_FLOAT, false, 9 * floatSize, 0);
+
+		int aNormal = glGetAttribLocation(shader, "aNormal");
+		glEnableVertexAttribArray(aNormal);
+		glVertexAttribPointer(aNormal, 3, GL_FLOAT, false, 9 * floatSize, 3 * floatSize);
+
+		int aColor = glGetAttribLocation(shader, "aColor");
+		glEnableVertexAttribArray(aColor);
+		glVertexAttribPointer(aColor, 3, GL_FLOAT, false, 9 * floatSize, 6 * floatSize);
+
+		glBindVertexArray(0);
+
+		return model;
+	}
+
+	public FloatBuffer loadMesh(MemoryStack stack, String path) {
 		ArrayList<ArrayList<Float>> positions = new ArrayList<ArrayList<Float>>();
+		ArrayList<ArrayList<Float>> colors = new ArrayList<ArrayList<Float>>();
 		ArrayList<ArrayList<Float>> normals = new ArrayList<ArrayList<Float>>();
 		ArrayList<ArrayList<Float>> verts = new ArrayList<ArrayList<Float>>();
 		try {
-			Scanner scanner = new Scanner(new File("app/src/main/resources/" + file));
+			Scanner scanner = new Scanner(new File("app/src/main/resources/" + path));
 			while (scanner.hasNextLine()) {
 				Scanner line = new Scanner(scanner.nextLine());
 				if (line.hasNext()) {
@@ -119,6 +166,19 @@ public class Resources {
 						position.add(line.nextFloat());
 						position.add(line.nextFloat());
 						positions.add(position);
+						if (line.hasNextFloat()) {
+							ArrayList<Float> color = new ArrayList<Float>();
+							color.add(line.nextFloat());
+							color.add(line.nextFloat());
+							color.add(line.nextFloat());
+							colors.add(color);
+						} else {
+							ArrayList<Float> color = new ArrayList<Float>();
+							color.add(1f);
+							color.add(1f);
+							color.add(1f);
+							colors.add(color);
+						}
 					} else if (lineType.equals("vn")) {
 						ArrayList<Float> normal = new ArrayList<Float>();
 						normal.add(line.nextFloat());
@@ -140,9 +200,10 @@ public class Resources {
 							vert.add(normals.get(normalIndex-1).get(1));
 							vert.add(normals.get(normalIndex-1).get(2));
 		
-							vert.add(1f);
-							vert.add(1f);
-							vert.add(1f);
+							int colorIndex = Integer.parseInt(vertIndex.split("/")[0]);
+							vert.add(colors.get(colorIndex-1).get(0));
+							vert.add(colors.get(colorIndex-1).get(1));
+							vert.add(colors.get(colorIndex-1).get(2));
 		
 							verts.add(vert);
 						}
@@ -155,6 +216,13 @@ public class Resources {
 			e.printStackTrace();
 		}
 
-		return verts;
+		FloatBuffer mesh = stack.mallocFloat(9 * verts.size());
+		for (ArrayList<Float> vert : verts) {
+			for (float v : vert) {
+				mesh.put(v);
+			}
+		}
+		mesh.flip();
+		return mesh;
 	}
 }

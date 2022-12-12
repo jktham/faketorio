@@ -70,7 +70,7 @@ public class Element {
 
 	public void update() {
 		if (tether != null) {
-			Vector4f tetherPos = new Vector4f(0f, 0f, 0f, 1f).mul(tether.model);
+			Vector4f tetherPos = new Vector4f(0f, 0f, 0f, 1f).mul(new Matrix4f().translate(tether.position));
 			Vector2f screenTetherPos = App.camera.worldToScreenPos(new Vector3f(tetherPos.x, tetherPos.y, tetherPos.z).add(tetherWorldOffset)).add(tetherScreenOffset);
 			position = new Vector2f(screenTetherPos.x, screenTetherPos.y);
 		}

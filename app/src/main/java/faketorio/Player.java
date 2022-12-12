@@ -2,15 +2,16 @@ package faketorio;
 
 import org.joml.Vector3f;
 import org.joml.Matrix4f;
-import org.lwjgl.system.MemoryStack;
 
 import static org.lwjgl.glfw.GLFW.*;
-
-import java.nio.FloatBuffer;
 
 public class Player extends Entity {
 	float speed = 5.0f;
 	int item = 1;
+
+	public Player() {
+		model = App.resources.playerModel.copy();
+	}
 
 	public void update() {
 		float deltaMove = speed * App.deltaTime;
@@ -31,49 +32,7 @@ public class Player extends Entity {
 		if (glfwGetKey(App.window, GLFW_KEY_D) == GLFW_PRESS) {
 			position.add(new Vector3f(right).mul(deltaMove));
 		}
-		model = new Matrix4f().translate(new Vector3f(position));
-	}
 
-	public FloatBuffer generateMesh(MemoryStack stack) {
-		vertCount = 36;
-		FloatBuffer mesh = stack.mallocFloat(9 * vertCount);
-		mesh.put(-0.5f).put(-0.5f).put(0f).put(-1f).put(0f).put(0f).put(1f).put(1f).put(1f);
-		mesh.put(-0.5f).put(-0.5f).put(2f).put(-1f).put(0f).put(0f).put(1f).put(1f).put(1f);
-		mesh.put(-0.5f).put( 0.5f).put(2f).put(-1f).put(0f).put(0f).put(1f).put(1f).put(1f);
-		mesh.put( 0.5f).put( 0.5f).put(0f).put(0f).put(0f).put(-1f).put(1f).put(1f).put(1f);
-		mesh.put(-0.5f).put(-0.5f).put(0f).put(0f).put(0f).put(-1f).put(1f).put(1f).put(1f);
-		mesh.put(-0.5f).put( 0.5f).put(0f).put(0f).put(0f).put(-1f).put(1f).put(1f).put(1f);
-		mesh.put( 0.5f).put(-0.5f).put(2f).put(0f).put(-1f).put(0f).put(1f).put(1f).put(1f);
-		mesh.put(-0.5f).put(-0.5f).put(0f).put(0f).put(-1f).put(0f).put(1f).put(1f).put(1f);
-		mesh.put( 0.5f).put(-0.5f).put(0f).put(0f).put(-1f).put(0f).put(1f).put(1f).put(1f);
-		mesh.put( 0.5f).put( 0.5f).put(0f).put(0f).put(0f).put(-1f).put(1f).put(1f).put(1f);
-		mesh.put( 0.5f).put(-0.5f).put(0f).put(0f).put(0f).put(-1f).put(1f).put(1f).put(1f);
-		mesh.put(-0.5f).put(-0.5f).put(0f).put(0f).put(0f).put(-1f).put(1f).put(1f).put(1f);
-		mesh.put(-0.5f).put(-0.5f).put(0f).put(-1f).put(0f).put(0f).put(1f).put(1f).put(1f);
-		mesh.put(-0.5f).put( 0.5f).put(2f).put(-1f).put(0f).put(0f).put(1f).put(1f).put(1f);
-		mesh.put(-0.5f).put( 0.5f).put(0f).put(-1f).put(0f).put(0f).put(1f).put(1f).put(1f);
-		mesh.put( 0.5f).put(-0.5f).put(2f).put(0f).put(-1f).put(0f).put(1f).put(1f).put(1f);
-		mesh.put(-0.5f).put(-0.5f).put(2f).put(0f).put(-1f).put(0f).put(1f).put(1f).put(1f);
-		mesh.put(-0.5f).put(-0.5f).put(0f).put(0f).put(-1f).put(0f).put(1f).put(1f).put(1f);
-		mesh.put(-0.5f).put( 0.5f).put(2f).put(0f).put(0f).put(1f).put(1f).put(1f).put(1f);
-		mesh.put(-0.5f).put(-0.5f).put(2f).put(0f).put(0f).put(1f).put(1f).put(1f).put(1f);
-		mesh.put( 0.5f).put(-0.5f).put(2f).put(0f).put(0f).put(1f).put(1f).put(1f).put(1f);
-		mesh.put( 0.5f).put( 0.5f).put(2f).put(1f).put(0f).put(0f).put(1f).put(1f).put(1f);
-		mesh.put( 0.5f).put(-0.5f).put(0f).put(1f).put(0f).put(0f).put(1f).put(1f).put(1f);
-		mesh.put( 0.5f).put( 0.5f).put(0f).put(1f).put(0f).put(0f).put(1f).put(1f).put(1f);
-		mesh.put( 0.5f).put(-0.5f).put(0f).put(1f).put(0f).put(0f).put(1f).put(1f).put(1f);
-		mesh.put( 0.5f).put( 0.5f).put(2f).put(1f).put(0f).put(0f).put(1f).put(1f).put(1f);
-		mesh.put( 0.5f).put(-0.5f).put(2f).put(1f).put(0f).put(0f).put(1f).put(1f).put(1f);
-		mesh.put( 0.5f).put( 0.5f).put(2f).put(0f).put(1f).put(0f).put(1f).put(1f).put(1f);
-		mesh.put( 0.5f).put( 0.5f).put(0f).put(0f).put(1f).put(0f).put(1f).put(1f).put(1f);
-		mesh.put(-0.5f).put( 0.5f).put(0f).put(0f).put(1f).put(0f).put(1f).put(1f).put(1f);
-		mesh.put( 0.5f).put( 0.5f).put(2f).put(0f).put(1f).put(0f).put(1f).put(1f).put(1f);
-		mesh.put(-0.5f).put( 0.5f).put(0f).put(0f).put(1f).put(0f).put(1f).put(1f).put(1f);
-		mesh.put(-0.5f).put( 0.5f).put(2f).put(0f).put(1f).put(0f).put(1f).put(1f).put(1f);
-		mesh.put( 0.5f).put( 0.5f).put(2f).put(0f).put(0f).put(1f).put(1f).put(1f).put(1f);
-		mesh.put(-0.5f).put( 0.5f).put(2f).put(0f).put(0f).put(1f).put(1f).put(1f).put(1f);
-		mesh.put( 0.5f).put(-0.5f).put(2f).put(0f).put(0f).put(1f).put(1f).put(1f).put(1f);
-		mesh.flip();
-		return mesh;
+		model.transform = new Matrix4f().translate(new Vector3f(position)).translate(0f, 0f, 0.5f);
 	}
 }

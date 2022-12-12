@@ -202,7 +202,7 @@ public class World {
 			if (type == 1) {
 				Cube cube = new Cube();
 				cube.position = new Vector3f(tilePos.x, tilePos.y, 0f);
-				cube.color = new Vector3f(0f, 0f, 1f);
+				cube.model.color = new Vector3f(0f, 0f, 1f);
 				cube.name = "cube";
 				cube.init();
 				entities.add(cube);
@@ -210,7 +210,7 @@ public class World {
 			} else if (type == 2) {
 				Triangle triangle = new Triangle();
 				triangle.position = new Vector3f(tilePos.x, tilePos.y, 0f);
-				triangle.color = new Vector3f(-1f, -1f, -1f);
+				triangle.model.color = new Vector3f(-1f, -1f, -1f);
 				triangle.name = "triangle";
 				triangle.init();
 				entities.add(triangle);
@@ -218,7 +218,7 @@ public class World {
 			} else if (type == 3) {
 				Sphere sphere = new Sphere();
 				sphere.position = new Vector3f(tilePos.x, tilePos.y, 0f);
-				sphere.color = new Vector3f(1f, 0f, 1f);
+				sphere.model.color = new Vector3f(1f, 0f, 1f);
 				sphere.name = "sphere";
 				sphere.init();
 				entities.add(sphere);
@@ -226,7 +226,7 @@ public class World {
 			} else if (type == 4) {
 				Miner miner = new Miner();
 				miner.position = new Vector3f(tilePos.x, tilePos.y, 0f);
-				miner.color = new Vector3f(1f, 0f, 0f);
+				miner.model.color = new Vector3f(1f, 0f, 0f);
 				miner.name = "miner";
 				miner.init();
 				entities.add(miner);
@@ -234,7 +234,7 @@ public class World {
 			} else if (type == 5) {
 				Monke monke = new Monke();
 				monke.position = new Vector3f(tilePos.x, tilePos.y, 0f);
-				monke.color = new Vector3f(1f, 0f, 0f);
+				monke.model.color = new Vector3f(0f, 1f, 0f);
 				monke.name = "monke";
 				monke.init();
 				entities.add(monke);
@@ -293,7 +293,7 @@ public class World {
 		if (prevGhostPosition != null) {
 			for (Entity entity : entities) {
 				if (worldToTilePos(entity.position).equals(prevGhostPosition)) {
-					entity.tint = new Vector3f(prevGhostTint);
+					entity.model.tint = new Vector3f(prevGhostTint);
 				}
 			}
 		}
@@ -303,35 +303,35 @@ public class World {
 				if (App.player.item == 1) {
 					Cube ghostCube = new Cube();
 					ghostCube.position = new Vector3f(tilePos.x, tilePos.y, 0f);
-					ghostCube.color = new Vector3f(1f, 1f, 1f);
+					ghostCube.model.color = new Vector3f(1f, 1f, 1f);
 					ghostCube.name = "ghost cube";
 					ghostCube.init();
 					ghost = ghostCube;
 				} else if (App.player.item == 2) {
 					Triangle ghostTriangle = new Triangle();
 					ghostTriangle.position = new Vector3f(tilePos.x, tilePos.y, 0f);
-					ghostTriangle.color = new Vector3f(1f, 1f, 1f);
+					ghostTriangle.model.color = new Vector3f(1f, 1f, 1f);
 					ghostTriangle.name = "ghost triangle";
 					ghostTriangle.init();
 					ghost = ghostTriangle;
 				} else if (App.player.item == 3) {
 					Sphere ghostSphere = new Sphere();
 					ghostSphere.position = new Vector3f(tilePos.x, tilePos.y, 0f);
-					ghostSphere.color = new Vector3f(1f, 1f, 1f);
+					ghostSphere.model.color = new Vector3f(1f, 1f, 1f);
 					ghostSphere.name = "ghost sphere";
 					ghostSphere.init();
 					ghost = ghostSphere;
 				} else if (App.player.item == 4) {
 					Miner ghostminer = new Miner();
 					ghostminer.position = new Vector3f(tilePos.x, tilePos.y, 0f);
-					ghostminer.color = new Vector3f(1f, 1f, 1f);
+					ghostminer.model.color = new Vector3f(1f, 1f, 1f);
 					ghostminer.name = "ghost miner";
 					ghostminer.init();
 					ghost = ghostminer;
 				} else if (App.player.item == 5) {
 					Monke ghostMonke = new Monke();
 					ghostMonke.position = new Vector3f(tilePos.x, tilePos.y, 0f);
-					ghostMonke.color = new Vector3f(1f, 1f, 1f);
+					ghostMonke.model.color = new Vector3f(1f, 1f, 1f);
 					ghostMonke.name = "ghost monke";
 					ghostMonke.init();
 					ghost = ghostMonke;
@@ -340,8 +340,8 @@ public class World {
 				for (Entity entity : entities) {
 					if (worldToTilePos(entity.position).equals(tilePos)) {
 						prevGhostPosition = worldToTilePos(entity.position);
-						prevGhostTint = new Vector3f(entity.tint);
-						entity.tint = new Vector3f(1f, 1f, 1f);
+						prevGhostTint = new Vector3f(entity.model.tint);
+						entity.model.tint = new Vector3f(1f, 1f, 1f);
 					}
 				}
 			}	

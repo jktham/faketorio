@@ -1,51 +1,14 @@
 package faketorio;
 
-import java.nio.FloatBuffer;
-
-import org.lwjgl.system.MemoryStack;
+import org.joml.Matrix4f;
 
 public class Cube extends Entity {
 
-	public FloatBuffer generateMesh(MemoryStack stack) {
-		vertCount = 36;
-		FloatBuffer mesh = stack.mallocFloat(9 * vertCount);
-		mesh.put(0f).put(0f).put(0f).put(-1f).put(0f).put(0f).put(1f).put(1f).put(1f);
-		mesh.put(0f).put(0f).put(1f).put(-1f).put(0f).put(0f).put(1f).put(1f).put(1f);
-		mesh.put(0f).put(1f).put(1f).put(-1f).put(0f).put(0f).put(1f).put(1f).put(1f);
-		mesh.put(1f).put(1f).put(0f).put(0f).put(0f).put(-1f).put(1f).put(1f).put(1f);
-		mesh.put(0f).put(0f).put(0f).put(0f).put(0f).put(-1f).put(1f).put(1f).put(1f);
-		mesh.put(0f).put(1f).put(0f).put(0f).put(0f).put(-1f).put(1f).put(1f).put(1f);
-		mesh.put(1f).put(0f).put(1f).put(0f).put(-1f).put(0f).put(1f).put(1f).put(1f);
-		mesh.put(0f).put(0f).put(0f).put(0f).put(-1f).put(0f).put(1f).put(1f).put(1f);
-		mesh.put(1f).put(0f).put(0f).put(0f).put(-1f).put(0f).put(1f).put(1f).put(1f);
-		mesh.put(1f).put(1f).put(0f).put(0f).put(0f).put(-1f).put(1f).put(1f).put(1f);
-		mesh.put(1f).put(0f).put(0f).put(0f).put(0f).put(-1f).put(1f).put(1f).put(1f);
-		mesh.put(0f).put(0f).put(0f).put(0f).put(0f).put(-1f).put(1f).put(1f).put(1f);
-		mesh.put(0f).put(0f).put(0f).put(-1f).put(0f).put(0f).put(1f).put(1f).put(1f);
-		mesh.put(0f).put(1f).put(1f).put(-1f).put(0f).put(0f).put(1f).put(1f).put(1f);
-		mesh.put(0f).put(1f).put(0f).put(-1f).put(0f).put(0f).put(1f).put(1f).put(1f);
-		mesh.put(1f).put(0f).put(1f).put(0f).put(-1f).put(0f).put(1f).put(1f).put(1f);
-		mesh.put(0f).put(0f).put(1f).put(0f).put(-1f).put(0f).put(1f).put(1f).put(1f);
-		mesh.put(0f).put(0f).put(0f).put(0f).put(-1f).put(0f).put(1f).put(1f).put(1f);
-		mesh.put(0f).put(1f).put(1f).put(0f).put(0f).put(1f).put(1f).put(1f).put(1f);
-		mesh.put(0f).put(0f).put(1f).put(0f).put(0f).put(1f).put(1f).put(1f).put(1f);
-		mesh.put(1f).put(0f).put(1f).put(0f).put(0f).put(1f).put(1f).put(1f).put(1f);
-		mesh.put(1f).put(1f).put(1f).put(1f).put(0f).put(0f).put(1f).put(1f).put(1f);
-		mesh.put(1f).put(0f).put(0f).put(1f).put(0f).put(0f).put(1f).put(1f).put(1f);
-		mesh.put(1f).put(1f).put(0f).put(1f).put(0f).put(0f).put(1f).put(1f).put(1f);
-		mesh.put(1f).put(0f).put(0f).put(1f).put(0f).put(0f).put(1f).put(1f).put(1f);
-		mesh.put(1f).put(1f).put(1f).put(1f).put(0f).put(0f).put(1f).put(1f).put(1f);
-		mesh.put(1f).put(0f).put(1f).put(1f).put(0f).put(0f).put(1f).put(1f).put(1f);
-		mesh.put(1f).put(1f).put(1f).put(0f).put(1f).put(0f).put(1f).put(1f).put(1f);
-		mesh.put(1f).put(1f).put(0f).put(0f).put(1f).put(0f).put(1f).put(1f).put(1f);
-		mesh.put(0f).put(1f).put(0f).put(0f).put(1f).put(0f).put(1f).put(1f).put(1f);
-		mesh.put(1f).put(1f).put(1f).put(0f).put(1f).put(0f).put(1f).put(1f).put(1f);
-		mesh.put(0f).put(1f).put(0f).put(0f).put(1f).put(0f).put(1f).put(1f).put(1f);
-		mesh.put(0f).put(1f).put(1f).put(0f).put(1f).put(0f).put(1f).put(1f).put(1f);
-		mesh.put(1f).put(1f).put(1f).put(0f).put(0f).put(1f).put(1f).put(1f).put(1f);
-		mesh.put(0f).put(1f).put(1f).put(0f).put(0f).put(1f).put(1f).put(1f).put(1f);
-		mesh.put(1f).put(0f).put(1f).put(0f).put(0f).put(1f).put(1f).put(1f).put(1f);
-		mesh.flip();
-		return mesh;
+	public Cube() {
+		model = App.resources.cubeModel.copy();
+	}
+
+	public void update() {
+		model.transform = new Matrix4f().translate(position).translate(0.5f, 0.5f, 0.5f);
 	}
 }
