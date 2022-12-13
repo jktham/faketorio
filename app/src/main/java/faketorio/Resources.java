@@ -1,5 +1,6 @@
 package faketorio;
 
+import org.joml.Matrix4f;
 import org.lwjgl.system.MemoryStack;
 
 import static org.lwjgl.opengl.GL33.*;
@@ -126,9 +127,8 @@ public class Resources {
 		glBindBuffer(GL_ARRAY_BUFFER, model.vbo);
 
 		try (MemoryStack stack = MemoryStack.stackPush()) {
-			FloatBuffer mesh = loadMesh(stack, meshPath);
+			FloatBuffer mesh = loadMesh(stack, meshPath, model);
 			glBufferData(GL_ARRAY_BUFFER, mesh, GL_STATIC_DRAW);
-			model.vertCount = mesh.capacity() / 9;
 		}
 
 		int floatSize = 4;
@@ -149,7 +149,7 @@ public class Resources {
 		return model;
 	}
 
-	public FloatBuffer loadMesh(MemoryStack stack, String path) {
+	public FloatBuffer loadMesh(MemoryStack stack, String path, Model model) {
 		ArrayList<ArrayList<Float>> positions = new ArrayList<ArrayList<Float>>();
 		ArrayList<ArrayList<Float>> colors = new ArrayList<ArrayList<Float>>();
 		ArrayList<ArrayList<Float>> normals = new ArrayList<ArrayList<Float>>();
@@ -160,7 +160,11 @@ public class Resources {
 				Scanner line = new Scanner(scanner.nextLine());
 				if (line.hasNext()) {
 					String lineType = line.next();
-					if (lineType.equals("v")) {
+					if (lineType.equals("o")) {
+						model.meshSizes.add(0);
+						model.meshOffsets.add(verts.size());
+						model.meshTransforms.add(new Matrix4f());
+					} else if (lineType.equals("v")) {
 						ArrayList<Float> position = new ArrayList<Float>();
 						position.add(line.nextFloat());
 						position.add(line.nextFloat());
@@ -206,6 +210,8 @@ public class Resources {
 							vert.add(colors.get(colorIndex-1).get(2));
 		
 							verts.add(vert);
+
+							model.meshSizes.set(model.meshSizes.size()-1, model.meshSizes.get(model.meshSizes.size()-1)+1);
 						}
 					}
 				}

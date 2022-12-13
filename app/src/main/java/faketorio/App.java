@@ -72,23 +72,11 @@ public class App {
 			if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
 				glfwSetWindowShouldClose(window, true);
 			}
-			if (key == GLFW_KEY_0 && action == GLFW_PRESS) {
-				player.item = 0;
+			if (key >= 48 && key < 58 && action == GLFW_PRESS) {
+				player.selectedItem = key - 48;
 			}
-			if (key == GLFW_KEY_1 && action == GLFW_PRESS) {
-				player.item = 1;
-			}
-			if (key == GLFW_KEY_2 && action == GLFW_PRESS) {
-				player.item = 2;
-			}
-			if (key == GLFW_KEY_3 && action == GLFW_PRESS) {
-				player.item = 3;
-			}
-			if (key == GLFW_KEY_4 && action == GLFW_PRESS) {
-				player.item = 4;
-			}
-			if (key == GLFW_KEY_5 && action == GLFW_PRESS) {
-				player.item = 5;
+			if (key == GLFW_KEY_R && action == GLFW_PRESS) {
+				player.itemRotation = (player.itemRotation + 1) % 4;
 			}
 		});
 
@@ -111,10 +99,10 @@ public class App {
 				Vector3f worldPos = camera.screenToWorldPos(cursorPos);
 				Vector2i tilePos = world.worldToTilePos(worldPos);
 				if (tilePos != null) {
-					if (player.item == 0) {
+					if (!world.getTile(tilePos).free) {
 						world.interact(tilePos);
 					} else {
-						world.placeNew(tilePos, App.player.item);
+						world.placeNew(tilePos, App.player.selectedItem);
 					}
 				}
 			}
@@ -214,7 +202,7 @@ public class App {
 					text += "null\n";
 				}
 
-				text += player.item + "\n";
+				text += player.selectedItem + ", " + player.itemRotation + "\n";
 				text += world.entities.size() + "\n";
 				text += ui.elements.size() + "\n";
 

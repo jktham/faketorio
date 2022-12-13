@@ -7,21 +7,21 @@ import org.joml.Vector3f;
 import java.util.ArrayList;
 
 public class Entity {
-	Model model;
-
 	Vector3f position = new Vector3f(0f, 0f, 0f);
+	int rotation = 0;
+
+	Model model;
+	Label label;
 
 	String name = "entity";
 	ArrayList<ItemStack> inventory = new ArrayList<ItemStack>();
-	Label entityLabel = new Label();
 
 	public Entity() {
 		model = App.resources.emptyModel.copy();
 	}
 
 	public void init() {
-		model.transform = new Matrix4f().translate(position);
-		entityLabel = new Label() {
+		label = new Label() {
 			public void instanceUpdate() {
 				text = "" + name + "\n";
 				for (ItemStack itemStack : inventory) {
@@ -37,17 +37,17 @@ public class Entity {
 				updateMesh();
 			}
 		};
-		entityLabel.text = "test";
-		entityLabel.size = new Vector2f(24f);
-		entityLabel.tether = this;
-		entityLabel.color = new Vector3f(1f);
-		entityLabel.fontAtlas = App.resources.arialTexture;
-		entityLabel.hidden = false;
-		entityLabel.init();
-		App.ui.elements.add(entityLabel);
+		label.size = new Vector2f(24f);
+		label.tether = this;
+		label.color = new Vector3f(1f);
+		label.fontAtlas = App.resources.arialTexture;
+		label.hidden = false;
+		label.init();
+		App.ui.elements.add(label);
 	}
 
 	public void update() {
+		model.transform = new Matrix4f().translate(position).rotate((float)Math.PI / 2f * rotation, 0f, 0f, 1f);
 		instanceUpdate();
 	}
 	

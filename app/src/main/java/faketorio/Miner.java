@@ -1,7 +1,6 @@
 package faketorio;
 
 import org.joml.Matrix4f;
-import org.joml.Vector3f;
 
 public class Miner extends Entity {
 	int lastTick = 0;
@@ -11,8 +10,8 @@ public class Miner extends Entity {
 	}
 
 	public void update() {
-		model.transform = new Matrix4f().translate(position).translate(0.5f, 0.5f, 0.5f);
-		model.transform.rotate(1.5f * App.time, new Vector3f(0f, 0f, 1f));
+		model.transform = new Matrix4f().translate(position).translate(0.5f, 0.5f, 0.5f).rotate((float)Math.PI / 2f * rotation, 0f, 0f, 1f);
+		model.meshTransforms.set(0, new Matrix4f().rotate(1.5f * App.time, 0f, 0f, 1f));
 
 		if (App.tick != lastTick) {
 			Tile tile = App.world.getTile(App.world.worldToTilePos(position));

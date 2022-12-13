@@ -12,7 +12,6 @@ public class Model {
 	int shader;
 	int vao;
 	int vbo;
-	int vertCount;
 
 	ArrayList<Integer> meshOffsets = new ArrayList<Integer>();
 	ArrayList<Integer> meshSizes = new ArrayList<Integer>();
@@ -27,10 +26,12 @@ public class Model {
 		model.shader = shader;
 		model.vao = vao;
 		model.vbo = vbo;
-		model.vertCount = vertCount;
 		model.meshOffsets = meshOffsets;
 		model.meshSizes = meshSizes;
 		model.meshTransforms = new ArrayList<Matrix4f>();
+		for (int i=0;i<meshTransforms.size();i++) {
+			model.meshTransforms.add(meshTransforms.get(i));
+		}
 		model.transform = new Matrix4f();
 		model.color = new Vector3f(-1f);
 		model.tint = new Vector3f(-1f);
@@ -38,20 +39,22 @@ public class Model {
 	}
 
 	public void draw() {
-		if (glGetInteger(GL_CURRENT_PROGRAM) != shader) {
-			glUseProgram(shader);
-		}
+		for (int i=0;i<meshOffsets.size();i++) {
+			if (glGetInteger(GL_CURRENT_PROGRAM) != shader) {
+				glUseProgram(shader);
+			}
 
-		try (MemoryStack stack = MemoryStack.stackPush()) {
-			glUniform3f(glGetUniformLocation(shader, "uColor"), color.x, color.y, color.z);
-			glUniform3f(glGetUniformLocation(shader, "uTint"), tint.x, tint.y, tint.z);
-			glUniformMatrix4fv(glGetUniformLocation(shader, "uModel"), false, transform.get(stack.mallocFloat(16)));
-			glUniformMatrix4fv(glGetUniformLocation(shader, "uView"), false, App.camera.view.get(stack.mallocFloat(16)));
-			glUniformMatrix4fv(glGetUniformLocation(shader, "uProjection"), false, App.camera.projection.get(stack.mallocFloat(16)));
+			try (MemoryStack stack = MemoryStack.stackPush()) {
+				glUniform3f(glGetUniformLocation(shader, "uColor"), color.x, color.y, color.z);
+				glUniform3f(glGetUniformLocation(shader, "uTint"), tint.x, tint.y, tint.z);
+				glUniformMatrix4fv(glGetUniformLocation(shader, "uModel"), false, new Matrix4f(transform).mul(meshTransforms.get(i)).get(stack.mallocFloat(16)));
+				glUniformMatrix4fv(glGetUniformLocation(shader, "uView"), false, App.camera.view.get(stack.mallocFloat(16)));
+				glUniformMatrix4fv(glGetUniformLocation(shader, "uProjection"), false, App.camera.projection.get(stack.mallocFloat(16)));
+			}
+			
+			glBindVertexArray(vao);
+			glDrawArrays(GL_TRIANGLES, meshOffsets.get(i), meshSizes.get(i));
+			glBindVertexArray(0);
 		}
-		
-		glBindVertexArray(vao);
-		glDrawArrays(GL_TRIANGLES, 0, vertCount);
-		glBindVertexArray(0);
 	}
 }

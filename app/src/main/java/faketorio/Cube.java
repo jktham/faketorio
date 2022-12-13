@@ -9,6 +9,7 @@ public class Cube extends Entity {
 	}
 
 	public void update() {
-		model.transform = new Matrix4f().translate(position).translate(0.5f, 0.5f, 0.5f);
+		model.transform = new Matrix4f().translate(position).translate(0.5f, 0.5f, 0.5f).rotate((float)Math.PI / 2f * rotation, 0f, 0f, 1f);
+		instanceUpdate();
 	}
 }

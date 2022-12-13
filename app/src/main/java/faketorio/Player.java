@@ -7,7 +7,8 @@ import static org.lwjgl.glfw.GLFW.*;
 
 public class Player extends Entity {
 	float speed = 5.0f;
-	int item = 1;
+	int selectedItem = 1;
+	int itemRotation = 0;
 
 	public Player() {
 		model = App.resources.playerModel.copy();
@@ -34,5 +35,6 @@ public class Player extends Entity {
 		}
 
 		model.transform = new Matrix4f().translate(new Vector3f(position)).translate(0f, 0f, 0.5f);
+		instanceUpdate();
 	}
 }

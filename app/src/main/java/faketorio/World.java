@@ -163,7 +163,7 @@ public class World {
 	public void update() {
 		Vector3f worldPos = App.camera.screenToWorldPos(App.cursorPos);
 		Vector2i tilePos = worldToTilePos(worldPos);
-		moveGhost(tilePos, App.player.item);
+		moveGhost(tilePos, App.player.selectedItem);
 		
 		if (ghost != null) {
 			ghost.update();
@@ -202,6 +202,7 @@ public class World {
 			if (type == 1) {
 				Cube cube = new Cube();
 				cube.position = new Vector3f(tilePos.x, tilePos.y, 0f);
+				cube.rotation = App.player.itemRotation;
 				cube.model.color = new Vector3f(0f, 0f, 1f);
 				cube.name = "cube";
 				cube.init();
@@ -210,6 +211,7 @@ public class World {
 			} else if (type == 2) {
 				Triangle triangle = new Triangle();
 				triangle.position = new Vector3f(tilePos.x, tilePos.y, 0f);
+				triangle.rotation = App.player.itemRotation;
 				triangle.model.color = new Vector3f(-1f, -1f, -1f);
 				triangle.name = "triangle";
 				triangle.init();
@@ -218,6 +220,7 @@ public class World {
 			} else if (type == 3) {
 				Sphere sphere = new Sphere();
 				sphere.position = new Vector3f(tilePos.x, tilePos.y, 0f);
+				sphere.rotation = App.player.itemRotation;
 				sphere.model.color = new Vector3f(1f, 0f, 1f);
 				sphere.name = "sphere";
 				sphere.init();
@@ -226,6 +229,7 @@ public class World {
 			} else if (type == 4) {
 				Miner miner = new Miner();
 				miner.position = new Vector3f(tilePos.x, tilePos.y, 0f);
+				miner.rotation = App.player.itemRotation;
 				miner.model.color = new Vector3f(1f, 0f, 0f);
 				miner.name = "miner";
 				miner.init();
@@ -234,6 +238,7 @@ public class World {
 			} else if (type == 5) {
 				Monke monke = new Monke();
 				monke.position = new Vector3f(tilePos.x, tilePos.y, 0f);
+				monke.rotation = App.player.itemRotation;
 				monke.model.color = new Vector3f(0f, 1f, 0f);
 				monke.name = "monke";
 				monke.init();
@@ -276,7 +281,7 @@ public class World {
 		if (!tile.free) {
 			for (Entity entity : entities) {
 				if (worldToTilePos(entity.position).equals(tilePos)) {
-					entity.entityLabel.hidden = !entity.entityLabel.hidden;	
+					entity.label.hidden = !entity.label.hidden;	
 				}
 			}
 		}
@@ -300,37 +305,42 @@ public class World {
 		if (tilePos != null) {
 			Tile tile = getTile(tilePos);
 			if (tile.free) {
-				if (App.player.item == 1) {
+				if (App.player.selectedItem == 1) {
 					Cube ghostCube = new Cube();
 					ghostCube.position = new Vector3f(tilePos.x, tilePos.y, 0f);
+					ghostCube.rotation = App.player.itemRotation;
 					ghostCube.model.color = new Vector3f(1f, 1f, 1f);
 					ghostCube.name = "ghost cube";
 					ghostCube.init();
 					ghost = ghostCube;
-				} else if (App.player.item == 2) {
+				} else if (App.player.selectedItem == 2) {
 					Triangle ghostTriangle = new Triangle();
 					ghostTriangle.position = new Vector3f(tilePos.x, tilePos.y, 0f);
+					ghostTriangle.rotation = App.player.itemRotation;
 					ghostTriangle.model.color = new Vector3f(1f, 1f, 1f);
 					ghostTriangle.name = "ghost triangle";
 					ghostTriangle.init();
 					ghost = ghostTriangle;
-				} else if (App.player.item == 3) {
+				} else if (App.player.selectedItem == 3) {
 					Sphere ghostSphere = new Sphere();
 					ghostSphere.position = new Vector3f(tilePos.x, tilePos.y, 0f);
+					ghostSphere.rotation = App.player.itemRotation;
 					ghostSphere.model.color = new Vector3f(1f, 1f, 1f);
 					ghostSphere.name = "ghost sphere";
 					ghostSphere.init();
 					ghost = ghostSphere;
-				} else if (App.player.item == 4) {
+				} else if (App.player.selectedItem == 4) {
 					Miner ghostminer = new Miner();
 					ghostminer.position = new Vector3f(tilePos.x, tilePos.y, 0f);
+					ghostminer.rotation = App.player.itemRotation;
 					ghostminer.model.color = new Vector3f(1f, 1f, 1f);
 					ghostminer.name = "ghost miner";
 					ghostminer.init();
 					ghost = ghostminer;
-				} else if (App.player.item == 5) {
+				} else if (App.player.selectedItem == 5) {
 					Monke ghostMonke = new Monke();
 					ghostMonke.position = new Vector3f(tilePos.x, tilePos.y, 0f);
+					ghostMonke.rotation = App.player.itemRotation;
 					ghostMonke.model.color = new Vector3f(1f, 1f, 1f);
 					ghostMonke.name = "ghost monke";
 					ghostMonke.init();
