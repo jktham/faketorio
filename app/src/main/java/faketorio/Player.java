@@ -10,8 +10,12 @@ public class Player extends Entity {
 	int selectedItem = 1;
 	int itemRotation = 0;
 
-	public Player() {
+	public Player(Vector3f position, int rotation) {
+		super(position, rotation);
 		model = App.resources.playerModel.copy();
+		model.transform = new Matrix4f().translate(position).translate(0f, 0f, 0.5f);
+		model.color = new Vector3f(1f, 0f, 0f);
+		name = "player";
 	}
 
 	public void update() {
@@ -34,7 +38,7 @@ public class Player extends Entity {
 			position.add(new Vector3f(right).mul(deltaMove));
 		}
 
-		model.transform = new Matrix4f().translate(new Vector3f(position)).translate(0f, 0f, 0.5f);
+		model.transform = new Matrix4f().translate(position).translate(0f, 0f, 0.5f);
 		instanceUpdate();
 	}
 }

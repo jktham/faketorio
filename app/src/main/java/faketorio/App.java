@@ -162,9 +162,7 @@ public class App {
 		world = new World();
 		world.size = new Vector2i(100, 100);
 		world.init();
-		player = new Player();
-		player.model.color = new Vector3f(1f, 0f, 0f);
-		player.name = "player";
+		player = new Player(new Vector3f(0f, 0f, 0f), 0);
 		player.init();
 		camera = new Camera();
 

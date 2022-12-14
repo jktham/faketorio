@@ -7,20 +7,23 @@ import org.joml.Vector3f;
 import java.util.ArrayList;
 
 public class Entity {
-	Vector3f position = new Vector3f(0f, 0f, 0f);
-	int rotation = 0;
+	Vector3f position;
+	int rotation;
 
 	Model model;
 	Label label;
 
-	String name = "entity";
-	ArrayList<ItemStack> inventory = new ArrayList<ItemStack>();
+	String name;
+	ArrayList<ItemStack> inventory;
 
-	public Entity() {
+	public Entity(Vector3f position, int rotation) {
+		this.position = new Vector3f(position);
+		this.rotation = rotation;
 		model = App.resources.emptyModel.copy();
-	}
-
-	public void init() {
+		model.transform = new Matrix4f().translate(position).rotate((float)Math.PI / 2f * rotation, 0f, 0f, 1f);
+		model.color = new Vector3f(0f, 0f, 1f);
+		name = "entity";
+		inventory = new ArrayList<ItemStack>();
 		label = new Label() {
 			public void instanceUpdate() {
 				text = "" + name + "\n";
@@ -46,8 +49,11 @@ public class Entity {
 		App.ui.elements.add(label);
 	}
 
+	public void init() {
+		
+	}
+
 	public void update() {
-		model.transform = new Matrix4f().translate(position).rotate((float)Math.PI / 2f * rotation, 0f, 0f, 1f);
 		instanceUpdate();
 	}
 	

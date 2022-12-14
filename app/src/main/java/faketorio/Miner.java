@@ -1,16 +1,20 @@
 package faketorio;
 
 import org.joml.Matrix4f;
+import org.joml.Vector3f;
 
 public class Miner extends Entity {
 	int lastTick = 0;
 	
-	public Miner() {
+	public Miner(Vector3f position, int rotation) {
+		super(position, rotation);
 		model = App.resources.minerModel.copy();
+		model.transform = new Matrix4f().translate(position).translate(0.5f, 0.5f, 0.5f).rotate((float)Math.PI / 2f * rotation, 0f, 0f, 1f);
+		model.color = new Vector3f(0.3f, 0.3f, 0.3f);
+		name = "miner";
 	}
 
 	public void update() {
-		model.transform = new Matrix4f().translate(position).translate(0.5f, 0.5f, 0.5f).rotate((float)Math.PI / 2f * rotation, 0f, 0f, 1f);
 		model.meshTransforms.set(0, new Matrix4f().rotate(1.5f * App.time, 0f, 0f, 1f));
 
 		if (App.tick != lastTick) {
@@ -27,4 +31,5 @@ public class Miner extends Entity {
 		}
 		instanceUpdate();
 	}
+
 }

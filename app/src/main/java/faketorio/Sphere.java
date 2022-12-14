@@ -5,8 +5,12 @@ import org.joml.Vector3f;
 
 public class Sphere extends Entity {
 
-	public Sphere() {
+	public Sphere(Vector3f position, int rotation) {
+		super(position, rotation);
 		model = App.resources.sphereModel.copy();
+		model.transform = new Matrix4f().translate(position).translate(0.5f, 0.5f, 1.0f).rotate((float)Math.PI / 2f * rotation, 0f, 0f, 1f);
+		model.color = new Vector3f(1f, 0f, 1f);
+		name = "sphere";
 	}
 
 	public void update() {
