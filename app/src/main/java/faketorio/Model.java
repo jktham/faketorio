@@ -13,13 +13,23 @@ public class Model {
 	int vao;
 	int vbo;
 
-	ArrayList<Integer> meshOffsets = new ArrayList<Integer>();
-	ArrayList<Integer> meshSizes = new ArrayList<Integer>();
-	ArrayList<Matrix4f> meshTransforms = new ArrayList<Matrix4f>();
+	ArrayList<Integer> meshOffsets;
+	ArrayList<Integer> meshSizes;
+	ArrayList<Matrix4f> meshTransforms;
 
-	Matrix4f transform = new Matrix4f();
-	Vector3f color = new Vector3f(-1f);
-	Vector3f tint = new Vector3f(-1f);
+	Matrix4f transform;
+	Vector3f color;
+	Vector3f tint;
+	
+	public Model() {
+		meshOffsets = new ArrayList<Integer>();
+		meshSizes = new ArrayList<Integer>();
+		meshTransforms = new ArrayList<Matrix4f>();
+
+		transform = new Matrix4f();
+		color = new Vector3f(-1f);
+		tint = new Vector3f(-1f);
+	}
 
 	public Model copy() {
 		Model model = new Model();

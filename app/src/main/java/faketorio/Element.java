@@ -75,11 +75,6 @@ public class Element {
 			position = new Vector2f(screenTetherPos.x, screenTetherPos.y);
 		}
 		model = new Matrix4f().translate(new Vector3f(position.x, position.y, 1f)).scale(new Vector3f(size.x, size.y, 1f));
-		instanceUpdate();
-	}
-
-	public void instanceUpdate() {
-
 	}
 
 	public void draw() {

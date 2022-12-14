@@ -30,6 +30,8 @@ public class Resources {
 	public Model sphereModel;
 	public Model minerModel;
 	public Model monkeModel;
+	public Model chestModel;
+	public Model beltModel;
 	
 	public void init() {
 		worldBaseShader = compileShader("shaders/world_base");
@@ -47,6 +49,8 @@ public class Resources {
 		sphereModel = loadModel(worldBaseShader, "models/sphere.obj");
 		minerModel = loadModel(worldBaseShader, "models/miner.obj");
 		monkeModel = loadModel(worldBaseShader, "models/monke.obj");
+		chestModel = loadModel(worldBaseShader, "models/chest.obj");
+		beltModel = loadModel(worldBaseShader, "models/belt.obj");
 	}
 
 	public int compileShader(String path) {

@@ -19,7 +19,7 @@ public class Player extends Entity {
 	}
 
 	public void update() {
-		float deltaMove = speed * App.deltaTime;
+		float deltaMove = speed * App.deltaTick;
 		Vector3f front = new Vector3f((float)Math.cos(App.camera.rotation), (float)Math.sin(App.camera.rotation), 0f).negate().normalize();
 		Vector3f right = new Vector3f(front).cross(0f, 0f, 1f).normalize();
 		if (glfwGetKey(App.window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
@@ -39,6 +39,5 @@ public class Player extends Entity {
 		}
 
 		model.transform = new Matrix4f().translate(position).translate(0f, 0f, 0.5f);
-		instanceUpdate();
 	}
 }

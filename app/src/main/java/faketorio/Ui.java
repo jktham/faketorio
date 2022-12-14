@@ -11,6 +11,8 @@ public class Ui {
 	Matrix4f view = new Matrix4f();
 	Matrix4f projection = new Matrix4f().ortho(0f, App.width, App.height, 0, 1f, -1f);
 
+	boolean hidden = false;
+
 	public void init() {
 		elements = new ArrayList<Element>();
 	}
@@ -24,6 +26,10 @@ public class Ui {
 	}
 
 	public void draw() {
+		if (hidden) {
+			return;
+		}
+		
 		glDisable(GL_DEPTH_TEST);
 		for (Element element : elements) {
 			element.draw();

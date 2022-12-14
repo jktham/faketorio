@@ -199,7 +199,7 @@ public class World {
 	public void placeNew(Vector2i tilePos, int type) {
 		Tile tile = getTile(tilePos);
 		if (tile.free) {
-			Entity entity = getNewEntity(tilePos, type);
+			Entity entity = newEntity(tilePos, type);
 			if (entity != null) {
 				entity.init();
 				entities.add(entity);
@@ -208,20 +208,26 @@ public class World {
 		}
 	}
 
-	public Entity getNewEntity(Vector2i tilePos, int type) {
+	public Entity newEntity(Vector2i tilePos, int type) {
 		Entity entity = null;
 		if (type == 1) {
-			entity = new Cube(new Vector3f(tilePos.x, tilePos.y, 0f), App.player.itemRotation);
-		} else if (type == 2) {
-			entity = new Triangle(new Vector3f(tilePos.x, tilePos.y, 0f), App.player.itemRotation);
-		} else if (type == 3) {
-			entity = new Sphere(new Vector3f(tilePos.x, tilePos.y, 0f), App.player.itemRotation);
-		} else if (type == 4) {
-			entity = new Monke(new Vector3f(tilePos.x, tilePos.y, 0f), App.player.itemRotation);
-		} else if (type == 5) {
 			entity = new Miner(new Vector3f(tilePos.x, tilePos.y, 0f), App.player.itemRotation);
-		} else if (type == 6) {
+		} else if (type == 2) {
 			entity = new Chest(new Vector3f(tilePos.x, tilePos.y, 0f), App.player.itemRotation);
+		} else if (type == 3) {
+			entity = new Belt(new Vector3f(tilePos.x, tilePos.y, 0f), App.player.itemRotation);
+		} else if (type == 4) {
+
+		} else if (type == 5) {
+			
+		} else if (type == 6) {
+			entity = new Cube(new Vector3f(tilePos.x, tilePos.y, 0f), App.player.itemRotation);
+		} else if (type == 7) {
+			entity = new Triangle(new Vector3f(tilePos.x, tilePos.y, 0f), App.player.itemRotation);
+		} else if (type == 8) {
+			entity = new Sphere(new Vector3f(tilePos.x, tilePos.y, 0f), App.player.itemRotation);
+		} else if (type == 9) {
+			entity = new Monke(new Vector3f(tilePos.x, tilePos.y, 0f), App.player.itemRotation);
 		}
 		return entity;
 	}
@@ -283,7 +289,7 @@ public class World {
 		if (tilePos != null) {
 			Tile tile = getTile(tilePos);
 			if (tile.free) {
-				Entity entity = getNewEntity(tilePos, type);
+				Entity entity = newEntity(tilePos, type);
 				if (entity != null) {
 					entity.name = "ghost " + entity.name;
 					entity.model.color = new Vector3f(1f, 1f, 1f);
@@ -347,5 +353,14 @@ public class World {
 		}
 		Vector2i tilePos = new Vector2i((int)Math.floor(worldPos.x), (int)Math.floor(worldPos.y));
 		return tilePos;
+	}
+
+	public Entity getEntity(Vector2i tilePos) {
+		for (Entity entity : entities) {
+			if (worldToTilePos(entity.position).equals(tilePos)) {
+				return entity;
+			}
+		}
+		return null;
 	}
 }

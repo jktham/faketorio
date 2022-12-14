@@ -20,12 +20,18 @@ public class App {
 	public static int height = 1080;
 
 	public static float time = 0.0f;
-	public static float deltaTime = 0.0f;
-	public static ArrayList<Float> frames = new ArrayList<Float>();
-	public static float frameRate = 0.0f;
-	public static int tick = 0;
-	public static float lastTick = 0.0f;
-	public static float desiredTickRate = 10.0f;
+
+	public static int frame;
+	public static float targetFrameRate = 60.0f;
+	public static float actualFrameRate;
+	public static float lastFrame;
+	public static float deltaFrame;
+
+	public static int tick;
+	public static float targetTickRate = 60.0f;
+	public static float actualTickRate;
+	public static float lastTick;
+	public static float deltaTick;
 
 	public static Vector2i cursorPos = new Vector2i(0);
 
@@ -77,6 +83,17 @@ public class App {
 			}
 			if (key == GLFW_KEY_R && action == GLFW_PRESS) {
 				player.itemRotation = (player.itemRotation + 1) % 4;
+			}
+			if (key == GLFW_KEY_Q && action == GLFW_PRESS) {
+				Entity entity = world.getEntity(world.worldToTilePos(camera.screenToWorldPos(cursorPos)));
+				if (entity != null) {
+					player.selectedItem = entity.type;
+				} else {
+					player.selectedItem = 0;
+				}
+			}
+			if (key == GLFW_KEY_LEFT_ALT && action == GLFW_PRESS) {
+				ui.hidden = !ui.hidden;
 			}
 		});
 
@@ -130,7 +147,7 @@ public class App {
 		});
 
 		glfwMakeContextCurrent(window);
-		glfwSwapInterval(1);
+		glfwSwapInterval(0);
 		glfwShowWindow(window);
 
 		GL.createCapabilities();
@@ -167,10 +184,11 @@ public class App {
 		camera = new Camera();
 
 		Label infoLabel = new Label() {
-			public void instanceUpdate() {
+			public void update() {
 				text = "";
-				text += String.format("%.6f", time) + ", " + String.format("%.6f", deltaTime) + ", " + String.format("%.6f", frameRate) + "\n";
-				text += tick + ", " + String.format("%.6f", lastTick) + "\n";
+				text += String.format("%.6f", time) + "\n";
+				text += tick + ", " + String.format("%.6f", deltaTick) + ", " + String.format("%.2f", targetTickRate) + ", " + String.format("%.2f", actualTickRate) + "\n";
+				text += frame + ", " + String.format("%.6f", deltaFrame) + ", " + String.format("%.2f", targetFrameRate) + ", " + String.format("%.2f", actualFrameRate) + "\n";
 				text += String.format("%.3f", player.position.x) + ", " + String.format("%.3f", player.position.y) + "\n";
 
 				if (cursorPos != null) {
@@ -218,25 +236,23 @@ public class App {
 
 	private void loop() {
 		while ( !glfwWindowShouldClose(window) ) {
-			deltaTime = (float)glfwGetTime() - time;
 			time = (float)glfwGetTime();
-			frames.add(deltaTime);
-			if (frames.size() > 60) {
-				frames.remove(0);
-			}
-			float frameSum = 0f;
-			for (int i=0;i<frames.size();i++) {
-				frameSum += frames.get(i);
-			}
-			frameRate = 1f / (frameSum / (float)frames.size());
+			deltaTick = time - lastTick;
+			deltaFrame = time - lastFrame;
 
-			if (time - lastTick >= 1f / desiredTickRate) {
-				tick += 1;
+			if (deltaTick >= 1f / targetTickRate) {
 				lastTick = time;
+				actualTickRate = 1f / deltaTick;
+				tick += 1;
+				update();
 			}
 
-			update();
-			draw();
+			if (deltaFrame >= 1f / targetFrameRate) {
+				lastFrame = time;
+				actualFrameRate = 1f / deltaFrame;
+				frame += 1;
+				draw();
+			}
 
 			glfwPollEvents();
 		}
