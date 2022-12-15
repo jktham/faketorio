@@ -1,6 +1,7 @@
 package faketorio;
 
 import org.joml.Matrix4f;
+import org.joml.Vector3f;
 import org.lwjgl.system.MemoryStack;
 
 import static org.lwjgl.opengl.GL33.*;
@@ -168,6 +169,7 @@ public class Resources {
 						model.meshSizes.add(0);
 						model.meshOffsets.add(verts.size());
 						model.meshTransforms.add(new Matrix4f());
+						model.meshColors.add(new Vector3f(-1f));
 					} else if (lineType.equals("v")) {
 						ArrayList<Float> position = new ArrayList<Float>();
 						position.add(line.nextFloat());

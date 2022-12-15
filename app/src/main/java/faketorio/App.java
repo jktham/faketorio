@@ -88,6 +88,7 @@ public class App {
 				Entity entity = world.getEntity(world.worldToTilePos(camera.screenToWorldPos(cursorPos)));
 				if (entity != null) {
 					player.selectedItem = entity.type;
+					player.itemRotation = entity.rotation;
 				} else {
 					player.selectedItem = 0;
 				}
@@ -164,14 +165,17 @@ public class App {
 		Item item = new Item();
 		item.id = 0;
 		item.name = "iron ore";
+		item.color = new Vector3f(0.2f, 0.2f, 0.5f);
 		items.add(item);
 		item = new Item();
 		item.id = 1;
 		item.name = "copper ore";
+		item.color = new Vector3f(0.5f, 0.2f, 0.2f);
 		items.add(item);
 		item = new Item();
 		item.id = 2;
 		item.name = "coal";
+		item.color = new Vector3f(0.05f, 0.05f, 0.05f);
 		items.add(item);
 
 		ui = new Ui();

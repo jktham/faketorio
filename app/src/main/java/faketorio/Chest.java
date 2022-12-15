@@ -12,6 +12,7 @@ public class Chest extends Entity {
 		model.color = new Vector3f(0.6f, 0.6f, 0.6f);
 		name = "chest";
 		stackSize = 1000;
+		inventorySize = 100;
 		type = 2;
 	}
 }

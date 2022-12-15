@@ -16,6 +16,7 @@ public class Model {
 	ArrayList<Integer> meshOffsets;
 	ArrayList<Integer> meshSizes;
 	ArrayList<Matrix4f> meshTransforms;
+	ArrayList<Vector3f> meshColors;
 
 	Matrix4f transform;
 	Vector3f color;
@@ -25,6 +26,7 @@ public class Model {
 		meshOffsets = new ArrayList<Integer>();
 		meshSizes = new ArrayList<Integer>();
 		meshTransforms = new ArrayList<Matrix4f>();
+		meshColors = new ArrayList<Vector3f>();
 
 		transform = new Matrix4f();
 		color = new Vector3f(-1f);
@@ -42,6 +44,10 @@ public class Model {
 		for (int i=0;i<meshTransforms.size();i++) {
 			model.meshTransforms.add(meshTransforms.get(i));
 		}
+		model.meshColors = new ArrayList<Vector3f>();
+		for (int i=0;i<meshColors.size();i++) {
+			model.meshColors.add(meshColors.get(i));
+		}
 		model.transform = new Matrix4f();
 		model.color = new Vector3f(-1f);
 		model.tint = new Vector3f(-1f);
@@ -55,7 +61,11 @@ public class Model {
 			}
 
 			try (MemoryStack stack = MemoryStack.stackPush()) {
-				glUniform3f(glGetUniformLocation(shader, "uColor"), color.x, color.y, color.z);
+				if (meshColors.get(i).x >= 0f) {
+					glUniform3f(glGetUniformLocation(shader, "uColor"), meshColors.get(i).x, meshColors.get(i).y, meshColors.get(i).z);
+				} else {
+					glUniform3f(glGetUniformLocation(shader, "uColor"), color.x, color.y, color.z);
+				}
 				glUniform3f(glGetUniformLocation(shader, "uTint"), tint.x, tint.y, tint.z);
 				glUniformMatrix4fv(glGetUniformLocation(shader, "uModel"), false, new Matrix4f(transform).mul(meshTransforms.get(i)).get(stack.mallocFloat(16)));
 				glUniformMatrix4fv(glGetUniformLocation(shader, "uView"), false, App.camera.view.get(stack.mallocFloat(16)));

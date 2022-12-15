@@ -18,7 +18,10 @@ public class Entity {
 	String name;
 	ArrayList<ItemStack> inventory;
 	int stackSize;
+	int inventorySize;
 	int type;
+	int sleepTicks;
+	boolean ghost;
 
 	public Entity(Vector3f position, int rotation) {
 		this.position = new Vector3f(position);
@@ -29,7 +32,10 @@ public class Entity {
 		name = "entity";
 		inventory = new ArrayList<ItemStack>();
 		stackSize = 100;
+		inventorySize = 10;
 		type = 0;
+		sleepTicks = 0;
+		ghost = false;
 		label = new Label() {
 			public void update() {
 				if (tether != null) {
@@ -52,7 +58,7 @@ public class Entity {
 				updateMesh();
 			}
 		};
-		label.size = new Vector2f(24f);
+		label.size = new Vector2f(16f);
 		label.tether = this;
 		label.color = new Vector3f(1f);
 		label.fontAtlas = App.resources.arialTexture;
@@ -71,6 +77,16 @@ public class Entity {
 
 	public boolean canBeAdded(int id, int amount) {
 		// only amount 1 supported
+		int stackCount = 0;
+		for (ItemStack itemStack : inventory) {
+			if (itemStack.item.id != id || itemStack.amount >= stackSize) {
+				stackCount += 1;
+			}
+		}
+		if (stackCount >= inventorySize) {
+			return false;
+		}
+
 		boolean found = false;
 		for (ItemStack itemStack : inventory) {
 			if (itemStack.item.id == id) {
@@ -96,6 +112,19 @@ public class Entity {
 			itemStack.item = App.items.get(id);
 			itemStack.amount = amount;
 			inventory.add(itemStack);
+		}
+		sleepTicks = 1;
+	}
+
+	public void removeItem(int id, int amount) {
+		for (ItemStack itemStack : inventory) {
+			if (itemStack.item.id == id) {
+				itemStack.amount -= amount;
+				if (itemStack.amount <= 0) {
+					inventory.remove(itemStack);
+					break;
+				}
+			}
 		}
 	}
 	

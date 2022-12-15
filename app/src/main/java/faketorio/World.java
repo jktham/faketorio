@@ -58,7 +58,7 @@ public class World {
 					itemStack.item = App.items.get(0);
 					itemStack.amount = 1000;
 					tile.inventory.add(itemStack);
-					tile.color = new Vector3f(0.2f, 0.2f, 0.5f);
+					tile.color = itemStack.item.color;
 				}
 				if ((x > size.x/2 + 10 && x < size.x/2 + 20 && y > size.y/2 && y < size.y/2 + 10)) {
 					tile.type = 1;
@@ -67,7 +67,7 @@ public class World {
 					itemStack.item = App.items.get(1);
 					itemStack.amount = 1000;
 					tile.inventory.add(itemStack);
-					tile.color = new Vector3f(0.5f, 0.2f, 0.2f);
+					tile.color = itemStack.item.color;
 				}
 				if ((x > size.x/2 + 20 && x < size.x/2 + 30 && y > size.y/2 && y < size.y/2 + 10)) {
 					tile.type = 2;
@@ -76,7 +76,7 @@ public class World {
 					itemStack.item = App.items.get(2);
 					itemStack.amount = 1000;
 					tile.inventory.add(itemStack);
-					tile.color = new Vector3f(0.05f, 0.05f, 0.05f);
+					tile.color = itemStack.item.color;
 				}
 				tiles.add(tile);
 			}
@@ -291,8 +291,12 @@ public class World {
 			if (tile.free) {
 				Entity entity = newEntity(tilePos, type);
 				if (entity != null) {
+					entity.ghost = true;
 					entity.name = "ghost " + entity.name;
 					entity.model.color = new Vector3f(1f, 1f, 1f);
+					for (int i=0;i<entity.model.meshColors.size();i++) {
+						entity.model.meshColors.set(i, new Vector3f(-1f));
+					}
 					entity.init();
 					ghost = entity;
 				}
