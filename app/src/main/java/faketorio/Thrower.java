@@ -1,24 +1,23 @@
 package faketorio;
 
 import org.joml.Matrix4f;
+import org.joml.Vector2i;
 import org.joml.Vector3f;
 
-public class Belt extends Entity {
+public class Thrower extends Entity {
+	int range = 5;
 
-	public Belt(Vector3f position, int rotation) {
+	public Thrower(Vector3f position, int rotation) {
 		super(position, rotation);
-		model = App.resources.beltModel.copy();
+		model = App.resources.throwerModel.copy();
 		model.transform = new Matrix4f().translate(position).translate(0.5f, 0.5f, 0.05f).rotate((float)Math.PI / 2f * rotation, 0f, 0f, 1f);
 		model.color = new Vector3f(0.2f, 0.2f, 0.2f);
-		model.meshHidden.set(1, true);
-		model.meshHidden.set(2, true);
-		model.meshHidden.set(3, true);
-		model.meshHidden.set(4, true);
 		model.meshColors.set(5, new Vector3f(0.4f, 0.4f, 0.4f));
-		name = "belt";
+		model.meshColors.set(6, new Vector3f(0.4f, 0.4f, 0.4f));
+		name = "thrower";
 		stackSize = 1;
 		inventorySize = 1;
-		type = 3;
+		type = 4;
 	}
 
 	public void update() {
@@ -41,9 +40,11 @@ public class Belt extends Entity {
 		}
 		if (empty) {
 			model.meshColors.set(5, new Vector3f(0.4f, 0.4f, 0.4f));
+			model.meshColors.set(6, new Vector3f(0.4f, 0.4f, 0.4f));
 		} else {
 			for (ItemStack itemStack : inventory) {
 				model.meshColors.set(5, itemStack.item.color);
+				model.meshColors.set(6, itemStack.item.color);
 			}
 		}
 
@@ -61,6 +62,20 @@ public class Belt extends Entity {
 				}
 			}
 		}
+	}
+	
+	public Vector2i getOutputTilePos() {
+		Vector2i outputTilePos = null;
+		if (rotation == 0) {
+			outputTilePos = App.world.worldToTilePos(position).add(0, -1 * range);
+		} else if (rotation == 1) {
+			outputTilePos = App.world.worldToTilePos(position).add(1 * range, 0);
+		} else if (rotation == 2) {
+			outputTilePos = App.world.worldToTilePos(position).add(0, 1 * range);
+		} else if (rotation == 3) {
+			outputTilePos = App.world.worldToTilePos(position).add(-1 * range, 0);
+		}
+		return outputTilePos;
 	}
 
 }

@@ -82,7 +82,10 @@ public class App {
 				player.selectedItem = key - 48;
 			}
 			if (key == GLFW_KEY_R && action == GLFW_PRESS) {
-				player.itemRotation = (player.itemRotation + 1) % 4;
+				player.itemRotation = player.itemRotation - 1;
+				if (player.itemRotation < 0) {
+					player.itemRotation = 3;
+				}
 			}
 			if (key == GLFW_KEY_Q && action == GLFW_PRESS) {
 				Entity entity = world.getEntity(world.worldToTilePos(camera.screenToWorldPos(cursorPos)));

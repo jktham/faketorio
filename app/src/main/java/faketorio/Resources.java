@@ -33,6 +33,9 @@ public class Resources {
 	public Model monkeModel;
 	public Model chestModel;
 	public Model beltModel;
+	public Model splitterModel;
+	public Model mergerModel;
+	public Model throwerModel;
 	
 	public void init() {
 		worldBaseShader = compileShader("shaders/world_base");
@@ -52,6 +55,9 @@ public class Resources {
 		monkeModel = loadModel(worldBaseShader, "models/monke.obj");
 		chestModel = loadModel(worldBaseShader, "models/chest.obj");
 		beltModel = loadModel(worldBaseShader, "models/belt.obj");
+		splitterModel = loadModel(worldBaseShader, "models/splitter.obj");
+		mergerModel = loadModel(worldBaseShader, "models/merger.obj");
+		throwerModel = loadModel(worldBaseShader, "models/thrower.obj");
 	}
 
 	public int compileShader(String path) {
@@ -170,6 +176,7 @@ public class Resources {
 						model.meshOffsets.add(verts.size());
 						model.meshTransforms.add(new Matrix4f());
 						model.meshColors.add(new Vector3f(-1f));
+						model.meshHidden.add(false);
 					} else if (lineType.equals("v")) {
 						ArrayList<Float> position = new ArrayList<Float>();
 						position.add(line.nextFloat());

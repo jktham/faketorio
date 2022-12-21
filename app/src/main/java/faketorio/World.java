@@ -202,7 +202,7 @@ public class World {
 			Entity entity = newEntity(tilePos, type);
 			if (entity != null) {
 				entity.init();
-				entities.add(entity);
+				entities.add(0, entity);
 				tile.free = false;
 			}
 		}
@@ -217,17 +217,14 @@ public class World {
 		} else if (type == 3) {
 			entity = new Belt(new Vector3f(tilePos.x, tilePos.y, 0f), App.player.itemRotation);
 		} else if (type == 4) {
-
+			entity = new Thrower(new Vector3f(tilePos.x, tilePos.y, 0f), App.player.itemRotation);
 		} else if (type == 5) {
-			
+			entity = new Splitter(new Vector3f(tilePos.x, tilePos.y, 0f), App.player.itemRotation);
 		} else if (type == 6) {
-			entity = new Cube(new Vector3f(tilePos.x, tilePos.y, 0f), App.player.itemRotation);
+			entity = new Merger(new Vector3f(tilePos.x, tilePos.y, 0f), App.player.itemRotation);
 		} else if (type == 7) {
-			entity = new Triangle(new Vector3f(tilePos.x, tilePos.y, 0f), App.player.itemRotation);
 		} else if (type == 8) {
-			entity = new Sphere(new Vector3f(tilePos.x, tilePos.y, 0f), App.player.itemRotation);
 		} else if (type == 9) {
-			entity = new Monke(new Vector3f(tilePos.x, tilePos.y, 0f), App.player.itemRotation);
 		}
 		return entity;
 	}
@@ -235,7 +232,7 @@ public class World {
 	public void placeEntity(Vector2i tilePos, Entity entity) {
 		Tile tile = getTile(tilePos);
 		if (tile.free) {
-			entities.add(entity);
+			entities.add(0, entity);
 			tile.free = false;
 		}
 	}
@@ -293,10 +290,11 @@ public class World {
 				if (entity != null) {
 					entity.ghost = true;
 					entity.name = "ghost " + entity.name;
-					entity.model.color = new Vector3f(1f, 1f, 1f);
-					for (int i=0;i<entity.model.meshColors.size();i++) {
-						entity.model.meshColors.set(i, new Vector3f(-1f));
-					}
+					entity.model.tint = new Vector3f(1.25f, 1.25f, 1.25f);
+					// entity.model.color = new Vector3f(1f, 1f, 1f);
+					// for (int i=0;i<entity.model.meshColors.size();i++) {
+					// 	entity.model.meshColors.set(i, new Vector3f(-1f));
+					// }
 					entity.init();
 					ghost = entity;
 				}

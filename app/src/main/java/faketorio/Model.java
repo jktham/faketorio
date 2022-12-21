@@ -17,6 +17,7 @@ public class Model {
 	ArrayList<Integer> meshSizes;
 	ArrayList<Matrix4f> meshTransforms;
 	ArrayList<Vector3f> meshColors;
+	ArrayList<Boolean> meshHidden;
 
 	Matrix4f transform;
 	Vector3f color;
@@ -27,6 +28,7 @@ public class Model {
 		meshSizes = new ArrayList<Integer>();
 		meshTransforms = new ArrayList<Matrix4f>();
 		meshColors = new ArrayList<Vector3f>();
+		meshHidden = new ArrayList<Boolean>();
 
 		transform = new Matrix4f();
 		color = new Vector3f(-1f);
@@ -48,6 +50,10 @@ public class Model {
 		for (int i=0;i<meshColors.size();i++) {
 			model.meshColors.add(meshColors.get(i));
 		}
+		model.meshHidden = new ArrayList<Boolean>();
+		for (int i=0;i<meshHidden.size();i++) {
+			model.meshHidden.add(meshHidden.get(i));
+		}
 		model.transform = new Matrix4f();
 		model.color = new Vector3f(-1f);
 		model.tint = new Vector3f(-1f);
@@ -56,6 +62,10 @@ public class Model {
 
 	public void draw() {
 		for (int i=0;i<meshOffsets.size();i++) {
+			if (meshHidden.get(i)) {
+				continue;
+			}
+
 			if (glGetInteger(GL_CURRENT_PROGRAM) != shader) {
 				glUseProgram(shader);
 			}

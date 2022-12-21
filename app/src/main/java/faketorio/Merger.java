@@ -1,81 +1,81 @@
 package faketorio;
 
 import org.joml.Matrix4f;
-import org.joml.Vector2f;
 import org.joml.Vector2i;
 import org.joml.Vector3f;
-import org.joml.Vector4f;
 
-import java.util.ArrayList;
+public class Merger extends Entity {
+	boolean lastInputLeft = false;
+	boolean firstInput = true;
 
-public class Entity {
-	Vector3f position;
-	int rotation;
-
-	Model model;
-	Label label;
-
-	String name;
-	ArrayList<ItemStack> inventory;
-	int stackSize;
-	int inventorySize;
-	int type;
-	int sleepTicks;
-	boolean ghost;
-
-	public Entity(Vector3f position, int rotation) {
-		this.position = new Vector3f(position);
-		this.rotation = rotation;
-		model = App.resources.emptyModel.copy();
-		model.transform = new Matrix4f().translate(position).rotate((float)Math.PI / 2f * rotation, 0f, 0f, 1f);
-		model.color = new Vector3f(-1f, -1f, -1f);
-		name = "entity";
-		inventory = new ArrayList<ItemStack>();
-		stackSize = 100;
-		inventorySize = 10;
-		type = 0;
-		sleepTicks = 0;
-		ghost = false;
-		label = new Label() {
-			public void update() {
-				if (tether != null) {
-					Vector4f tetherPos = new Vector4f(0f, 0f, 0f, 1f).mul(new Matrix4f().translate(tether.position));
-					Vector2f screenTetherPos = App.camera.worldToScreenPos(new Vector3f(tetherPos.x, tetherPos.y, tetherPos.z).add(tetherWorldOffset)).add(tetherScreenOffset);
-					position = new Vector2f(screenTetherPos.x, screenTetherPos.y);
-				}
-				model = new Matrix4f().translate(new Vector3f(position.x, position.y, 1f)).scale(new Vector3f(size.x, size.y, 1f));
-				text = "" + name + "\n";
-				for (ItemStack itemStack : inventory) {
-					text += itemStack.item.id + ": " + itemStack.item.name + ": " + itemStack.amount + "\n";
-				}
-				Tile tile = App.world.getTile(App.world.worldToTilePos(Entity.this.position));
-				if (tile != null) {
-					text += tile.name + "\n";
-					for (ItemStack itemStack : tile.inventory) {
-						text += itemStack.item.id + ": " + itemStack.item.name + ": " + itemStack.amount + "\n";
-					}
-				}
-				updateMesh();
-			}
-		};
-		label.size = new Vector2f(16f);
-		label.tether = this;
-		label.color = new Vector3f(1f);
-		label.fontAtlas = App.resources.arialTexture;
-		label.hidden = true;
-		label.init();
-		App.ui.elements.add(label);
-	}
-
-	public void init() {
-		
+	public Merger(Vector3f position, int rotation) {
+		super(position, rotation);
+		model = App.resources.mergerModel.copy();
+		model.transform = new Matrix4f().translate(position).translate(0.5f, 0.5f, 0.05f).rotate((float)Math.PI / 2f * rotation, 0f, 0f, 1f);
+		model.color = new Vector3f(0.2f, 0.2f, 0.2f);
+		model.meshColors.set(5, new Vector3f(0.4f, 0.4f, 0.4f));
+		model.meshColors.set(6, new Vector3f(0.4f, 0.4f, 0.4f));
+		model.meshColors.set(7, new Vector3f(0.4f, 0.4f, 0.4f));
+		name = "merger";
+		stackSize = 1;
+		inventorySize = 1;
+		type = 6;
 	}
 
 	public void update() {
+		updateBorders();
 
+		if (ghost) {
+			return;
+		}
+		
+		if (sleepTicks > 0) {
+			sleepTicks -= 1;
+			return;
+		}
+
+		boolean empty = true;
+		for (ItemStack itemStack : inventory) {
+			if (itemStack.amount > 0) {
+				empty = false;
+			}
+		}
+		if (empty) {
+			model.meshColors.set(7, new Vector3f(0.4f, 0.4f, 0.4f));
+		} else {
+			for (ItemStack itemStack : inventory) {
+				model.meshColors.set(7, itemStack.item.color);
+			}
+		}
+
+		if (App.tick % 12 == 0) {
+			Entity outputEntity = App.world.getEntity(getOutputTilePos());
+			if (outputEntity != null) {
+				for (ItemStack itemStack : inventory) {
+					if (itemStack.amount > 0) {
+						if (outputEntity.canBeAdded(itemStack.item.id, 1, this)) {
+							removeItem(itemStack.item.id, 1);
+							outputEntity.addItem(itemStack.item.id, 1, this);
+							break;
+						}
+					}
+				}
+			}
+		}
 	}
 
 	public boolean canBeAdded(int id, int amount, Entity source) {
+		if (!firstInput) {
+			if (lastInputLeft) {
+				if (!isRightInputDirection(source)) {
+					return false;
+				}
+			} else {
+				if (!isLeftInputDirection(source)) {
+					return false;
+				}
+			}
+		}
 		// only amount 1 supported
 		if (id == -1) {
 			return true;
@@ -103,6 +103,14 @@ public class Entity {
 	}
 
 	public void addItem(int id, int amount, Entity source) {
+		if (firstInput) {
+			firstInput = false;
+		}
+		if (isLeftInputDirection(source)) {
+			lastInputLeft = true;
+		} else {
+			lastInputLeft = false;
+		}
 		boolean found = false;
 		for (ItemStack itemStack : inventory) {
 			if (itemStack.item.id == id) {
@@ -117,36 +125,6 @@ public class Entity {
 			inventory.add(itemStack);
 		}
 		sleepTicks = 1;
-	}
-
-	public void removeItem(int id, int amount) {
-		for (ItemStack itemStack : inventory) {
-			if (itemStack.item.id == id) {
-				itemStack.amount -= amount;
-				if (itemStack.amount <= 0) {
-					inventory.remove(itemStack);
-					break;
-				}
-			}
-		}
-	}
-	
-	public Vector2i getOutputTilePos() {
-		Vector2i outputTilePos = null;
-		if (rotation == 0) {
-			outputTilePos = App.world.worldToTilePos(position).add(0, -1);
-		} else if (rotation == 1) {
-			outputTilePos = App.world.worldToTilePos(position).add(1, 0);
-		} else if (rotation == 2) {
-			outputTilePos = App.world.worldToTilePos(position).add(0, 1);
-		} else if (rotation == 3) {
-			outputTilePos = App.world.worldToTilePos(position).add(-1, 0);
-		}
-		return outputTilePos;
-	}
-
-	public void draw() {
-		model.draw();
 	}
 
 	public void updateBorders() {
@@ -186,51 +164,75 @@ public class Entity {
 		if (App.world.ghost != null && App.world.worldToTilePos(App.world.ghost.position).equals(App.world.worldToTilePos(position).add(-1, 0)) && App.world.ghost.getOutputTilePos().equals(App.world.worldToTilePos(position))) {
 			model.meshHidden.set(getBorderIndex(3), false);
 		}
-	}
 
-	public int getBorderIndex(int dir) {
-		if (dir == 0) {
-			if (rotation == 0) {
-				return 2;
-			} else if (rotation == 1) {
-				return 3;
-			} else if (rotation == 2) {
-				return 4;
-			} else if (rotation == 3) {
-				return 1;
-			}
-		} else if (dir == 1) {
-			if (rotation == 0) {
-				return 3;
-			} else if (rotation == 1) {
-				return 4;
-			} else if (rotation == 2) {
-				return 1;
-			} else if (rotation == 3) {
-				return 2;
-			}
-		} else if (dir == 2) {
-			if (rotation == 0) {
-				return 4;
-			} else if (rotation == 1) {
-				return 1;
-			} else if (rotation == 2) {
-				return 2;
-			} else if (rotation == 3) {
-				return 3;
-			}
-		} else if (dir == 3) {
-			if (rotation == 0) {
-				return 1;
-			} else if (rotation == 1) {
-				return 2;
-			} else if (rotation == 2) {
-				return 3;
-			} else if (rotation == 3) {
-				return 4;
+		if (!firstInput) {
+			if (lastInputLeft) {
+				model.meshHidden.set(3, true);
+			} else {
+				model.meshHidden.set(1, true);
 			}
 		}
-		return 0;
+		model.meshHidden.set(2, true);
+	}
+
+	public boolean isLeftInputDirection(Entity source) {
+		Vector2i inputDir = App.world.worldToTilePos(position).sub(App.world.worldToTilePos(source.position));
+		if (rotation == 0) {
+			if (inputDir.x < 0) {
+				return true;
+			} else {
+				return false;
+			}
+		} else if (rotation == 1) {
+			if (inputDir.y < 0) {
+				return true;
+			} else {
+				return false;
+			}
+		} else if (rotation == 2) {
+			if (inputDir.x > 0) {
+				return true;
+			} else {
+				return false;
+			}
+		} else if (rotation == 3) {
+			if (inputDir.y > 0) {
+				return true;
+			} else {
+				return false;
+			}
+		}
+		return false;
+	}
+
+	public boolean isRightInputDirection(Entity source) {
+		Vector2i inputDir = App.world.worldToTilePos(position).sub(App.world.worldToTilePos(source.position));
+		if (rotation == 0) {
+			if (inputDir.x > 0) {
+				return true;
+			} else {
+				return false;
+			}
+		} else if (rotation == 1) {
+			if (inputDir.y > 0) {
+				return true;
+			} else {
+				return false;
+			}
+		} else if (rotation == 2) {
+			if (inputDir.x < 0) {
+				return true;
+			} else {
+				return false;
+			}
+		} else if (rotation == 3) {
+			if (inputDir.y < 0) {
+				return true;
+			} else {
+				return false;
+			}
+		}
+		return false;
 	}
 
 }

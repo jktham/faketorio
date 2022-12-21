@@ -11,7 +11,7 @@ public class Sphere extends Entity {
 		model.transform = new Matrix4f().translate(position).translate(0.5f, 0.5f, 1.0f).rotate((float)Math.PI / 2f * rotation, 0f, 0f, 1f);
 		model.color = new Vector3f(1f, 0f, 1f);
 		name = "sphere";
-		type = 8;
+		type = 99;
 	}
 
 	public void update() {
