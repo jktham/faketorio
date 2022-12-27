@@ -4,23 +4,24 @@ import org.joml.Matrix4f;
 import org.joml.Vector2i;
 import org.joml.Vector3f;
 
-public class Thrower extends Entity {
+public class Thrower extends Building {
 	int range = 5;
 
-	public Thrower(Vector3f position, int rotation) {
-		super(position, rotation);
+	public Thrower(Vector2i tilePos, int rotation) {
+		super(tilePos, rotation);
 		model = App.resources.throwerModel.copy();
-		model.transform = new Matrix4f().translate(position).translate(0.5f, 0.5f, 0.05f).rotate((float)Math.PI / 2f * rotation, 0f, 0f, 1f);
+		model.transform = new Matrix4f().translate(worldPos).translate(0.5f, 0.5f, 0.05f).rotate((float)Math.PI / 2f * rotation, 0f, 0f, 1f);
 		model.color = new Vector3f(0.2f, 0.2f, 0.2f);
 		model.meshColors.set(5, new Vector3f(0.4f, 0.4f, 0.4f));
 		model.meshColors.set(6, new Vector3f(0.4f, 0.4f, 0.4f));
 		name = "thrower";
-		stackSize = 1;
-		inventorySize = 1;
+		inventory.stackSize = 1;
+		inventory.inventorySize = 1;
 		type = 4;
 	}
 
 	public void update() {
+		output = App.world.getBuilding(getOutputTilePos());
 		updateBorders();
 
 		if (ghost) {
@@ -33,8 +34,8 @@ public class Thrower extends Entity {
 		}
 
 		boolean empty = true;
-		for (ItemStack itemStack : inventory) {
-			if (itemStack.amount > 0) {
+		for (ItemStack stack : inventory.stacks) {
+			if (stack.amount > 0) {
 				empty = false;
 			}
 		}
@@ -42,20 +43,19 @@ public class Thrower extends Entity {
 			model.meshColors.set(5, new Vector3f(0.4f, 0.4f, 0.4f));
 			model.meshColors.set(6, new Vector3f(0.4f, 0.4f, 0.4f));
 		} else {
-			for (ItemStack itemStack : inventory) {
-				model.meshColors.set(5, itemStack.item.color);
-				model.meshColors.set(6, itemStack.item.color);
+			for (ItemStack stack : inventory.stacks) {
+				model.meshColors.set(5, stack.item.color);
+				model.meshColors.set(6, stack.item.color);
 			}
 		}
 
 		if (App.tick % 12 == 0) {
-			Entity outputEntity = App.world.getEntity(getOutputTilePos());
-			if (outputEntity != null) {
-				for (ItemStack itemStack : inventory) {
-					if (itemStack.amount > 0) {
-						if (outputEntity.canBeAdded(itemStack.item.id, 1, this)) {
-							removeItem(itemStack.item.id, 1);
-							outputEntity.addItem(itemStack.item.id, 1, this);
+			if (output != null) {
+				for (ItemStack stack : inventory.stacks) {
+					if (stack.amount > 0) {
+						if (output.canBeAdded(stack.item.id, 1, this)) {
+							removeItem(stack.item.id, 1);
+							output.addItem(stack.item.id, 1, this);
 							break;
 						}
 					}
@@ -67,13 +67,13 @@ public class Thrower extends Entity {
 	public Vector2i getOutputTilePos() {
 		Vector2i outputTilePos = null;
 		if (rotation == 0) {
-			outputTilePos = App.world.worldToTilePos(position).add(0, -1 * range);
+			outputTilePos = new Vector2i(tilePos).add(0, -range);
 		} else if (rotation == 1) {
-			outputTilePos = App.world.worldToTilePos(position).add(1 * range, 0);
+			outputTilePos = new Vector2i(tilePos).add(range, 0);
 		} else if (rotation == 2) {
-			outputTilePos = App.world.worldToTilePos(position).add(0, 1 * range);
+			outputTilePos = new Vector2i(tilePos).add(0, range);
 		} else if (rotation == 3) {
-			outputTilePos = App.world.worldToTilePos(position).add(-1 * range, 0);
+			outputTilePos = new Vector2i(tilePos).add(-range, 0);
 		}
 		return outputTilePos;
 	}

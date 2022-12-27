@@ -88,10 +88,10 @@ public class App {
 				}
 			}
 			if (key == GLFW_KEY_Q && action == GLFW_PRESS) {
-				Entity entity = world.getEntity(world.worldToTilePos(camera.screenToWorldPos(cursorPos)));
-				if (entity != null) {
-					player.selectedItem = entity.type;
-					player.itemRotation = entity.rotation;
+				Building building = world.getBuilding(world.worldToTilePos(camera.screenToWorldPos(cursorPos)));
+				if (building != null) {
+					player.selectedItem = building.type;
+					player.itemRotation = building.rotation;
 				} else {
 					player.selectedItem = 0;
 				}
@@ -186,7 +186,7 @@ public class App {
 		world = new World();
 		world.size = new Vector2i(100, 100);
 		world.init();
-		player = new Player(new Vector3f(0f, 0f, 0f), 0);
+		player = new Player(new Vector3f(0f, 0f, 0f));
 		player.init();
 		camera = new Camera();
 
@@ -226,7 +226,7 @@ public class App {
 				}
 
 				text += player.selectedItem + ", " + player.itemRotation + "\n";
-				text += world.entities.size() + "\n";
+				text += world.buildings.size() + "\n";
 				text += ui.elements.size() + "\n";
 
 				updateMesh();

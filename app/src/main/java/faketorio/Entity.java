@@ -2,57 +2,49 @@ package faketorio;
 
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
-import org.joml.Vector2i;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 
-import java.util.ArrayList;
-
 public class Entity {
-	Vector3f position;
-	int rotation;
+	Vector3f worldPos;
 
 	Model model;
 	Label label;
 
 	String name;
-	ArrayList<ItemStack> inventory;
-	int stackSize;
-	int inventorySize;
+	Inventory inventory;
+
 	int type;
 	int sleepTicks;
-	boolean ghost;
 
-	public Entity(Vector3f position, int rotation) {
-		this.position = new Vector3f(position);
-		this.rotation = rotation;
+	public Entity(Vector3f worldPos) {
+		this.worldPos = new Vector3f(worldPos);
 		model = App.resources.emptyModel.copy();
-		model.transform = new Matrix4f().translate(position).rotate((float)Math.PI / 2f * rotation, 0f, 0f, 1f);
+		model.transform = new Matrix4f().translate(worldPos);
 		model.color = new Vector3f(-1f, -1f, -1f);
 		name = "entity";
-		inventory = new ArrayList<ItemStack>();
-		stackSize = 100;
-		inventorySize = 10;
+		inventory = new Inventory();
+		inventory.stackSize = 100;
+		inventory.inventorySize = 10;
 		type = 0;
 		sleepTicks = 0;
-		ghost = false;
 		label = new Label() {
 			public void update() {
 				if (tether != null) {
-					Vector4f tetherPos = new Vector4f(0f, 0f, 0f, 1f).mul(new Matrix4f().translate(tether.position));
+					Vector4f tetherPos = new Vector4f(0f, 0f, 0f, 1f).mul(new Matrix4f().translate(tether.worldPos));
 					Vector2f screenTetherPos = App.camera.worldToScreenPos(new Vector3f(tetherPos.x, tetherPos.y, tetherPos.z).add(tetherWorldOffset)).add(tetherScreenOffset);
 					position = new Vector2f(screenTetherPos.x, screenTetherPos.y);
 				}
 				model = new Matrix4f().translate(new Vector3f(position.x, position.y, 1f)).scale(new Vector3f(size.x, size.y, 1f));
 				text = "" + name + "\n";
-				for (ItemStack itemStack : inventory) {
-					text += itemStack.item.id + ": " + itemStack.item.name + ": " + itemStack.amount + "\n";
+				for (ItemStack stack : inventory.stacks) {
+					text += stack.item.id + ": " + stack.item.name + ": " + stack.amount + "\n";
 				}
-				Tile tile = App.world.getTile(App.world.worldToTilePos(Entity.this.position));
+				Tile tile = App.world.getTile(App.world.worldToTilePos(Entity.this.worldPos));
 				if (tile != null) {
 					text += tile.name + "\n";
-					for (ItemStack itemStack : tile.inventory) {
-						text += itemStack.item.id + ": " + itemStack.item.name + ": " + itemStack.amount + "\n";
+					for (ItemStack stack : tile.inventory.stacks) {
+						text += stack.item.id + ": " + stack.item.name + ": " + stack.amount + "\n";
 					}
 				}
 				updateMesh();
@@ -75,162 +67,21 @@ public class Entity {
 
 	}
 
-	public boolean canBeAdded(int id, int amount, Entity source) {
-		// only amount 1 supported
-		if (id == -1) {
-			return true;
-		}
-		int stackCount = 0;
-		for (ItemStack itemStack : inventory) {
-			if (itemStack.item.id != id || itemStack.amount >= stackSize) {
-				stackCount += 1;
-			}
-		}
-		if (stackCount >= inventorySize) {
-			return false;
-		}
-
-		boolean found = false;
-		for (ItemStack itemStack : inventory) {
-			if (itemStack.item.id == id) {
-				found = true;
-				if (itemStack.amount < stackSize) {
-					return true;
-				}
-			}
-		}
-		return !found;
-	}
-
-	public void addItem(int id, int amount, Entity source) {
-		boolean found = false;
-		for (ItemStack itemStack : inventory) {
-			if (itemStack.item.id == id) {
-				itemStack.amount += amount;
-				found = true;
-			}
-		}
-		if (!found) {
-			ItemStack itemStack = new ItemStack();
-			itemStack.item = App.items.get(id);
-			itemStack.amount = amount;
-			inventory.add(itemStack);
-		}
-		sleepTicks = 1;
-	}
-
-	public void removeItem(int id, int amount) {
-		for (ItemStack itemStack : inventory) {
-			if (itemStack.item.id == id) {
-				itemStack.amount -= amount;
-				if (itemStack.amount <= 0) {
-					inventory.remove(itemStack);
-					break;
-				}
-			}
-		}
-	}
-	
-	public Vector2i getOutputTilePos() {
-		Vector2i outputTilePos = null;
-		if (rotation == 0) {
-			outputTilePos = App.world.worldToTilePos(position).add(0, -1);
-		} else if (rotation == 1) {
-			outputTilePos = App.world.worldToTilePos(position).add(1, 0);
-		} else if (rotation == 2) {
-			outputTilePos = App.world.worldToTilePos(position).add(0, 1);
-		} else if (rotation == 3) {
-			outputTilePos = App.world.worldToTilePos(position).add(-1, 0);
-		}
-		return outputTilePos;
-	}
-
 	public void draw() {
 		model.draw();
 	}
 
-	public void updateBorders() {
-		model.meshHidden.set(1, true);
-		model.meshHidden.set(2, true);
-		model.meshHidden.set(3, true);
-		model.meshHidden.set(4, true);
-
-		if (App.world.getEntity(getOutputTilePos()) != null && App.world.getEntity(getOutputTilePos()).canBeAdded(-1, 0, this)) {
-			model.meshHidden.set(4, false);
-		}
-		if (App.world.ghost != null && getOutputTilePos().equals(App.world.worldToTilePos(App.world.ghost.position)) && App.world.ghost.canBeAdded(-1, 0, this)) {
-			model.meshHidden.set(4, false);
-		}
-
-		if (App.world.getEntity(App.world.worldToTilePos(position).add(0, 1)) != null && App.world.getEntity(App.world.worldToTilePos(position).add(0, 1)).getOutputTilePos().equals(App.world.worldToTilePos(position))) {
-			model.meshHidden.set(getBorderIndex(0), false);
-		}
-		if (App.world.getEntity(App.world.worldToTilePos(position).add(1, 0)) != null && App.world.getEntity(App.world.worldToTilePos(position).add(1, 0)).getOutputTilePos().equals(App.world.worldToTilePos(position))) {
-			model.meshHidden.set(getBorderIndex(1), false);
-		}
-		if (App.world.getEntity(App.world.worldToTilePos(position).add(0, -1)) != null && App.world.getEntity(App.world.worldToTilePos(position).add(0, -1)).getOutputTilePos().equals(App.world.worldToTilePos(position))) {
-			model.meshHidden.set(getBorderIndex(2), false);
-		}
-		if (App.world.getEntity(App.world.worldToTilePos(position).add(-1, 0)) != null && App.world.getEntity(App.world.worldToTilePos(position).add(-1, 0)).getOutputTilePos().equals(App.world.worldToTilePos(position))) {
-			model.meshHidden.set(getBorderIndex(3), false);
-		}
-		if (App.world.ghost != null && App.world.worldToTilePos(App.world.ghost.position).equals(App.world.worldToTilePos(position).add(0, 1)) && App.world.ghost.getOutputTilePos().equals(App.world.worldToTilePos(position))) {
-			model.meshHidden.set(getBorderIndex(0), false);
-		}
-		if (App.world.ghost != null && App.world.worldToTilePos(App.world.ghost.position).equals(App.world.worldToTilePos(position).add(1, 0)) && App.world.ghost.getOutputTilePos().equals(App.world.worldToTilePos(position))) {
-			model.meshHidden.set(getBorderIndex(1), false);
-		}
-		if (App.world.ghost != null && App.world.worldToTilePos(App.world.ghost.position).equals(App.world.worldToTilePos(position).add(0, -1)) && App.world.ghost.getOutputTilePos().equals(App.world.worldToTilePos(position))) {
-			model.meshHidden.set(getBorderIndex(2), false);
-		}
-		if (App.world.ghost != null && App.world.worldToTilePos(App.world.ghost.position).equals(App.world.worldToTilePos(position).add(-1, 0)) && App.world.ghost.getOutputTilePos().equals(App.world.worldToTilePos(position))) {
-			model.meshHidden.set(getBorderIndex(3), false);
-		}
+	public boolean canBeAdded(int id, int amount, Building source) {
+		return inventory.canBeAdded(id, amount);
 	}
 
-	public int getBorderIndex(int dir) {
-		if (dir == 0) {
-			if (rotation == 0) {
-				return 2;
-			} else if (rotation == 1) {
-				return 3;
-			} else if (rotation == 2) {
-				return 4;
-			} else if (rotation == 3) {
-				return 1;
-			}
-		} else if (dir == 1) {
-			if (rotation == 0) {
-				return 3;
-			} else if (rotation == 1) {
-				return 4;
-			} else if (rotation == 2) {
-				return 1;
-			} else if (rotation == 3) {
-				return 2;
-			}
-		} else if (dir == 2) {
-			if (rotation == 0) {
-				return 4;
-			} else if (rotation == 1) {
-				return 1;
-			} else if (rotation == 2) {
-				return 2;
-			} else if (rotation == 3) {
-				return 3;
-			}
-		} else if (dir == 3) {
-			if (rotation == 0) {
-				return 1;
-			} else if (rotation == 1) {
-				return 2;
-			} else if (rotation == 2) {
-				return 3;
-			} else if (rotation == 3) {
-				return 4;
-			}
-		}
-		return 0;
+	public void addItem(int id, int amount, Building source) {
+		inventory.addItem(id, amount);
+		sleepTicks = 1;
+	}
+
+	public void removeItem(int id, int amount) {
+		inventory.removeItem(id, amount);
 	}
 
 }

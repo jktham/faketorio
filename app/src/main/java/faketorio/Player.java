@@ -5,17 +5,27 @@ import org.joml.Matrix4f;
 
 import static org.lwjgl.glfw.GLFW.*;
 
-public class Player extends Entity {
+public class Player {
 	float speed = 5.0f;
 	int selectedItem = 1;
 	int itemRotation = 0;
 
-	public Player(Vector3f position, int rotation) {
-		super(position, rotation);
+	Model model;
+
+	String name;
+
+	Vector3f position;
+
+	public Player(Vector3f position) {
+		this.position = position;
 		model = App.resources.playerModel.copy();
 		model.transform = new Matrix4f().translate(position).translate(0f, 0f, 0.5f);
 		model.color = new Vector3f(1f, 0f, 0f);
 		name = "player";
+	}
+
+	public void init() {
+		
 	}
 
 	public void update() {
@@ -39,5 +49,9 @@ public class Player extends Entity {
 		}
 
 		model.transform = new Matrix4f().translate(position).translate(0f, 0f, 0.5f);
+	}
+
+	public void draw() {
+		model.draw();
 	}
 }

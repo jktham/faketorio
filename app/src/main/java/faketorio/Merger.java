@@ -4,25 +4,26 @@ import org.joml.Matrix4f;
 import org.joml.Vector2i;
 import org.joml.Vector3f;
 
-public class Merger extends Entity {
+public class Merger extends Building {
 	boolean lastInputLeft = false;
 	boolean firstInput = true;
 
-	public Merger(Vector3f position, int rotation) {
-		super(position, rotation);
+	public Merger(Vector2i tilePos, int rotation) {
+		super(tilePos, rotation);
 		model = App.resources.mergerModel.copy();
-		model.transform = new Matrix4f().translate(position).translate(0.5f, 0.5f, 0.05f).rotate((float)Math.PI / 2f * rotation, 0f, 0f, 1f);
+		model.transform = new Matrix4f().translate(worldPos).translate(0.5f, 0.5f, 0.05f).rotate((float)Math.PI / 2f * rotation, 0f, 0f, 1f);
 		model.color = new Vector3f(0.2f, 0.2f, 0.2f);
 		model.meshColors.set(5, new Vector3f(0.4f, 0.4f, 0.4f));
 		model.meshColors.set(6, new Vector3f(0.4f, 0.4f, 0.4f));
 		model.meshColors.set(7, new Vector3f(0.4f, 0.4f, 0.4f));
 		name = "merger";
-		stackSize = 1;
-		inventorySize = 1;
+		inventory.stackSize = 1;
+		inventory.inventorySize = 1;
 		type = 6;
 	}
 
 	public void update() {
+		output = App.world.getBuilding(getOutputTilePos());
 		updateBorders();
 
 		if (ghost) {
@@ -35,27 +36,26 @@ public class Merger extends Entity {
 		}
 
 		boolean empty = true;
-		for (ItemStack itemStack : inventory) {
-			if (itemStack.amount > 0) {
+		for (ItemStack stack : inventory.stacks) {
+			if (stack.amount > 0) {
 				empty = false;
 			}
 		}
 		if (empty) {
 			model.meshColors.set(7, new Vector3f(0.4f, 0.4f, 0.4f));
 		} else {
-			for (ItemStack itemStack : inventory) {
-				model.meshColors.set(7, itemStack.item.color);
+			for (ItemStack stack : inventory.stacks) {
+				model.meshColors.set(7, stack.item.color);
 			}
 		}
 
 		if (App.tick % 12 == 0) {
-			Entity outputEntity = App.world.getEntity(getOutputTilePos());
-			if (outputEntity != null) {
-				for (ItemStack itemStack : inventory) {
-					if (itemStack.amount > 0) {
-						if (outputEntity.canBeAdded(itemStack.item.id, 1, this)) {
-							removeItem(itemStack.item.id, 1);
-							outputEntity.addItem(itemStack.item.id, 1, this);
+			if (output != null) {
+				for (ItemStack stack : inventory.stacks) {
+					if (stack.amount > 0) {
+						if (output.canBeAdded(stack.item.id, 1, this)) {
+							removeItem(stack.item.id, 1);
+							output.addItem(stack.item.id, 1, this);
 							break;
 						}
 					}
@@ -64,7 +64,7 @@ public class Merger extends Entity {
 		}
 	}
 
-	public boolean canBeAdded(int id, int amount, Entity source) {
+	public boolean canBeAdded(int id, int amount, Building source) {
 		if (!firstInput) {
 			if (lastInputLeft) {
 				if (!isRightInputDirection(source)) {
@@ -76,33 +76,10 @@ public class Merger extends Entity {
 				}
 			}
 		}
-		// only amount 1 supported
-		if (id == -1) {
-			return true;
-		}
-		int stackCount = 0;
-		for (ItemStack itemStack : inventory) {
-			if (itemStack.item.id != id || itemStack.amount >= stackSize) {
-				stackCount += 1;
-			}
-		}
-		if (stackCount >= inventorySize) {
-			return false;
-		}
-
-		boolean found = false;
-		for (ItemStack itemStack : inventory) {
-			if (itemStack.item.id == id) {
-				found = true;
-				if (itemStack.amount < stackSize) {
-					return true;
-				}
-			}
-		}
-		return !found;
+		return inventory.canBeAdded(id, amount);
 	}
 
-	public void addItem(int id, int amount, Entity source) {
+	public void addItem(int id, int amount, Building source) {
 		if (firstInput) {
 			firstInput = false;
 		}
@@ -111,19 +88,7 @@ public class Merger extends Entity {
 		} else {
 			lastInputLeft = false;
 		}
-		boolean found = false;
-		for (ItemStack itemStack : inventory) {
-			if (itemStack.item.id == id) {
-				itemStack.amount += amount;
-				found = true;
-			}
-		}
-		if (!found) {
-			ItemStack itemStack = new ItemStack();
-			itemStack.item = App.items.get(id);
-			itemStack.amount = amount;
-			inventory.add(itemStack);
-		}
+		inventory.addItem(id, amount);
 		sleepTicks = 1;
 	}
 
@@ -133,35 +98,35 @@ public class Merger extends Entity {
 		model.meshHidden.set(3, true);
 		model.meshHidden.set(4, true);
 
-		if (App.world.getEntity(getOutputTilePos()) != null && App.world.getEntity(getOutputTilePos()).canBeAdded(-1, 0, this)) {
+		if (output != null && output.canBeAdded(-1, 0, this)) {
 			model.meshHidden.set(4, false);
 		}
-		if (App.world.ghost != null && getOutputTilePos().equals(App.world.worldToTilePos(App.world.ghost.position)) && App.world.ghost.canBeAdded(-1, 0, this)) {
+		if (App.world.ghost != null && getOutputTilePos().equals(App.world.ghost.tilePos) && App.world.ghost.canBeAdded(-1, 0, this)) {
 			model.meshHidden.set(4, false);
 		}
 
-		if (App.world.getEntity(App.world.worldToTilePos(position).add(0, 1)) != null && App.world.getEntity(App.world.worldToTilePos(position).add(0, 1)).getOutputTilePos().equals(App.world.worldToTilePos(position))) {
+		if (App.world.getBuilding(new Vector2i(tilePos).add(0, 1)) != null && App.world.getBuilding(new Vector2i(tilePos).add(0, 1)).getOutputTilePos().equals(tilePos)) {
 			model.meshHidden.set(getBorderIndex(0), false);
 		}
-		if (App.world.getEntity(App.world.worldToTilePos(position).add(1, 0)) != null && App.world.getEntity(App.world.worldToTilePos(position).add(1, 0)).getOutputTilePos().equals(App.world.worldToTilePos(position))) {
+		if (App.world.getBuilding(new Vector2i(tilePos).add(1, 0)) != null && App.world.getBuilding(new Vector2i(tilePos).add(1, 0)).getOutputTilePos().equals(tilePos)) {
 			model.meshHidden.set(getBorderIndex(1), false);
 		}
-		if (App.world.getEntity(App.world.worldToTilePos(position).add(0, -1)) != null && App.world.getEntity(App.world.worldToTilePos(position).add(0, -1)).getOutputTilePos().equals(App.world.worldToTilePos(position))) {
+		if (App.world.getBuilding(new Vector2i(tilePos).add(0, -1)) != null && App.world.getBuilding(new Vector2i(tilePos).add(0, -1)).getOutputTilePos().equals(tilePos)) {
 			model.meshHidden.set(getBorderIndex(2), false);
 		}
-		if (App.world.getEntity(App.world.worldToTilePos(position).add(-1, 0)) != null && App.world.getEntity(App.world.worldToTilePos(position).add(-1, 0)).getOutputTilePos().equals(App.world.worldToTilePos(position))) {
+		if (App.world.getBuilding(new Vector2i(tilePos).add(-1, 0)) != null && App.world.getBuilding(new Vector2i(tilePos).add(-1, 0)).getOutputTilePos().equals(tilePos)) {
 			model.meshHidden.set(getBorderIndex(3), false);
 		}
-		if (App.world.ghost != null && App.world.worldToTilePos(App.world.ghost.position).equals(App.world.worldToTilePos(position).add(0, 1)) && App.world.ghost.getOutputTilePos().equals(App.world.worldToTilePos(position))) {
+		if (App.world.ghost != null && App.world.ghost.tilePos.equals(new Vector2i(tilePos).add(0, 1)) && App.world.ghost.getOutputTilePos().equals(tilePos)) {
 			model.meshHidden.set(getBorderIndex(0), false);
 		}
-		if (App.world.ghost != null && App.world.worldToTilePos(App.world.ghost.position).equals(App.world.worldToTilePos(position).add(1, 0)) && App.world.ghost.getOutputTilePos().equals(App.world.worldToTilePos(position))) {
+		if (App.world.ghost != null && App.world.ghost.tilePos.equals(new Vector2i(tilePos).add(1, 0)) && App.world.ghost.getOutputTilePos().equals(tilePos)) {
 			model.meshHidden.set(getBorderIndex(1), false);
 		}
-		if (App.world.ghost != null && App.world.worldToTilePos(App.world.ghost.position).equals(App.world.worldToTilePos(position).add(0, -1)) && App.world.ghost.getOutputTilePos().equals(App.world.worldToTilePos(position))) {
+		if (App.world.ghost != null && App.world.ghost.tilePos.equals(new Vector2i(tilePos).add(0, -1)) && App.world.ghost.getOutputTilePos().equals(tilePos)) {
 			model.meshHidden.set(getBorderIndex(2), false);
 		}
-		if (App.world.ghost != null && App.world.worldToTilePos(App.world.ghost.position).equals(App.world.worldToTilePos(position).add(-1, 0)) && App.world.ghost.getOutputTilePos().equals(App.world.worldToTilePos(position))) {
+		if (App.world.ghost != null && App.world.ghost.tilePos.equals(new Vector2i(tilePos).add(-1, 0)) && App.world.ghost.getOutputTilePos().equals(tilePos)) {
 			model.meshHidden.set(getBorderIndex(3), false);
 		}
 
@@ -175,8 +140,8 @@ public class Merger extends Entity {
 		model.meshHidden.set(2, true);
 	}
 
-	public boolean isLeftInputDirection(Entity source) {
-		Vector2i inputDir = App.world.worldToTilePos(position).sub(App.world.worldToTilePos(source.position));
+	public boolean isLeftInputDirection(Building source) {
+		Vector2i inputDir = new Vector2i(tilePos).sub(source.tilePos);
 		if (rotation == 0) {
 			if (inputDir.x < 0) {
 				return true;
@@ -205,8 +170,8 @@ public class Merger extends Entity {
 		return false;
 	}
 
-	public boolean isRightInputDirection(Entity source) {
-		Vector2i inputDir = App.world.worldToTilePos(position).sub(App.world.worldToTilePos(source.position));
+	public boolean isRightInputDirection(Building source) {
+		Vector2i inputDir = new Vector2i(tilePos).sub(source.tilePos);
 		if (rotation == 0) {
 			if (inputDir.x > 0) {
 				return true;

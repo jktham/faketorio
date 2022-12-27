@@ -24,7 +24,8 @@ public class World {
 
 	ArrayList<Tile> tiles;
 
-	Entity ghost = null;
+	Building ghost = null;
+	ArrayList<Building> buildings;
 	ArrayList<Entity> entities;
 
 	Vector2i prevGhostPosition;
@@ -41,7 +42,7 @@ public class World {
 		for (int x=0;x<size.x;x++) {
 			for (int y=0;y<size.y;y++) {
 				Tile tile = new Tile();
-				tile.position = new Vector2i(x-size.x/2, y-size.y/2);
+				tile.tilePos = new Vector2i(x-size.x/2, y-size.y/2);
 				if ((x + y % 2) % 2 == 0) {
 					tile.type = -1;
 					tile.name = "empty tile";
@@ -54,29 +55,29 @@ public class World {
 				if ((x > size.x/2 && x < size.x/2 + 10 && y > size.y/2 && y < size.y/2 + 10)) {
 					tile.type = 0;
 					tile.name = "iron tile";
-					ItemStack itemStack = new ItemStack();
-					itemStack.item = App.items.get(0);
-					itemStack.amount = 1000;
-					tile.inventory.add(itemStack);
-					tile.color = itemStack.item.color;
+					ItemStack stack = new ItemStack();
+					stack.item = App.items.get(0);
+					stack.amount = 1000;
+					tile.inventory.stacks.add(stack);
+					tile.color = stack.item.color;
 				}
 				if ((x > size.x/2 + 10 && x < size.x/2 + 20 && y > size.y/2 && y < size.y/2 + 10)) {
 					tile.type = 1;
 					tile.name = "copper tile";
-					ItemStack itemStack = new ItemStack();
-					itemStack.item = App.items.get(1);
-					itemStack.amount = 1000;
-					tile.inventory.add(itemStack);
-					tile.color = itemStack.item.color;
+					ItemStack stack = new ItemStack();
+					stack.item = App.items.get(1);
+					stack.amount = 1000;
+					tile.inventory.stacks.add(stack);
+					tile.color = stack.item.color;
 				}
 				if ((x > size.x/2 + 20 && x < size.x/2 + 30 && y > size.y/2 && y < size.y/2 + 10)) {
 					tile.type = 2;
 					tile.name = "coal tile";
-					ItemStack itemStack = new ItemStack();
-					itemStack.item = App.items.get(2);
-					itemStack.amount = 1000;
-					tile.inventory.add(itemStack);
-					tile.color = itemStack.item.color;
+					ItemStack stack = new ItemStack();
+					stack.item = App.items.get(2);
+					stack.amount = 1000;
+					tile.inventory.stacks.add(stack);
+					tile.color = stack.item.color;
 				}
 				tiles.add(tile);
 			}
@@ -86,6 +87,7 @@ public class World {
 		vbo = glGenBuffers();
 		ibo = glGenBuffers();
 
+		buildings = new ArrayList<Building>();
 		entities = new ArrayList<Entity>();
 		updateMesh();
 	}
@@ -119,7 +121,7 @@ public class World {
 		try (MemoryStack stack = MemoryStack.stackPush()) {
 			FloatBuffer data = stack.mallocFloat(9 * tiles.size());
 			for (Tile tile : tiles) {
-				data.put((float)tile.position.x).put((float)tile.position.y).put(0f);
+				data.put((float)tile.tilePos.x).put((float)tile.tilePos.y).put(0f);
 				data.put(tile.color.x).put(tile.color.y).put(tile.color.z);
 				data.put(tile.tint.x).put(tile.tint.y).put(tile.tint.z);
 			}
@@ -168,6 +170,9 @@ public class World {
 		if (ghost != null) {
 			ghost.update();
 		}
+		for (Building building : buildings) {
+			building.update();
+		}
 		for (Entity entity : entities) {
 			entity.update();
 		}
@@ -191,48 +196,48 @@ public class World {
 		if (ghost != null) {
 			ghost.draw();
 		}
-		for (Entity entity : entities) {
-			entity.draw();
+		for (Building building : buildings) {
+			building.draw();
 		}
 	}
 
 	public void placeNew(Vector2i tilePos, int type) {
 		Tile tile = getTile(tilePos);
 		if (tile.free) {
-			Entity entity = newEntity(tilePos, type);
-			if (entity != null) {
-				entity.init();
-				entities.add(0, entity);
+			Building building = newBuilding(tilePos, type);
+			if (building != null) {
+				building.init();
+				buildings.add(0, building);
 				tile.free = false;
 			}
 		}
 	}
 
-	public Entity newEntity(Vector2i tilePos, int type) {
-		Entity entity = null;
+	public Building newBuilding(Vector2i tilePos, int type) {
+		Building building = null;
 		if (type == 1) {
-			entity = new Miner(new Vector3f(tilePos.x, tilePos.y, 0f), App.player.itemRotation);
+			building = new Miner(tilePos, App.player.itemRotation);
 		} else if (type == 2) {
-			entity = new Chest(new Vector3f(tilePos.x, tilePos.y, 0f), App.player.itemRotation);
+			building = new Chest(tilePos, App.player.itemRotation);
 		} else if (type == 3) {
-			entity = new Belt(new Vector3f(tilePos.x, tilePos.y, 0f), App.player.itemRotation);
+			building = new Belt(tilePos, App.player.itemRotation);
 		} else if (type == 4) {
-			entity = new Thrower(new Vector3f(tilePos.x, tilePos.y, 0f), App.player.itemRotation);
+			building = new Thrower(tilePos, App.player.itemRotation);
 		} else if (type == 5) {
-			entity = new Splitter(new Vector3f(tilePos.x, tilePos.y, 0f), App.player.itemRotation);
+			building = new Splitter(tilePos, App.player.itemRotation);
 		} else if (type == 6) {
-			entity = new Merger(new Vector3f(tilePos.x, tilePos.y, 0f), App.player.itemRotation);
+			building = new Merger(tilePos, App.player.itemRotation);
 		} else if (type == 7) {
 		} else if (type == 8) {
 		} else if (type == 9) {
 		}
-		return entity;
+		return building;
 	}
 
-	public void placeEntity(Vector2i tilePos, Entity entity) {
+	public void placeBuilding(Vector2i tilePos, Building building) {
 		Tile tile = getTile(tilePos);
 		if (tile.free) {
-			entities.add(0, entity);
+			buildings.add(0, building);
 			tile.free = false;
 		}
 	}
@@ -240,13 +245,13 @@ public class World {
 	public void destroy(Vector2i tilePos) {
 		Tile tile = getTile(tilePos);
 		if (!tile.free) {
-			for (Entity entity : entities) {
-				if (worldToTilePos(entity.position).equals(tilePos)) {
-					entities.remove(entity);
+			for (Building building : buildings) {
+				if (building.tilePos.equals(tilePos)) {
+					buildings.remove(building);
 					tile.free = true;
 					prevGhostPosition = null;
 					for (Element element : App.ui.elements) {
-						if (element.tether == entity) {
+						if (element.tether == building) {
 							App.ui.elements.remove(element);
 							break;
 						}
@@ -260,9 +265,9 @@ public class World {
 	public void interact(Vector2i tilePos) {
 		Tile tile = getTile(tilePos);
 		if (!tile.free) {
-			for (Entity entity : entities) {
-				if (worldToTilePos(entity.position).equals(tilePos)) {
-					entity.label.hidden = !entity.label.hidden;	
+			for (Building building : buildings) {
+				if (building.tilePos.equals(tilePos)) {
+					building.label.hidden = !building.label.hidden;	
 				}
 			}
 		}
@@ -277,33 +282,33 @@ public class World {
 		}
 		ghost = null;
 		if (prevGhostPosition != null) {
-			for (Entity entity : entities) {
-				if (worldToTilePos(entity.position).equals(prevGhostPosition)) {
-					entity.model.tint = new Vector3f(prevGhostTint);
+			for (Building building : buildings) {
+				if (building.tilePos.equals(prevGhostPosition)) {
+					building.model.tint = new Vector3f(prevGhostTint);
 				}
 			}
 		}
 		if (tilePos != null) {
 			Tile tile = getTile(tilePos);
 			if (tile.free) {
-				Entity entity = newEntity(tilePos, type);
-				if (entity != null) {
-					entity.ghost = true;
-					entity.name = "ghost " + entity.name;
-					entity.model.tint = new Vector3f(1.25f, 1.25f, 1.25f);
-					// entity.model.color = new Vector3f(1f, 1f, 1f);
-					// for (int i=0;i<entity.model.meshColors.size();i++) {
-					// 	entity.model.meshColors.set(i, new Vector3f(-1f));
+				Building building = newBuilding(tilePos, type);
+				if (building != null) {
+					building.ghost = true;
+					building.name = "ghost " + building.name;
+					building.model.tint = new Vector3f(1.25f, 1.25f, 1.25f);
+					// building.model.color = new Vector3f(1f, 1f, 1f);
+					// for (int i=0;i<building.model.meshColors.size();i++) {
+					// 	building.model.meshColors.set(i, new Vector3f(-1f));
 					// }
-					entity.init();
-					ghost = entity;
+					building.init();
+					ghost = building;
 				}
 			} else {
-				for (Entity entity : entities) {
-					if (worldToTilePos(entity.position).equals(tilePos)) {
-						prevGhostPosition = worldToTilePos(entity.position);
-						prevGhostTint = new Vector3f(entity.model.tint);
-						entity.model.tint = new Vector3f(1f, 1f, 1f);
+				for (Building building : buildings) {
+					if (building.tilePos.equals(tilePos)) {
+						prevGhostPosition = building.tilePos;
+						prevGhostTint = new Vector3f(building.model.tint);
+						building.model.tint = new Vector3f(1f, 1f, 1f);
 					}
 				}
 			}	
@@ -324,7 +329,7 @@ public class World {
 		}
 		if (tilePos != null) {
 			Tile tile = getTile(tilePos);
-			prevTilePosition = new Vector2i(tile.position);
+			prevTilePosition = new Vector2i(tile.tilePos);
 			prevTileTint = new Vector3f(tile.tint);
 			tile.tint = new Vector3f(1f, 1f, 1f);
 	
@@ -342,7 +347,7 @@ public class World {
 
 	public Tile getTile(Vector2i tilePos) {
 		for (Tile tile : tiles) {
-			if (tile.position.equals(tilePos)) {
+			if (tile.tilePos.equals(tilePos)) {
 				return tile;
 			}
 		}
@@ -357,10 +362,10 @@ public class World {
 		return tilePos;
 	}
 
-	public Entity getEntity(Vector2i tilePos) {
-		for (Entity entity : entities) {
-			if (worldToTilePos(entity.position).equals(tilePos)) {
-				return entity;
+	public Building getBuilding(Vector2i tilePos) {
+		for (Building building : buildings) {
+			if (building.tilePos.equals(tilePos)) {
+				return building;
 			}
 		}
 		return null;
