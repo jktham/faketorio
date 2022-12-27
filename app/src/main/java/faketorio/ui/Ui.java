@@ -1,17 +1,20 @@
-package faketorio;
+package faketorio.ui;
+
+import static org.lwjgl.opengl.GL33.*;
 
 import java.util.ArrayList;
 
 import org.joml.Matrix4f;
-import static org.lwjgl.opengl.GL33.*;
+
+import faketorio.engine.App;
 
 public class Ui {
-	ArrayList<Element> elements;
+	public ArrayList<Element> elements;
 	
-	Matrix4f view = new Matrix4f();
-	Matrix4f projection = new Matrix4f().ortho(0f, App.width, App.height, 0, 1f, -1f);
+	public Matrix4f view = new Matrix4f();
+	public Matrix4f projection = new Matrix4f().ortho(0f, App.width, App.height, 0, 1f, -1f);
 
-	boolean hidden = false;
+	public boolean hidden = false;
 
 	public void init() {
 		elements = new ArrayList<Element>();

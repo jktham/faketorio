@@ -1,15 +1,17 @@
-package faketorio;
-
-import org.joml.Matrix4f;
-import org.joml.Vector3f;
-import org.lwjgl.system.MemoryStack;
+package faketorio.ui;
 
 import static org.lwjgl.opengl.GL33.*;
 
 import java.nio.FloatBuffer;
 
+import org.joml.Matrix4f;
+import org.joml.Vector3f;
+import org.lwjgl.system.MemoryStack;
+
+import faketorio.engine.App;
+
 public class TexturedQuad extends Element {
-	int texture = 0;
+	public int texture = 0;
 	
 	public void init() {
 		model = new Matrix4f().translate(new Vector3f(position.x, position.y, 1f)).scale(new Vector3f(size.x, size.y, 1f));

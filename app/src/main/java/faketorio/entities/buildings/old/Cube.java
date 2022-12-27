@@ -1,8 +1,11 @@
-package faketorio;
+package faketorio.entities.buildings.old;
 
 import org.joml.Matrix4f;
 import org.joml.Vector2i;
 import org.joml.Vector3f;
+
+import faketorio.engine.App;
+import faketorio.entities.buildings.Building;
 
 public class Cube extends Building {
 

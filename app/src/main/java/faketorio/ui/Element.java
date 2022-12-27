@@ -1,33 +1,36 @@
-package faketorio;
-
-import org.lwjgl.system.MemoryStack;
-import org.joml.Matrix4f;
-import org.joml.Vector2f;
-import org.joml.Vector3f;
-import org.joml.Vector4f;
+package faketorio.ui;
 
 import static org.lwjgl.opengl.GL33.*;
 
 import java.nio.FloatBuffer;
 
+import org.joml.Matrix4f;
+import org.joml.Vector2f;
+import org.joml.Vector3f;
+import org.joml.Vector4f;
+import org.lwjgl.system.MemoryStack;
+
+import faketorio.engine.App;
+import faketorio.entities.Entity;
+
 public class Element {
-	int vao;
-	int vbo;
-	int shader;
-	int vertCount;
+	public int vao;
+	public int vbo;
+	public int shader;
+	public int vertCount;
 
-	Entity tether = null;
-	Vector3f tetherWorldOffset = new Vector3f();
-	Vector2f tetherScreenOffset = new Vector2f();;
+	public Entity tether = null;
+	public Vector3f tetherWorldOffset = new Vector3f();
+	public Vector2f tetherScreenOffset = new Vector2f();;
 
-	Vector2f position = new Vector2f(0f);
-	Vector2f size = new Vector2f(0f);
+	public Vector2f position = new Vector2f(0f);
+	public Vector2f size = new Vector2f(0f);
 
-	Matrix4f model = new Matrix4f();
+	public Matrix4f model = new Matrix4f();
 
-	Vector3f color = new Vector3f(-1f);
-	Vector3f tint = new Vector3f(-1f);
-	boolean hidden = false;
+	public Vector3f color = new Vector3f(-1f);
+	public Vector3f tint = new Vector3f(-1f);
+	public boolean hidden = false;
 
 	public void init() {
 		model = new Matrix4f().translate(new Vector3f(position.x, position.y, 1f)).scale(new Vector3f(size.x, size.y, 1f));

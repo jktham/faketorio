@@ -1,27 +1,27 @@
-package faketorio;
+package faketorio.engine;
+
+import static org.lwjgl.opengl.GL33.*;
 
 import java.util.ArrayList;
 
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
-
-import static org.lwjgl.opengl.GL33.*;
 import org.lwjgl.system.MemoryStack;
 
 public class Model {
-	int shader;
-	int vao;
-	int vbo;
+	public int shader;
+	public int vao;
+	public int vbo;
 
-	ArrayList<Integer> meshOffsets;
-	ArrayList<Integer> meshSizes;
-	ArrayList<Matrix4f> meshTransforms;
-	ArrayList<Vector3f> meshColors;
-	ArrayList<Boolean> meshHidden;
+	public ArrayList<Integer> meshOffsets;
+	public ArrayList<Integer> meshSizes;
+	public ArrayList<Matrix4f> meshTransforms;
+	public ArrayList<Vector3f> meshColors;
+	public ArrayList<Boolean> meshHidden;
 
-	Matrix4f transform;
-	Vector3f color;
-	Vector3f tint;
+	public Matrix4f transform;
+	public Vector3f color;
+	public Vector3f tint;
 	
 	public Model() {
 		meshOffsets = new ArrayList<Integer>();

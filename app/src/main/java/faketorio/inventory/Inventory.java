@@ -1,12 +1,13 @@
-package faketorio;
+package faketorio.inventory;
 
 import java.util.ArrayList;
 
+import faketorio.engine.App;
+
 public class Inventory {
-	
-	ArrayList<ItemStack> stacks;
-	int stackSize;
-	int inventorySize;
+	public ArrayList<ItemStack> stacks;
+	public int stackSize;
+	public int inventorySize;
 
 	public Inventory() {
 		stacks = new ArrayList<ItemStack>();

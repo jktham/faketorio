@@ -1,20 +1,23 @@
-package faketorio;
-
-import org.joml.Vector3f;
-import org.joml.Matrix4f;
+package faketorio.entities;
 
 import static org.lwjgl.glfw.GLFW.*;
 
+import org.joml.Matrix4f;
+import org.joml.Vector3f;
+
+import faketorio.engine.App;
+import faketorio.engine.Model;
+
 public class Player {
-	float speed = 5.0f;
-	int selectedItem = 1;
-	int itemRotation = 0;
+	public float speed = 5.0f;
+	public int selectedItem = 1;
+	public int itemRotation = 0;
 
-	Model model;
+	public Model model;
 
-	String name;
+	public String name;
 
-	Vector3f position;
+	public Vector3f position;
 
 	public Player(Vector3f position) {
 		this.position = position;

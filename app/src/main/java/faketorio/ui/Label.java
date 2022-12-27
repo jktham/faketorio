@@ -1,4 +1,6 @@
-package faketorio;
+package faketorio.ui;
+
+import static org.lwjgl.opengl.GL33.*;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -9,12 +11,13 @@ import java.util.Scanner;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.lwjgl.system.MemoryStack;
-import static org.lwjgl.opengl.GL33.*;
+
+import faketorio.engine.App;
 
 public class Label extends Element {
-	String text = "";
-	int fontAtlas;
-	ArrayList<Glyph> glyphs;
+	public String text = "";
+	public int fontAtlas;
+	public ArrayList<Glyph> glyphs;
 	
 	public void init() {
 		model = new Matrix4f().translate(new Vector3f(position.x, position.y, 1f)).scale(new Vector3f(size.x, size.y, 1f));

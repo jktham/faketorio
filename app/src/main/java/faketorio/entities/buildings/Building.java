@@ -1,16 +1,18 @@
-package faketorio;
+package faketorio.entities.buildings;
 
 import org.joml.Vector2i;
 import org.joml.Vector3f;
 
+import faketorio.engine.App;
+import faketorio.entities.Entity;
+
 public class Building extends Entity {
+	public Vector2i tilePos;
+	public int rotation;
 
-	Vector2i tilePos;
-	int rotation;
+	public boolean ghost;
 
-	boolean ghost;
-
-	Building output;
+	public Building output;
 	
 	public Building(Vector2i tilePos, int rotation) {
 		super(new Vector3f(tilePos.x, tilePos.y, 0f));

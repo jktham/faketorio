@@ -1,8 +1,12 @@
-package faketorio;
+package faketorio.entities.buildings;
 
 import org.joml.Matrix4f;
 import org.joml.Vector2i;
 import org.joml.Vector3f;
+
+import faketorio.engine.App;
+import faketorio.inventory.ItemStack;
+import faketorio.world.Tile;
 
 public class Miner extends Building {
 	

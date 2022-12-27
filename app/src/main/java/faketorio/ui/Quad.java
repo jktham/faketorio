@@ -1,6 +1,7 @@
-package faketorio;
+package faketorio.ui;
 
 import java.nio.FloatBuffer;
+
 import org.lwjgl.system.MemoryStack;
 
 public class Quad extends Element {

@@ -1,4 +1,6 @@
-package faketorio;
+package faketorio.world;
+
+import static org.lwjgl.opengl.GL33.*;
 
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
@@ -8,30 +10,34 @@ import org.joml.Vector2i;
 import org.joml.Vector3f;
 import org.lwjgl.system.MemoryStack;
 
-import static org.lwjgl.opengl.GL33.*;
+import faketorio.engine.App;
+import faketorio.entities.Entity;
+import faketorio.entities.buildings.*;
+import faketorio.inventory.ItemStack;
+import faketorio.ui.Element;
 
 public class World {
-	int vao;
-	int vbo;
-	int ibo;
+	public int vao;
+	public int vbo;
+	public int ibo;
 	
-	int shader;
-	int vertCount;
+	public int shader;
+	public int vertCount;
 
-	Matrix4f model = new Matrix4f();
+	public Matrix4f model = new Matrix4f();
 
-	Vector2i size = new Vector2i(100, 100);
+	public Vector2i size = new Vector2i(100, 100);
 
-	ArrayList<Tile> tiles;
+	public ArrayList<Tile> tiles;
 
-	Building ghost = null;
-	ArrayList<Building> buildings;
-	ArrayList<Entity> entities;
+	public Building ghost = null;
+	public ArrayList<Building> buildings;
+	public ArrayList<Entity> entities;
 
-	Vector2i prevGhostPosition;
-	Vector3f prevGhostTint;
-	Vector2i prevTilePosition;
-	Vector3f prevTileTint;
+	public Vector2i prevGhostPosition;
+	public Vector3f prevGhostTint;
+	public Vector2i prevTilePosition;
+	public Vector3f prevTileTint;
 
 	public void init() {
 		model = new Matrix4f();

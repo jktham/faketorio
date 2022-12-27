@@ -1,11 +1,4 @@
-package faketorio;
-
-import org.joml.Vector2f;
-import org.joml.Vector2i;
-import org.joml.Vector3f;
-import org.lwjgl.glfw.*;
-import org.lwjgl.opengl.*;
-import org.lwjgl.system.Configuration;
+package faketorio.engine;
 
 import static org.lwjgl.glfw.Callbacks.*;
 import static org.lwjgl.glfw.GLFW.*;
@@ -13,6 +6,22 @@ import static org.lwjgl.opengl.GL33.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
 import java.util.ArrayList;
+
+import org.joml.Vector2f;
+import org.joml.Vector2i;
+import org.joml.Vector3f;
+import org.lwjgl.glfw.GLFWErrorCallback;
+import org.lwjgl.opengl.GL;
+import org.lwjgl.system.Configuration;
+
+import faketorio.entities.Camera;
+import faketorio.entities.Player;
+import faketorio.entities.buildings.Building;
+import faketorio.inventory.Item;
+import faketorio.ui.Label;
+import faketorio.ui.Ui;
+import faketorio.world.Tile;
+import faketorio.world.World;
 
 public class App {
 	public static long window = 0;

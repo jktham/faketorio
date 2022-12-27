@@ -1,4 +1,4 @@
-package faketorio;
+package faketorio.entities;
 
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
@@ -6,16 +6,17 @@ import org.joml.Vector2i;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 
+import faketorio.engine.App;
 
 public class Camera {
-	Matrix4f view = new Matrix4f();
-	Matrix4f projection = new Matrix4f().perspective(1.2f, (float)App.width/(float)App.height, 0.1f, 1000f);
+	public Matrix4f view = new Matrix4f();
+	public Matrix4f projection = new Matrix4f().perspective(1.2f, (float)App.width/(float)App.height, 0.1f, 1000f);
 
-	float radius = 10f;
-	float rotation = -(float)Math.PI / 2f;
-	float angle = (float)Math.PI / 4f;
+	public float radius = 10f;
+	public float rotation = -(float)Math.PI / 2f;
+	public float angle = (float)Math.PI / 4f;
 
-	Vector3f position = new Vector3f(0f, 0f, 0f);
+	public Vector3f position = new Vector3f(0f, 0f, 0f);
 
 	public void update() {
 		projection = new Matrix4f().perspective(1.2f, (float)App.width/(float)App.height, 0.1f, 1000f);

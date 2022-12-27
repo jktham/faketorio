@@ -1,21 +1,29 @@
-package faketorio;
+package faketorio.entities;
 
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 
+import faketorio.engine.App;
+import faketorio.engine.Model;
+import faketorio.entities.buildings.Building;
+import faketorio.inventory.Inventory;
+import faketorio.inventory.ItemStack;
+import faketorio.ui.Label;
+import faketorio.world.Tile;
+
 public class Entity {
-	Vector3f worldPos;
+	public Vector3f worldPos;
 
-	Model model;
-	Label label;
+	public Model model;
+	public Label label;
 
-	String name;
-	Inventory inventory;
+	public String name;
+	public Inventory inventory;
 
-	int type;
-	int sleepTicks;
+	public int type;
+	public int sleepTicks;
 
 	public Entity(Vector3f worldPos) {
 		this.worldPos = new Vector3f(worldPos);
