@@ -207,10 +207,10 @@ public class World {
 		}
 	}
 
-	public void placeNew(Vector2i tilePos, int type) {
+	public void placeNew(Vector2i tilePos, int type, int rotation) {
 		Tile tile = getTile(tilePos);
 		if (tile.free) {
-			Building building = newBuilding(tilePos, type);
+			Building building = newBuilding(tilePos, type, rotation);
 			if (building != null) {
 				building.init();
 				buildings.add(0, building);
@@ -219,22 +219,24 @@ public class World {
 		}
 	}
 
-	public Building newBuilding(Vector2i tilePos, int type) {
+	public Building newBuilding(Vector2i tilePos, int type, int rotation) {
 		Building building = null;
 		if (type == 1) {
-			building = new Miner(tilePos, App.player.itemRotation);
+			building = new Miner(tilePos, rotation);
 		} else if (type == 2) {
-			building = new Chest(tilePos, App.player.itemRotation);
+			building = new Chest(tilePos, rotation);
 		} else if (type == 3) {
-			building = new Belt(tilePos, App.player.itemRotation);
+			building = new Belt(tilePos, rotation);
 		} else if (type == 4) {
-			building = new Thrower(tilePos, App.player.itemRotation);
+			building = new Thrower(tilePos, rotation);
 		} else if (type == 5) {
-			building = new Splitter(tilePos, App.player.itemRotation);
+			building = new Splitter(tilePos, rotation);
 		} else if (type == 6) {
-			building = new Merger(tilePos, App.player.itemRotation);
+			building = new Merger(tilePos, rotation);
 		} else if (type == 7) {
+			building = new Extractor(tilePos, rotation);
 		} else if (type == 8) {
+			building = new Assembler(tilePos, rotation);
 		} else if (type == 9) {
 		}
 		return building;
@@ -297,7 +299,7 @@ public class World {
 		if (tilePos != null) {
 			Tile tile = getTile(tilePos);
 			if (tile.free) {
-				Building building = newBuilding(tilePos, type);
+				Building building = newBuilding(tilePos, type, App.player.itemRotation);
 				if (building != null) {
 					building.ghost = true;
 					building.name = "ghost " + building.name;

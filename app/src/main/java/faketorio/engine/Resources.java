@@ -36,6 +36,8 @@ public class Resources {
 	public Model splitterModel;
 	public Model mergerModel;
 	public Model throwerModel;
+	public Model extractorModel;
+	public Model assemblerModel;
 	
 	public void init() {
 		worldBaseShader = compileShader("shaders/world_base");
@@ -58,6 +60,8 @@ public class Resources {
 		splitterModel = loadModel(worldBaseShader, "models/splitter.obj");
 		mergerModel = loadModel(worldBaseShader, "models/merger.obj");
 		throwerModel = loadModel(worldBaseShader, "models/thrower.obj");
+		extractorModel = loadModel(worldBaseShader, "models/extractor.obj");
+		assemblerModel = loadModel(worldBaseShader, "models/assembler.obj");
 	}
 
 	public int compileShader(String path) {

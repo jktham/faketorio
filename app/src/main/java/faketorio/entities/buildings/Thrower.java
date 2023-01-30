@@ -8,7 +8,7 @@ import faketorio.engine.App;
 import faketorio.inventory.ItemStack;
 
 public class Thrower extends Building {
-	int range = 5;
+	int range = 4;
 
 	public Thrower(Vector2i tilePos, int rotation) {
 		super(tilePos, rotation);

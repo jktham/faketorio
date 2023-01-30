@@ -16,8 +16,11 @@ import org.lwjgl.system.Configuration;
 
 import faketorio.entities.Camera;
 import faketorio.entities.Player;
+import faketorio.entities.buildings.Assembler;
 import faketorio.entities.buildings.Building;
 import faketorio.inventory.Item;
+import faketorio.inventory.ItemStack;
+import faketorio.inventory.Recipe;
 import faketorio.ui.Label;
 import faketorio.ui.Ui;
 import faketorio.world.Tile;
@@ -46,6 +49,7 @@ public class App {
 
 	public static Resources resources;
 	public static ArrayList<Item> items;
+	public static ArrayList<Recipe> recipes;
 	public static World world;
 	public static Player player;
 	public static Camera camera;
@@ -108,6 +112,109 @@ public class App {
 			if (key == GLFW_KEY_LEFT_ALT && action == GLFW_PRESS) {
 				ui.hidden = !ui.hidden;
 			}
+			if (key == GLFW_KEY_L && action == GLFW_PRESS) {
+				
+
+				world.placeNew(new Vector2i(2, 5), 1, 1);
+				world.placeNew(new Vector2i(2, 4), 1, 1);
+				world.placeNew(new Vector2i(2, 3), 1, 1);
+				world.placeNew(new Vector2i(2, 2), 1, 1);
+				world.placeNew(new Vector2i(12, 5), 1, 1);
+				world.placeNew(new Vector2i(12, 4), 1, 1);
+				world.placeNew(new Vector2i(12, 3), 1, 1);
+				world.placeNew(new Vector2i(12, 2), 1, 1);
+				world.placeNew(new Vector2i(22, 5), 1, 1);
+				world.placeNew(new Vector2i(22, 4), 1, 1);
+				world.placeNew(new Vector2i(22, 3), 1, 1);
+				world.placeNew(new Vector2i(22, 2), 1, 1);
+
+				world.placeNew(new Vector2i(23, 5), 3, 0);
+				world.placeNew(new Vector2i(23, 4), 3, 0);
+				world.placeNew(new Vector2i(23, 3), 3, 0);
+				world.placeNew(new Vector2i(23, 2), 3, 0);
+				world.placeNew(new Vector2i(23, 1), 3, 0);
+				world.placeNew(new Vector2i(23, 0), 3, 0);
+				world.placeNew(new Vector2i(23, -1), 3, 0);
+				world.placeNew(new Vector2i(23, -2), 3, 3);
+				world.placeNew(new Vector2i(22, -2), 3, 3);
+				world.placeNew(new Vector2i(21, -2), 3, 3);
+				world.placeNew(new Vector2i(20, -2), 3, 3);
+				world.placeNew(new Vector2i(19, -2), 3, 3);
+				world.placeNew(new Vector2i(18, -2), 3, 3);
+				world.placeNew(new Vector2i(17, -2), 3, 3);
+				world.placeNew(new Vector2i(16, -2), 5, 3);
+				world.placeNew(new Vector2i(16, -1), 3, 3);
+				world.placeNew(new Vector2i(16, -3), 3, 3);
+				world.placeNew(new Vector2i(15, -1), 4, 3);
+				world.placeNew(new Vector2i(11, -1), 3, 3);
+				world.placeNew(new Vector2i(10, -1), 3, 3);
+				world.placeNew(new Vector2i(9, -1), 3, 3);
+				world.placeNew(new Vector2i(8, -1), 3, 3);
+				world.placeNew(new Vector2i(7, -1), 3, 3);
+				world.placeNew(new Vector2i(6, -1), 3, 3);
+				world.placeNew(new Vector2i(5, -1), 3, 3);
+
+				world.placeNew(new Vector2i(13, 5), 3, 0);
+				world.placeNew(new Vector2i(13, 4), 3, 0);
+				world.placeNew(new Vector2i(13, 3), 3, 0);
+				world.placeNew(new Vector2i(13, 2), 3, 0);
+				world.placeNew(new Vector2i(13, 1), 3, 0);
+				world.placeNew(new Vector2i(13, 0), 3, 0);
+				world.placeNew(new Vector2i(13, -1), 3, 0);
+				world.placeNew(new Vector2i(13, -2), 3, 0);
+				world.placeNew(new Vector2i(13, -3), 3, 1);
+				world.placeNew(new Vector2i(14, -3), 3, 1);
+
+				world.placeNew(new Vector2i(3, 5), 3, 0);
+				world.placeNew(new Vector2i(3, 4), 3, 0);
+				world.placeNew(new Vector2i(3, 3), 3, 0);
+				world.placeNew(new Vector2i(3, 2), 3, 0);
+				world.placeNew(new Vector2i(3, 1), 3, 0);
+				world.placeNew(new Vector2i(3, 0), 3, 0);
+				world.placeNew(new Vector2i(3, -1), 3, 1);
+
+				world.placeNew(new Vector2i(15, -3), 6, 0);
+				world.placeNew(new Vector2i(15, -4), 3, 0);
+				world.placeNew(new Vector2i(15, -5), 3, 0);
+				world.placeNew(new Vector2i(15, -6), 3, 0);
+				world.placeNew(new Vector2i(15, -7), 3, 0);
+				world.placeNew(new Vector2i(15, -8), 3, 0);
+				world.placeNew(new Vector2i(15, -9), 2, 0);
+				
+				world.placeNew(new Vector2i(4, -1), 6, 0);
+				world.placeNew(new Vector2i(4, -2), 3, 0);
+				world.placeNew(new Vector2i(4, -3), 3, 0);
+				world.placeNew(new Vector2i(4, -4), 3, 0);
+				world.placeNew(new Vector2i(4, -5), 3, 0);
+				world.placeNew(new Vector2i(4, -6), 3, 0);
+				world.placeNew(new Vector2i(4, -7), 3, 0);
+				world.placeNew(new Vector2i(4, -8), 3, 0);
+				world.placeNew(new Vector2i(4, -9), 2, 0);
+
+				world.placeNew(new Vector2i(14, -6), 7, 3);
+				world.placeNew(new Vector2i(13, -6), 8, 0);
+				Assembler a = (Assembler)world.getBuilding(new Vector2i(13, -6));
+				a.recipe = recipes.get(1);
+				world.placeNew(new Vector2i(12, -6), 7, 3);
+				world.placeNew(new Vector2i(11, -6), 3, 0);
+				world.placeNew(new Vector2i(11, -7), 3, 0);
+				world.placeNew(new Vector2i(11, -8), 3, 0);
+				world.placeNew(new Vector2i(11, -9), 3, 0);
+				world.placeNew(new Vector2i(11, -10), 3, 0);
+				world.placeNew(new Vector2i(11, -11), 3, 0);
+				world.placeNew(new Vector2i(11, -12), 2, 0);
+				
+				world.placeNew(new Vector2i(5, -6), 7, 1);
+				world.placeNew(new Vector2i(6, -6), 8, 0);
+				world.placeNew(new Vector2i(7, -6), 7, 1);
+				world.placeNew(new Vector2i(8, -6), 3, 0);
+				world.placeNew(new Vector2i(8, -7), 3, 0);
+				world.placeNew(new Vector2i(8, -8), 3, 0);
+				world.placeNew(new Vector2i(8, -9), 3, 0);
+				world.placeNew(new Vector2i(8, -10), 3, 0);
+				world.placeNew(new Vector2i(8, -11), 3, 0);
+				world.placeNew(new Vector2i(8, -12), 2, 0);
+			}
 		});
 
 		glfwSetCursorPosCallback(window, (window, xpos, ypos) -> {
@@ -132,7 +239,7 @@ public class App {
 					if (!world.getTile(tilePos).free) {
 						world.interact(tilePos);
 					} else {
-						world.placeNew(tilePos, App.player.selectedItem);
+						world.placeNew(tilePos, App.player.selectedItem, App.player.itemRotation);
 					}
 				}
 			}
@@ -189,6 +296,49 @@ public class App {
 		item.name = "coal";
 		item.color = new Vector3f(0.05f, 0.05f, 0.05f);
 		items.add(item);
+		item = new Item();
+		item.id = 3;
+		item.name = "iron plate";
+		item.color = new Vector3f(0.2f, 0.2f, 0.8f);
+		items.add(item);
+		item = new Item();
+		item.id = 4;
+		item.name = "copper plate";
+		item.color = new Vector3f(0.8f, 0.2f, 0.2f);
+		items.add(item);
+		
+		recipes = new ArrayList<Recipe>();
+		ArrayList<ItemStack> recipeInput = new ArrayList<ItemStack>();
+		ArrayList<ItemStack> recipeOutput = new ArrayList<ItemStack>();
+		ItemStack stack = new ItemStack();
+		stack.item = App.items.get(0);
+		stack.amount = 1;
+		recipeInput.add(stack);
+		stack = new ItemStack();
+		stack.item = App.items.get(2);
+		stack.amount = 1;
+		recipeInput.add(stack);
+		stack = new ItemStack();
+		stack.item = App.items.get(3);
+		stack.amount = 1;
+		recipeOutput.add(stack);
+		recipes.add(new Recipe(recipeInput, recipeOutput));
+		
+		recipeInput = new ArrayList<ItemStack>();
+		recipeOutput = new ArrayList<ItemStack>();
+		stack = new ItemStack();
+		stack.item = App.items.get(1);
+		stack.amount = 1;
+		recipeInput.add(stack);
+		stack = new ItemStack();
+		stack.item = App.items.get(2);
+		stack.amount = 1;
+		recipeInput.add(stack);
+		stack = new ItemStack();
+		stack.item = App.items.get(4);
+		stack.amount = 1;
+		recipeOutput.add(stack);
+		recipes.add(new Recipe(recipeInput, recipeOutput));
 
 		ui = new Ui();
 		ui.init();
