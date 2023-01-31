@@ -14,9 +14,13 @@ public class Wall extends Building {
 		model.transform = new Matrix4f().translate(worldPos).translate(0.5f, 0.5f, 0.2f).rotate((float)Math.PI / 2f * rotation, 0f, 0f, 1f);
 		model.color = new Vector3f(0.2f, 0.2f, 0.2f);
 		model.meshColors.set(0, new Vector3f(0.3f, 0.3f, 0.3f));
+		model.meshColors.set(1, new Vector3f(0.3f, 0.3f, 0.3f));
+		model.meshColors.set(2, new Vector3f(0.3f, 0.3f, 0.3f));
+		model.meshColors.set(3, new Vector3f(0.3f, 0.3f, 0.3f));
+		model.meshColors.set(4, new Vector3f(0.3f, 0.3f, 0.3f));
 		name = "wall";
-		inventory.stackSize = 1000;
-		inventory.inventorySize = 100;
+		inventory.stackSize = 0;
+		inventory.inventorySize = 0;
 		type = 11;
 		label.hidden = false;
 		maxHealth = 10000;
@@ -24,10 +28,42 @@ public class Wall extends Building {
 	}
 
 	public void update() {
-
+		updateBorders();
 	}
 
 	public Vector2i getOutputTilePos() {
 		return new Vector2i(-99999);
+	}
+
+	public void updateBorders() {
+		model.meshHidden.set(1, true);
+		model.meshHidden.set(2, true);
+		model.meshHidden.set(3, true);
+		model.meshHidden.set(4, true);
+
+		if (App.world.getBuilding(new Vector2i(tilePos).add(0, 1)) != null && App.world.getBuilding(new Vector2i(tilePos).add(0, 1)).type == type) {
+			model.meshHidden.set(getBorderIndex(0), false);
+		}
+		if (App.world.getBuilding(new Vector2i(tilePos).add(1, 0)) != null && App.world.getBuilding(new Vector2i(tilePos).add(1, 0)).type == type) {
+			model.meshHidden.set(getBorderIndex(1), false);
+		}
+		if (App.world.getBuilding(new Vector2i(tilePos).add(0, -1)) != null && App.world.getBuilding(new Vector2i(tilePos).add(0, -1)).type == type) {
+			model.meshHidden.set(getBorderIndex(2), false);
+		}
+		if (App.world.getBuilding(new Vector2i(tilePos).add(-1, 0)) != null && App.world.getBuilding(new Vector2i(tilePos).add(-1, 0)).type == type) {
+			model.meshHidden.set(getBorderIndex(3), false);
+		}
+		if (App.world.ghost != null && App.world.ghost.tilePos.equals(new Vector2i(tilePos).add(0, 1)) && App.world.ghost.type == type) {
+			model.meshHidden.set(getBorderIndex(0), false);
+		}
+		if (App.world.ghost != null && App.world.ghost.tilePos.equals(new Vector2i(tilePos).add(1, 0)) && App.world.ghost.type == type) {
+			model.meshHidden.set(getBorderIndex(1), false);
+		}
+		if (App.world.ghost != null && App.world.ghost.tilePos.equals(new Vector2i(tilePos).add(0, -1)) && App.world.ghost.type == type) {
+			model.meshHidden.set(getBorderIndex(2), false);
+		}
+		if (App.world.ghost != null && App.world.ghost.tilePos.equals(new Vector2i(tilePos).add(-1, 0)) && App.world.ghost.type == type) {
+			model.meshHidden.set(getBorderIndex(3), false);
+		}
 	}
 }

@@ -20,6 +20,19 @@ public class Chest extends Building {
 		type = 6;
 		label.hidden = false;
 	}
+	
+	public void update() {
+		output = App.world.getBuilding(getOutputTilePos());
+		updateBorders();
+		if (App.tick % 6 == 0) {
+			model.meshColors.set(5, new Vector3f(0.6f, 0.6f, 0.6f));
+		}
+	}
+
+	public void addItem(int id, int amount, Building source) {
+		inventory.addItem(id, amount);
+		model.meshColors.set(5, App.items.get(id).color);
+	}
 
 	public Vector2i getOutputTilePos() {
 		return new Vector2i(-99999);

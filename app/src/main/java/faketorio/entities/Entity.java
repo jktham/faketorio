@@ -49,7 +49,7 @@ public class Entity {
 					position = new Vector2f(screenTetherPos.x, screenTetherPos.y);
 				}
 				model = new Matrix4f().translate(new Vector3f(position.x, position.y, 1f)).scale(new Vector3f(size.x, size.y, 1f));
-				text = "" + name + " " + health + "/" + maxHealth + "\n";
+				text = "" + name + " " + health + "/" + maxHealth + " " + sleepTicks + "\n";
 				for (ItemStack stack : inventory.stacks) {
 					text += stack.item.id + ": " + stack.item.name + ": " + stack.amount + "\n";
 				}

@@ -44,6 +44,7 @@ public class Miner extends Building {
 						if (canBeAdded(stack.item.id, 1, this)) {
 							stack.amount -= 1;
 							addItem(stack.item.id, 1, this);
+							sleepTicks = 0;
 							model.meshColors.set(4, stack.item.color);
 						}
 					}

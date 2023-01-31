@@ -43,6 +43,7 @@ public class App {
 	public static float actualTickRate;
 	public static float lastTick;
 	public static float deltaTick;
+	public static boolean paused;
 
 	public static Vector2i cursorPos = new Vector2i(0);
 
@@ -114,9 +115,10 @@ public class App {
 			if (key == GLFW_KEY_LEFT_ALT && action == GLFW_PRESS) {
 				ui.hidden = !ui.hidden;
 			}
+			if (key == GLFW_KEY_SPACE && action == GLFW_PRESS) {
+				paused = !paused;
+			}
 			if (key == GLFW_KEY_L && action == GLFW_PRESS) {
-				
-
 				world.placeNew(new Vector2i(2, 5), 8, 1);
 				world.placeNew(new Vector2i(2, 4), 8, 1);
 				world.placeNew(new Vector2i(2, 3), 8, 1);
@@ -239,8 +241,6 @@ public class App {
 				world.placeNew(new Vector2i(8, -26), 13, 0);
 				world.placeNew(new Vector2i(10, -26), 13, 0);
 				world.placeNew(new Vector2i(12, -26), 13, 0);
-
-
 			}
 		});
 
@@ -252,6 +252,24 @@ public class App {
 					camera.angle = (float)Math.PI / 2f - 0.1f;
 				} else if (camera.angle < 0.1f) {
 					camera.angle = 0.1f;
+				}
+			}
+			if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_1) == GLFW_PRESS) {
+				Vector3f worldPos = camera.screenToWorldPos(cursorPos);
+				Vector2i tilePos = world.worldToTilePos(worldPos);
+				if (tilePos != null) {
+					if (!world.getTile(tilePos).free) {
+
+					} else {
+						world.placeNew(tilePos, App.player.selectedItem, App.player.itemRotation);
+					}
+				}
+			}
+			if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_2) == GLFW_PRESS) {
+				Vector3f worldPos = camera.screenToWorldPos(cursorPos);
+				Vector2i tilePos = world.worldToTilePos(worldPos);
+				if (tilePos != null) {
+					world.deconstruct(tilePos);
 				}
 			}
 
@@ -473,7 +491,9 @@ public class App {
 	}
 
 	private void update() {
-		world.update();
+		if (!paused) {
+			world.update();
+		}
 		player.update();
 		camera.update();
 		ui.update();

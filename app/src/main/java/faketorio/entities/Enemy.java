@@ -45,7 +45,7 @@ public class Enemy extends Entity {
 			return;
 		}
 
-		model.transform = new Matrix4f().translate(worldPos).translate(0.5f, 0.5f, 0.5f).rotate(rotation, 0f, 0f, 1f);
+		model.transform = new Matrix4f().translate(worldPos).translate(0.5f, 0.5f, 0.5f).rotate(rotation, 0f, 0f, 1f).scale((float)health/(float)maxHealth);
 		Vector3f dir = new Vector3f(target.worldPos).sub(worldPos).normalize().mul(speed);
 		if (new Vector3f(target.worldPos).sub(worldPos).length() > range) {
 			worldPos.add(dir);

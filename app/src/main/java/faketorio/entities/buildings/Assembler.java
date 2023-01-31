@@ -86,7 +86,7 @@ public class Assembler extends Building {
 			return;
 		}
 
-		boolean enough = true;
+		boolean enoughInput = true;
 		if (App.tick % 12 == 0) {
 			for (ItemStack rstack : recipe.input) {
 				boolean found = false;
@@ -98,10 +98,16 @@ public class Assembler extends Building {
 					}
 				}
 				if (!found) {
-					enough = false;
+					enoughInput = false;
 				}
 			}
-			if (enough) {
+			boolean outputFull = false;
+			for (ItemStack stack : recipe.output) {
+				if (!inventory.canBeAdded(stack.item.id, stack.amount)) {
+					outputFull = true;
+				}
+			}
+			if (enoughInput && !outputFull) {
 				for (ItemStack stack : recipe.input) {
 					inputInventory.removeItem(stack.item.id, stack.amount);
 				}

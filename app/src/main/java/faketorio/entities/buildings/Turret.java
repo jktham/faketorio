@@ -35,7 +35,7 @@ public class Turret extends Building {
 			return;
 		}
 
-		if (App.tick % 12 == 0) {
+		if (App.tick % 1 == 0) {
 			float min = 9999f;
 			target = null;
 			for (Entity e : App.world.entities) {
