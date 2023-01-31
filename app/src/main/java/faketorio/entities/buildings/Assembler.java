@@ -26,7 +26,7 @@ public class Assembler extends Building {
 		name = "assembler";
 		inventory.stackSize = 2;
 		inventory.inventorySize = 100;
-		type = 8;
+		type = 7;
 
 		recipe = App.recipes.get(0);
 		inputInventory = new Inventory();
@@ -77,7 +77,10 @@ public class Assembler extends Building {
 			return;
 		}
 		
-		model.meshColors.set(5, new Vector3f(0.6f, 0.6f, 0.6f));
+		if (App.tick % 6 == 0) {
+			model.meshColors.set(5, new Vector3f(0.6f, 0.6f, 0.6f));
+		}
+		
 		if (sleepTicks > 0) {
 			sleepTicks -= 1;
 			return;

@@ -205,6 +205,9 @@ public class World {
 		for (Building building : buildings) {
 			building.draw();
 		}
+		for (Entity entity : entities) {
+			entity.draw();
+		}
 	}
 
 	public void placeNew(Vector2i tilePos, int type, int rotation) {
@@ -221,23 +224,58 @@ public class World {
 
 	public Building newBuilding(Vector2i tilePos, int type, int rotation) {
 		Building building = null;
-		if (type == 1) {
-			building = new Miner(tilePos, rotation);
-		} else if (type == 2) {
-			building = new Chest(tilePos, rotation);
-		} else if (type == 3) {
-			building = new Belt(tilePos, rotation);
-		} else if (type == 4) {
-			building = new Thrower(tilePos, rotation);
-		} else if (type == 5) {
-			building = new Splitter(tilePos, rotation);
-		} else if (type == 6) {
-			building = new Merger(tilePos, rotation);
-		} else if (type == 7) {
-			building = new Extractor(tilePos, rotation);
-		} else if (type == 8) {
-			building = new Assembler(tilePos, rotation);
-		} else if (type == 9) {
+		switch (type) {
+			case 0:
+				break;
+			case 1:
+				building = new Belt(tilePos, rotation);
+				break;
+			case 2:
+				building = new Thrower(tilePos, rotation);
+				break;
+			case 3:
+				building = new Splitter(tilePos, rotation);
+				break;
+			case 4:
+				building = new Merger(tilePos, rotation);
+				break;
+			case 5:
+				building = new Extractor(tilePos, rotation);
+				break;
+			case 6:
+				building = new Chest(tilePos, rotation);
+				break;
+			case 7:
+				building = new Assembler(tilePos, rotation);
+				break;
+			case 8:
+				building = new Miner(tilePos, rotation);
+				break;
+			case 9:
+				break;
+			case 10:
+				break;
+			case 11:
+				building = new Wall(tilePos, rotation);
+				break;
+			case 12:
+				building = new Turret(tilePos, rotation);
+				break;
+			case 13:
+				building = new Spawner(tilePos, rotation);
+				break;
+			case 14:
+				break;
+			case 15:
+				break;
+			case 16:
+				break;
+			case 17:
+				break;
+			case 18:
+				break;
+			case 19:
+				break;
 		}
 		return building;
 	}
@@ -250,7 +288,7 @@ public class World {
 		}
 	}
 
-	public void destroy(Vector2i tilePos) {
+	public void deconstruct(Vector2i tilePos) {
 		Tile tile = getTile(tilePos);
 		if (!tile.free) {
 			for (Building building : buildings) {
@@ -266,6 +304,27 @@ public class World {
 					}
 					break;
 				}
+			}
+		}
+	}
+
+	public void destroy(Building building) {
+		buildings.remove(building);
+		getTile(building.tilePos).free = true;
+		for (Element element : App.ui.elements) {
+			if (element.tether == building) {
+				App.ui.elements.remove(element);
+				break;
+			}
+		}
+	}
+
+	public void kill(Entity entity) {
+		entities.remove(entity);
+		for (Element element : App.ui.elements) {
+			if (element.tether == entity) {
+				App.ui.elements.remove(element);
+				break;
 			}
 		}
 	}

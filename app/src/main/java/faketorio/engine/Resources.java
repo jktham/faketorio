@@ -38,6 +38,10 @@ public class Resources {
 	public Model throwerModel;
 	public Model extractorModel;
 	public Model assemblerModel;
+	public Model spawnerModel;
+	public Model enemyModel;
+	public Model wallModel;
+	public Model turretModel;
 	
 	public void init() {
 		worldBaseShader = compileShader("shaders/world_base");
@@ -62,6 +66,10 @@ public class Resources {
 		throwerModel = loadModel(worldBaseShader, "models/thrower.obj");
 		extractorModel = loadModel(worldBaseShader, "models/extractor.obj");
 		assemblerModel = loadModel(worldBaseShader, "models/assembler.obj");
+		spawnerModel = loadModel(worldBaseShader, "models/spawner.obj");
+		enemyModel = loadModel(worldBaseShader, "models/enemy.obj");
+		wallModel = loadModel(worldBaseShader, "models/wall.obj");
+		turretModel = loadModel(worldBaseShader, "models/turret.obj");
 	}
 
 	public int compileShader(String path) {

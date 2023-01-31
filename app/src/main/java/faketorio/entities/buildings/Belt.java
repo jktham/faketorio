@@ -22,7 +22,7 @@ public class Belt extends Building {
 		name = "belt";
 		inventory.stackSize = 1;
 		inventory.inventorySize = 1;
-		type = 3;
+		type = 1;
 	}
 
 	public void update() {

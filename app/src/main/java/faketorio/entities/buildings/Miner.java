@@ -19,7 +19,7 @@ public class Miner extends Building {
 		name = "miner";
 		inventory.stackSize = 1;
 		inventory.inventorySize = 10;
-		type = 1;
+		type = 8;
 		label.hidden = false;
 	}
 
@@ -32,7 +32,9 @@ public class Miner extends Building {
 			return;
 		}
 
-		model.meshColors.set(4, new Vector3f(0.8f, 0.8f, 0.8f));
+		if (App.tick % 6 == 0) {
+			model.meshColors.set(4, new Vector3f(0.8f, 0.8f, 0.8f));
+		}
 
 		if (App.tick % 120 == 0) {
 			Tile tile = App.world.getTile(tilePos);

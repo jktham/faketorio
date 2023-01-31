@@ -20,7 +20,7 @@ public class Splitter extends Building {
 		name = "splitter";
 		inventory.stackSize = 1;
 		inventory.inventorySize = 1;
-		type = 5;
+		type = 3;
 	}
 
 	public void update() {

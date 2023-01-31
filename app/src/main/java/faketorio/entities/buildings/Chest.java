@@ -17,7 +17,7 @@ public class Chest extends Building {
 		name = "chest";
 		inventory.stackSize = 1000;
 		inventory.inventorySize = 100;
-		type = 2;
+		type = 6;
 		label.hidden = false;
 	}
 

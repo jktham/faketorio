@@ -92,6 +92,9 @@ public class App {
 			}
 			if (key >= 48 && key < 58 && action == GLFW_PRESS) {
 				player.selectedItem = key - 48;
+				if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
+					player.selectedItem += 10;
+				}
 			}
 			if (key == GLFW_KEY_R && action == GLFW_PRESS) {
 				player.itemRotation = player.itemRotation - 1;
@@ -114,104 +117,130 @@ public class App {
 			if (key == GLFW_KEY_L && action == GLFW_PRESS) {
 				
 
-				world.placeNew(new Vector2i(2, 5), 1, 1);
-				world.placeNew(new Vector2i(2, 4), 1, 1);
-				world.placeNew(new Vector2i(2, 3), 1, 1);
-				world.placeNew(new Vector2i(2, 2), 1, 1);
-				world.placeNew(new Vector2i(12, 5), 1, 1);
-				world.placeNew(new Vector2i(12, 4), 1, 1);
-				world.placeNew(new Vector2i(12, 3), 1, 1);
-				world.placeNew(new Vector2i(12, 2), 1, 1);
-				world.placeNew(new Vector2i(22, 5), 1, 1);
-				world.placeNew(new Vector2i(22, 4), 1, 1);
-				world.placeNew(new Vector2i(22, 3), 1, 1);
-				world.placeNew(new Vector2i(22, 2), 1, 1);
+				world.placeNew(new Vector2i(2, 5), 8, 1);
+				world.placeNew(new Vector2i(2, 4), 8, 1);
+				world.placeNew(new Vector2i(2, 3), 8, 1);
+				world.placeNew(new Vector2i(2, 2), 8, 1);
+				world.placeNew(new Vector2i(12, 5), 8, 1);
+				world.placeNew(new Vector2i(12, 4), 8, 1);
+				world.placeNew(new Vector2i(12, 3), 8, 1);
+				world.placeNew(new Vector2i(12, 2), 8, 1);
+				world.placeNew(new Vector2i(22, 5), 8, 1);
+				world.placeNew(new Vector2i(22, 4), 8, 1);
+				world.placeNew(new Vector2i(22, 3), 8, 1);
+				world.placeNew(new Vector2i(22, 2), 8, 1);
 
-				world.placeNew(new Vector2i(23, 5), 3, 0);
-				world.placeNew(new Vector2i(23, 4), 3, 0);
-				world.placeNew(new Vector2i(23, 3), 3, 0);
-				world.placeNew(new Vector2i(23, 2), 3, 0);
-				world.placeNew(new Vector2i(23, 1), 3, 0);
-				world.placeNew(new Vector2i(23, 0), 3, 0);
-				world.placeNew(new Vector2i(23, -1), 3, 0);
-				world.placeNew(new Vector2i(23, -2), 3, 3);
-				world.placeNew(new Vector2i(22, -2), 3, 3);
-				world.placeNew(new Vector2i(21, -2), 3, 3);
-				world.placeNew(new Vector2i(20, -2), 3, 3);
-				world.placeNew(new Vector2i(19, -2), 3, 3);
-				world.placeNew(new Vector2i(18, -2), 3, 3);
-				world.placeNew(new Vector2i(17, -2), 3, 3);
-				world.placeNew(new Vector2i(16, -2), 5, 3);
-				world.placeNew(new Vector2i(16, -1), 3, 3);
-				world.placeNew(new Vector2i(16, -3), 3, 3);
-				world.placeNew(new Vector2i(15, -1), 4, 3);
-				world.placeNew(new Vector2i(11, -1), 3, 3);
-				world.placeNew(new Vector2i(10, -1), 3, 3);
-				world.placeNew(new Vector2i(9, -1), 3, 3);
-				world.placeNew(new Vector2i(8, -1), 3, 3);
-				world.placeNew(new Vector2i(7, -1), 3, 3);
-				world.placeNew(new Vector2i(6, -1), 3, 3);
-				world.placeNew(new Vector2i(5, -1), 3, 3);
+				world.placeNew(new Vector2i(23, 5), 1, 0);
+				world.placeNew(new Vector2i(23, 4), 1, 0);
+				world.placeNew(new Vector2i(23, 3), 1, 0);
+				world.placeNew(new Vector2i(23, 2), 1, 0);
+				world.placeNew(new Vector2i(23, 1), 1, 0);
+				world.placeNew(new Vector2i(23, 0), 1, 0);
+				world.placeNew(new Vector2i(23, -1), 1, 0);
+				world.placeNew(new Vector2i(23, -2), 1, 3);
+				world.placeNew(new Vector2i(22, -2), 1, 3);
+				world.placeNew(new Vector2i(21, -2), 1, 3);
+				world.placeNew(new Vector2i(20, -2), 1, 3);
+				world.placeNew(new Vector2i(19, -2), 1, 3);
+				world.placeNew(new Vector2i(18, -2), 1, 3);
+				world.placeNew(new Vector2i(17, -2), 1, 3);
+				world.placeNew(new Vector2i(16, -2), 3, 3);
+				world.placeNew(new Vector2i(16, -1), 1, 3);
+				world.placeNew(new Vector2i(16, -3), 1, 3);
+				world.placeNew(new Vector2i(15, -1), 2, 3);
+				world.placeNew(new Vector2i(11, -1), 1, 3);
+				world.placeNew(new Vector2i(10, -1), 1, 3);
+				world.placeNew(new Vector2i(9, -1), 1, 3);
+				world.placeNew(new Vector2i(8, -1), 1, 3);
+				world.placeNew(new Vector2i(7, -1), 1, 3);
+				world.placeNew(new Vector2i(6, -1), 1, 3);
+				world.placeNew(new Vector2i(5, -1), 1, 3);
 
-				world.placeNew(new Vector2i(13, 5), 3, 0);
-				world.placeNew(new Vector2i(13, 4), 3, 0);
-				world.placeNew(new Vector2i(13, 3), 3, 0);
-				world.placeNew(new Vector2i(13, 2), 3, 0);
-				world.placeNew(new Vector2i(13, 1), 3, 0);
-				world.placeNew(new Vector2i(13, 0), 3, 0);
-				world.placeNew(new Vector2i(13, -1), 3, 0);
-				world.placeNew(new Vector2i(13, -2), 3, 0);
-				world.placeNew(new Vector2i(13, -3), 3, 1);
-				world.placeNew(new Vector2i(15, -3), 3, 3);
+				world.placeNew(new Vector2i(13, 5), 1, 0);
+				world.placeNew(new Vector2i(13, 4), 1, 0);
+				world.placeNew(new Vector2i(13, 3), 1, 0);
+				world.placeNew(new Vector2i(13, 2), 1, 0);
+				world.placeNew(new Vector2i(13, 1), 1, 0);
+				world.placeNew(new Vector2i(13, 0), 1, 0);
+				world.placeNew(new Vector2i(13, -1), 1, 0);
+				world.placeNew(new Vector2i(13, -2), 1, 0);
+				world.placeNew(new Vector2i(13, -3), 1, 1);
+				world.placeNew(new Vector2i(15, -3), 1, 3);
 
-				world.placeNew(new Vector2i(3, 5), 3, 0);
-				world.placeNew(new Vector2i(3, 4), 3, 0);
-				world.placeNew(new Vector2i(3, 3), 3, 0);
-				world.placeNew(new Vector2i(3, 2), 3, 0);
-				world.placeNew(new Vector2i(3, 1), 3, 0);
-				world.placeNew(new Vector2i(3, 0), 3, 0);
-				world.placeNew(new Vector2i(3, -1), 3, 1);
+				world.placeNew(new Vector2i(3, 5), 1, 0);
+				world.placeNew(new Vector2i(3, 4), 1, 0);
+				world.placeNew(new Vector2i(3, 3), 1, 0);
+				world.placeNew(new Vector2i(3, 2), 1, 0);
+				world.placeNew(new Vector2i(3, 1), 1, 0);
+				world.placeNew(new Vector2i(3, 0), 1, 0);
+				world.placeNew(new Vector2i(3, -1), 1, 1);
 
-				world.placeNew(new Vector2i(14, -3), 6, 0);
-				world.placeNew(new Vector2i(14, -4), 3, 0);
-				world.placeNew(new Vector2i(14, -5), 3, 0);
-				world.placeNew(new Vector2i(14, -6), 3, 0);
-				world.placeNew(new Vector2i(14, -7), 3, 0);
-				world.placeNew(new Vector2i(14, -8), 3, 0);
-				world.placeNew(new Vector2i(14, -9), 2, 0);
+				world.placeNew(new Vector2i(14, -3), 4, 0);
+				world.placeNew(new Vector2i(14, -4), 1, 0);
+				world.placeNew(new Vector2i(14, -5), 1, 0);
+				world.placeNew(new Vector2i(14, -6), 1, 0);
+				world.placeNew(new Vector2i(14, -7), 1, 0);
+				world.placeNew(new Vector2i(14, -8), 1, 0);
+				world.placeNew(new Vector2i(14, -9), 6, 0);
 				
-				world.placeNew(new Vector2i(4, -1), 6, 0);
-				world.placeNew(new Vector2i(4, -2), 3, 0);
-				world.placeNew(new Vector2i(4, -3), 3, 0);
-				world.placeNew(new Vector2i(4, -4), 3, 0);
-				world.placeNew(new Vector2i(4, -5), 3, 0);
-				world.placeNew(new Vector2i(4, -6), 3, 0);
-				world.placeNew(new Vector2i(4, -7), 3, 0);
-				world.placeNew(new Vector2i(4, -8), 3, 0);
-				world.placeNew(new Vector2i(4, -9), 2, 0);
+				world.placeNew(new Vector2i(4, -1), 4, 0);
+				world.placeNew(new Vector2i(4, -2), 1, 0);
+				world.placeNew(new Vector2i(4, -3), 1, 0);
+				world.placeNew(new Vector2i(4, -4), 1, 0);
+				world.placeNew(new Vector2i(4, -5), 1, 0);
+				world.placeNew(new Vector2i(4, -6), 1, 0);
+				world.placeNew(new Vector2i(4, -7), 1, 0);
+				world.placeNew(new Vector2i(4, -8), 1, 0);
+				world.placeNew(new Vector2i(4, -9), 6, 0);
 
-				world.placeNew(new Vector2i(13, -6), 7, 3);
-				world.placeNew(new Vector2i(12, -6), 8, 0);
+				world.placeNew(new Vector2i(13, -6), 5, 3);
+				world.placeNew(new Vector2i(12, -6), 7, 0);
 				world.interact(new Vector2i(12, -6));
-				world.placeNew(new Vector2i(11, -6), 7, 3);
-				world.placeNew(new Vector2i(10, -6), 3, 0);
-				world.placeNew(new Vector2i(10, -7), 3, 0);
-				world.placeNew(new Vector2i(10, -8), 3, 3);
+				world.placeNew(new Vector2i(11, -6), 5, 3);
+				world.placeNew(new Vector2i(10, -6), 1, 0);
+				world.placeNew(new Vector2i(10, -7), 1, 0);
+				world.placeNew(new Vector2i(10, -8), 1, 3);
 				
-				world.placeNew(new Vector2i(5, -6), 7, 1);
-				world.placeNew(new Vector2i(6, -6), 8, 0);
-				world.placeNew(new Vector2i(7, -6), 7, 1);
-				world.placeNew(new Vector2i(8, -6), 3, 0);
-				world.placeNew(new Vector2i(8, -7), 3, 0);
-				world.placeNew(new Vector2i(8, -8), 3, 1);
+				world.placeNew(new Vector2i(5, -6), 5, 1);
+				world.placeNew(new Vector2i(6, -6), 7, 0);
+				world.placeNew(new Vector2i(7, -6), 5, 1);
+				world.placeNew(new Vector2i(8, -6), 1, 0);
+				world.placeNew(new Vector2i(8, -7), 1, 0);
+				world.placeNew(new Vector2i(8, -8), 1, 1);
 
-				world.placeNew(new Vector2i(9, -8), 8, 0);
+				world.placeNew(new Vector2i(9, -8), 7, 0);
 				world.interact(new Vector2i(9, -8));
 				world.interact(new Vector2i(9, -8));
-				world.placeNew(new Vector2i(9, -9), 7, 0);
-				world.placeNew(new Vector2i(9, -10), 3, 0);
-				world.placeNew(new Vector2i(9, -11), 3, 0);
-				world.placeNew(new Vector2i(9, -12), 2, 0);
+				world.placeNew(new Vector2i(9, -9), 5, 0);
+				world.placeNew(new Vector2i(9, -10), 1, 0);
+				world.placeNew(new Vector2i(9, -11), 1, 0);
+				world.placeNew(new Vector2i(9, -12), 6, 0);
+
+				world.placeNew(new Vector2i(7, -16), 12, 0);
+				world.placeNew(new Vector2i(9, -16), 12, 0);
+				world.placeNew(new Vector2i(11, -16), 12, 0);
+				world.placeNew(new Vector2i(4, -18), 11, 0);
+				world.placeNew(new Vector2i(5, -18), 11, 0);
+				world.placeNew(new Vector2i(6, -18), 11, 0);
+				world.placeNew(new Vector2i(7, -18), 11, 0);
+				world.placeNew(new Vector2i(8, -18), 11, 0);
+				world.placeNew(new Vector2i(9, -18), 11, 0);
+				world.placeNew(new Vector2i(10, -18), 11, 0);
+				world.placeNew(new Vector2i(11, -18), 11, 0);
+				world.placeNew(new Vector2i(12, -18), 11, 0);
+				world.placeNew(new Vector2i(13, -18), 11, 0);
+				world.placeNew(new Vector2i(14, -18), 11, 0);
+				world.placeNew(new Vector2i(8, -24), 13, 0);
+				world.placeNew(new Vector2i(10, -24), 13, 0);
+				world.placeNew(new Vector2i(7, -25), 13, 0);
+				world.placeNew(new Vector2i(9, -25), 13, 0);
+				world.placeNew(new Vector2i(11, -25), 13, 0);
+				world.placeNew(new Vector2i(6, -26), 13, 0);
+				world.placeNew(new Vector2i(8, -26), 13, 0);
+				world.placeNew(new Vector2i(10, -26), 13, 0);
+				world.placeNew(new Vector2i(12, -26), 13, 0);
+
+
 			}
 		});
 
@@ -245,7 +274,7 @@ public class App {
 				Vector3f worldPos = camera.screenToWorldPos(cursorPos);
 				Vector2i tilePos = world.worldToTilePos(worldPos);
 				if (tilePos != null) {
-					world.destroy(tilePos);
+					world.deconstruct(tilePos);
 				}
 			}
 		});

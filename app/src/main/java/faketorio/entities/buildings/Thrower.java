@@ -20,7 +20,7 @@ public class Thrower extends Building {
 		name = "thrower";
 		inventory.stackSize = 1;
 		inventory.inventorySize = 1;
-		type = 4;
+		type = 2;
 	}
 
 	public void update() {

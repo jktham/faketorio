@@ -20,7 +20,7 @@ public class Extractor extends Building {
 		name = "extractor";
 		inventory.stackSize = 0;
 		inventory.inventorySize = 0;
-		type = 7;
+		type = 5;
 	}
 
 	public void update() {
@@ -37,8 +37,10 @@ public class Extractor extends Building {
 			return;
 		}
 
-		model.meshColors.set(5, new Vector3f(0.4f, 0.4f, 0.4f));
-		model.meshColors.set(6, new Vector3f(0.4f, 0.4f, 0.4f));
+		if (App.tick % 6 == 0) {
+			model.meshColors.set(5, new Vector3f(0.4f, 0.4f, 0.4f));
+			model.meshColors.set(6, new Vector3f(0.4f, 0.4f, 0.4f));
+		}
 
 		if (App.tick % 12 == 0) {
 			if (input != null && output != null) {

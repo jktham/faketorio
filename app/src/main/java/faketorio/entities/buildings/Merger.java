@@ -22,7 +22,7 @@ public class Merger extends Building {
 		name = "merger";
 		inventory.stackSize = 1;
 		inventory.inventorySize = 1;
-		type = 6;
+		type = 4;
 	}
 
 	public void update() {
