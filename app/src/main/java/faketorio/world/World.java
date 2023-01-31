@@ -275,7 +275,7 @@ public class World {
 		if (!tile.free) {
 			for (Building building : buildings) {
 				if (building.tilePos.equals(tilePos)) {
-					building.label.hidden = !building.label.hidden;	
+					building.interact();
 				}
 			}
 		}

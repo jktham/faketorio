@@ -124,4 +124,8 @@ public class Building extends Entity {
 		}
 		return 0;
 	}
+
+	public void interact() {
+		
+	}
 }

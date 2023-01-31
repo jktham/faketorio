@@ -18,6 +18,7 @@ public class Chest extends Building {
 		inventory.stackSize = 1000;
 		inventory.inventorySize = 100;
 		type = 2;
+		label.hidden = false;
 	}
 
 	public Vector2i getOutputTilePos() {

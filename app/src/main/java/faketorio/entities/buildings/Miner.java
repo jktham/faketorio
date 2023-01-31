@@ -20,6 +20,7 @@ public class Miner extends Building {
 		inventory.stackSize = 1;
 		inventory.inventorySize = 10;
 		type = 1;
+		label.hidden = false;
 	}
 
 	public void update() {

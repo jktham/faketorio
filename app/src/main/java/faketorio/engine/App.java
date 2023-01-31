@@ -16,7 +16,6 @@ import org.lwjgl.system.Configuration;
 
 import faketorio.entities.Camera;
 import faketorio.entities.Player;
-import faketorio.entities.buildings.Assembler;
 import faketorio.entities.buildings.Building;
 import faketorio.inventory.Item;
 import faketorio.inventory.ItemStack;
@@ -163,7 +162,7 @@ public class App {
 				world.placeNew(new Vector2i(13, -1), 3, 0);
 				world.placeNew(new Vector2i(13, -2), 3, 0);
 				world.placeNew(new Vector2i(13, -3), 3, 1);
-				world.placeNew(new Vector2i(14, -3), 3, 1);
+				world.placeNew(new Vector2i(15, -3), 3, 3);
 
 				world.placeNew(new Vector2i(3, 5), 3, 0);
 				world.placeNew(new Vector2i(3, 4), 3, 0);
@@ -173,13 +172,13 @@ public class App {
 				world.placeNew(new Vector2i(3, 0), 3, 0);
 				world.placeNew(new Vector2i(3, -1), 3, 1);
 
-				world.placeNew(new Vector2i(15, -3), 6, 0);
-				world.placeNew(new Vector2i(15, -4), 3, 0);
-				world.placeNew(new Vector2i(15, -5), 3, 0);
-				world.placeNew(new Vector2i(15, -6), 3, 0);
-				world.placeNew(new Vector2i(15, -7), 3, 0);
-				world.placeNew(new Vector2i(15, -8), 3, 0);
-				world.placeNew(new Vector2i(15, -9), 2, 0);
+				world.placeNew(new Vector2i(14, -3), 6, 0);
+				world.placeNew(new Vector2i(14, -4), 3, 0);
+				world.placeNew(new Vector2i(14, -5), 3, 0);
+				world.placeNew(new Vector2i(14, -6), 3, 0);
+				world.placeNew(new Vector2i(14, -7), 3, 0);
+				world.placeNew(new Vector2i(14, -8), 3, 0);
+				world.placeNew(new Vector2i(14, -9), 2, 0);
 				
 				world.placeNew(new Vector2i(4, -1), 6, 0);
 				world.placeNew(new Vector2i(4, -2), 3, 0);
@@ -191,29 +190,28 @@ public class App {
 				world.placeNew(new Vector2i(4, -8), 3, 0);
 				world.placeNew(new Vector2i(4, -9), 2, 0);
 
-				world.placeNew(new Vector2i(14, -6), 7, 3);
-				world.placeNew(new Vector2i(13, -6), 8, 0);
-				Assembler a = (Assembler)world.getBuilding(new Vector2i(13, -6));
-				a.recipe = recipes.get(1);
-				world.placeNew(new Vector2i(12, -6), 7, 3);
-				world.placeNew(new Vector2i(11, -6), 3, 0);
-				world.placeNew(new Vector2i(11, -7), 3, 0);
-				world.placeNew(new Vector2i(11, -8), 3, 0);
-				world.placeNew(new Vector2i(11, -9), 3, 0);
-				world.placeNew(new Vector2i(11, -10), 3, 0);
-				world.placeNew(new Vector2i(11, -11), 3, 0);
-				world.placeNew(new Vector2i(11, -12), 2, 0);
+				world.placeNew(new Vector2i(13, -6), 7, 3);
+				world.placeNew(new Vector2i(12, -6), 8, 0);
+				world.interact(new Vector2i(12, -6));
+				world.placeNew(new Vector2i(11, -6), 7, 3);
+				world.placeNew(new Vector2i(10, -6), 3, 0);
+				world.placeNew(new Vector2i(10, -7), 3, 0);
+				world.placeNew(new Vector2i(10, -8), 3, 3);
 				
 				world.placeNew(new Vector2i(5, -6), 7, 1);
 				world.placeNew(new Vector2i(6, -6), 8, 0);
 				world.placeNew(new Vector2i(7, -6), 7, 1);
 				world.placeNew(new Vector2i(8, -6), 3, 0);
 				world.placeNew(new Vector2i(8, -7), 3, 0);
-				world.placeNew(new Vector2i(8, -8), 3, 0);
-				world.placeNew(new Vector2i(8, -9), 3, 0);
-				world.placeNew(new Vector2i(8, -10), 3, 0);
-				world.placeNew(new Vector2i(8, -11), 3, 0);
-				world.placeNew(new Vector2i(8, -12), 2, 0);
+				world.placeNew(new Vector2i(8, -8), 3, 1);
+
+				world.placeNew(new Vector2i(9, -8), 8, 0);
+				world.interact(new Vector2i(9, -8));
+				world.interact(new Vector2i(9, -8));
+				world.placeNew(new Vector2i(9, -9), 7, 0);
+				world.placeNew(new Vector2i(9, -10), 3, 0);
+				world.placeNew(new Vector2i(9, -11), 3, 0);
+				world.placeNew(new Vector2i(9, -12), 2, 0);
 			}
 		});
 
@@ -306,6 +304,11 @@ public class App {
 		item.name = "copper plate";
 		item.color = new Vector3f(0.8f, 0.2f, 0.2f);
 		items.add(item);
+		item = new Item();
+		item.id = 5;
+		item.name = "science stuff";
+		item.color = new Vector3f(0.2f, 0.8f, 0.2f);
+		items.add(item);
 		
 		recipes = new ArrayList<Recipe>();
 		ArrayList<ItemStack> recipeInput = new ArrayList<ItemStack>();
@@ -322,7 +325,7 @@ public class App {
 		stack.item = App.items.get(3);
 		stack.amount = 1;
 		recipeOutput.add(stack);
-		recipes.add(new Recipe(recipeInput, recipeOutput));
+		recipes.add(new Recipe(recipeInput, recipeOutput, 1, 60));
 		
 		recipeInput = new ArrayList<ItemStack>();
 		recipeOutput = new ArrayList<ItemStack>();
@@ -338,7 +341,23 @@ public class App {
 		stack.item = App.items.get(4);
 		stack.amount = 1;
 		recipeOutput.add(stack);
-		recipes.add(new Recipe(recipeInput, recipeOutput));
+		recipes.add(new Recipe(recipeInput, recipeOutput, 1, 60));
+		
+		recipeInput = new ArrayList<ItemStack>();
+		recipeOutput = new ArrayList<ItemStack>();
+		stack = new ItemStack();
+		stack.item = App.items.get(3);
+		stack.amount = 2;
+		recipeInput.add(stack);
+		stack = new ItemStack();
+		stack.item = App.items.get(4);
+		stack.amount = 2;
+		recipeInput.add(stack);
+		stack = new ItemStack();
+		stack.item = App.items.get(5);
+		stack.amount = 1;
+		recipeOutput.add(stack);
+		recipes.add(new Recipe(recipeInput, recipeOutput, 2, 120));
 
 		ui = new Ui();
 		ui.init();
