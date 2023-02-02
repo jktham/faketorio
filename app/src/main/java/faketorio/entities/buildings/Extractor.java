@@ -31,28 +31,30 @@ public class Extractor extends Building {
 		if (ghost) {
 			return;
 		}
+
+		if (colorResetTicks > 0) {
+			colorResetTicks -= 1;
+		} else {
+			model.meshColors.set(5, new Vector3f(0.4f, 0.4f, 0.4f));
+			model.meshColors.set(6, new Vector3f(0.4f, 0.4f, 0.4f));
+		}
 		
 		if (sleepTicks > 0) {
 			sleepTicks -= 1;
 			return;
 		}
 
-		if (App.tick % 6 == 0) {
-			model.meshColors.set(5, new Vector3f(0.4f, 0.4f, 0.4f));
-			model.meshColors.set(6, new Vector3f(0.4f, 0.4f, 0.4f));
-		}
-
-		if (App.tick % 12 == 0) {
-			if (input != null && output != null) {
-				for (ItemStack stack : input.inventory.stacks) {
-					if (stack.amount > 0) {
-						if (output.canBeAdded(stack.item.id, 1, this)) {
-							input.removeItem(stack.item.id, 1);
-							output.addItem(stack.item.id, 1, this);
-							model.meshColors.set(5, stack.item.color);
-							model.meshColors.set(6, stack.item.color);
-							break;
-						}
+		if (input != null && output != null) {
+			for (ItemStack stack : input.inventory.stacks) {
+				if (stack.amount > 0) {
+					if (output.canBeAdded(stack.item.id, 1, this)) {
+						input.removeItem(stack.item.id, 1);
+						output.addItem(stack.item.id, 1, this);
+						sleepTicks = 6-1;
+						model.meshColors.set(5, stack.item.color);
+						model.meshColors.set(6, stack.item.color);
+						colorResetTicks = 6-1;
+						break;
 					}
 				}
 			}

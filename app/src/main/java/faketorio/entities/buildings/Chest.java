@@ -13,7 +13,7 @@ public class Chest extends Building {
 		model = App.resources.chestModel.copy();
 		model.transform = new Matrix4f().translate(worldPos).translate(0.5f, 0.5f, 0.05f).rotate((float)Math.PI / 2f * rotation, 0f, 0f, 1f);
 		model.color = new Vector3f(0.2f, 0.2f, 0.2f);
-		model.meshColors.set(5, new Vector3f(0.6f, 0.6f, 0.6f));
+		model.meshColors.set(5, new Vector3f(0.4f, 0.4f, 0.4f));
 		name = "chest";
 		inventory.stackSize = 1000;
 		inventory.inventorySize = 100;
@@ -24,14 +24,18 @@ public class Chest extends Building {
 	public void update() {
 		output = App.world.getBuilding(getOutputTilePos());
 		updateBorders();
-		if (App.tick % 6 == 0) {
-			model.meshColors.set(5, new Vector3f(0.6f, 0.6f, 0.6f));
+		
+		if (colorResetTicks > 0) {
+			colorResetTicks -= 1;
+		} else {
+			model.meshColors.set(5, new Vector3f(0.4f, 0.4f, 0.4f));
 		}
 	}
 
 	public void addItem(int id, int amount, Building source) {
 		inventory.addItem(id, amount);
 		model.meshColors.set(5, App.items.get(id).color);
+		colorResetTicks = 6-1;
 	}
 
 	public Vector2i getOutputTilePos() {

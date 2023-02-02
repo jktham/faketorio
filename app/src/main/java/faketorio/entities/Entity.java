@@ -24,6 +24,7 @@ public class Entity {
 
 	public int type;
 	public int sleepTicks;
+	public int colorResetTicks;
 
 	public int maxHealth;
 	public int health;
@@ -39,6 +40,7 @@ public class Entity {
 		inventory.inventorySize = 10;
 		type = 0;
 		sleepTicks = 0;
+		colorResetTicks = 0;
 		maxHealth = 100;
 		health = maxHealth;
 		label = new Label() {
@@ -49,7 +51,7 @@ public class Entity {
 					position = new Vector2f(screenTetherPos.x, screenTetherPos.y);
 				}
 				model = new Matrix4f().translate(new Vector3f(position.x, position.y, 1f)).scale(new Vector3f(size.x, size.y, 1f));
-				text = "" + name + " " + health + "/" + maxHealth + " " + sleepTicks + "\n";
+				text = "" + name + " " + health + "/" + maxHealth + " " + sleepTicks + " " + colorResetTicks + "\n";
 				for (ItemStack stack : inventory.stacks) {
 					text += stack.item.id + ": " + stack.item.name + ": " + stack.amount + "\n";
 				}

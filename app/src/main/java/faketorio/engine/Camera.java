@@ -1,12 +1,10 @@
-package faketorio.entities;
+package faketorio.engine;
 
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
-
-import faketorio.engine.App;
 
 public class Camera {
 	public Matrix4f view = new Matrix4f();

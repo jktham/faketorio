@@ -21,14 +21,13 @@ public class Enemy extends Entity {
 		super(worldPos);
 		model = App.resources.enemyModel.copy();
 		model.transform = new Matrix4f().translate(worldPos).translate(0.5f, 0.5f, 0.5f);
-		model.color = new Vector3f(0.2f, 0.2f, 0.2f);
-		model.meshColors.set(0, new Vector3f(0.6f, 0.2f, 0.2f));
+		model.color = new Vector3f(0.6f, 0.2f, 0.2f);
 		name = "enemy";
 		inventory.stackSize = 1000;
 		inventory.inventorySize = 100;
 		type = 100;
 		label.hidden = false;
-		speed = 0.02f;
+		speed = 0.03f;
 		range = 1f;
 		damage = 1f;
 
@@ -43,14 +42,12 @@ public class Enemy extends Entity {
 	}
 
 	public void update() {
-		if (App.tick % 1 == 0) {
-			float min = 9999f;
-			target = null;
-			for (Building b : App.world.buildings) {
-				if (b.type != 13 && new Vector3f(b.worldPos).sub(worldPos).length() < min) {
-					min = new Vector3f(b.worldPos).sub(worldPos).length();
-					target = b;
-				}
+		float min = 9999f;
+		target = null;
+		for (Building b : App.world.buildings) {
+			if (b.type != 13 && new Vector3f(b.worldPos).sub(worldPos).length() < min) {
+				min = new Vector3f(b.worldPos).sub(worldPos).length();
+				target = b;
 			}
 		}
 

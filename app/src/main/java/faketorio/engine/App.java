@@ -14,8 +14,6 @@ import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.system.Configuration;
 
-import faketorio.entities.Camera;
-import faketorio.entities.Player;
 import faketorio.entities.buildings.Building;
 import faketorio.inventory.Item;
 import faketorio.inventory.ItemStack;
@@ -202,6 +200,11 @@ public class App {
 				world.placeNew(new Vector2i(4, -8), 1, 0);
 				world.placeNew(new Vector2i(4, -9), 6, 0);
 
+				world.placeNew(new Vector2i(13, -5), 5, 3);
+				world.placeNew(new Vector2i(12, -5), 7, 0);
+				world.interact(new Vector2i(12, -5));
+				world.placeNew(new Vector2i(11, -5), 5, 3);
+				world.placeNew(new Vector2i(10, -5), 1, 0);
 				world.placeNew(new Vector2i(13, -6), 5, 3);
 				world.placeNew(new Vector2i(12, -6), 7, 0);
 				world.interact(new Vector2i(12, -6));
@@ -210,6 +213,10 @@ public class App {
 				world.placeNew(new Vector2i(10, -7), 1, 0);
 				world.placeNew(new Vector2i(10, -8), 1, 3);
 				
+				world.placeNew(new Vector2i(5, -5), 5, 1);
+				world.placeNew(new Vector2i(6, -5), 7, 0);
+				world.placeNew(new Vector2i(7, -5), 5, 1);
+				world.placeNew(new Vector2i(8, -5), 1, 0);
 				world.placeNew(new Vector2i(5, -6), 5, 1);
 				world.placeNew(new Vector2i(6, -6), 7, 0);
 				world.placeNew(new Vector2i(7, -6), 5, 1);
@@ -225,9 +232,11 @@ public class App {
 				world.placeNew(new Vector2i(9, -11), 1, 0);
 				world.placeNew(new Vector2i(9, -12), 6, 0);
 
+				world.placeNew(new Vector2i(5, -16), 12, 0);
 				world.placeNew(new Vector2i(7, -16), 12, 0);
 				world.placeNew(new Vector2i(9, -16), 12, 0);
 				world.placeNew(new Vector2i(11, -16), 12, 0);
+				world.placeNew(new Vector2i(13, -16), 12, 0);
 				world.placeNew(new Vector2i(4, -18), 11, 0);
 				world.placeNew(new Vector2i(5, -18), 11, 0);
 				world.placeNew(new Vector2i(6, -18), 11, 0);
@@ -249,6 +258,12 @@ public class App {
 				world.placeNew(new Vector2i(8, -26), 13, 0);
 				world.placeNew(new Vector2i(10, -26), 13, 0);
 				world.placeNew(new Vector2i(12, -26), 13, 0);
+				world.placeNew(new Vector2i(9, -29), 13, 0);
+				world.placeNew(new Vector2i(8, -28), 13, 0);
+				world.placeNew(new Vector2i(10, -28), 13, 0);
+				world.placeNew(new Vector2i(7, -27), 13, 0);
+				world.placeNew(new Vector2i(9, -27), 13, 0);
+				world.placeNew(new Vector2i(11, -27), 13, 0);
 			}
 		});
 
@@ -334,85 +349,34 @@ public class App {
 		resources.init();
 
 		items = new ArrayList<Item>();
-		Item item = new Item();
-		item.id = 0;
-		item.name = "iron ore";
-		item.color = new Vector3f(0.2f, 0.2f, 0.5f);
-		items.add(item);
-		item = new Item();
-		item.id = 1;
-		item.name = "copper ore";
-		item.color = new Vector3f(0.5f, 0.2f, 0.2f);
-		items.add(item);
-		item = new Item();
-		item.id = 2;
-		item.name = "coal";
-		item.color = new Vector3f(0.05f, 0.05f, 0.05f);
-		items.add(item);
-		item = new Item();
-		item.id = 3;
-		item.name = "iron plate";
-		item.color = new Vector3f(0.2f, 0.2f, 0.8f);
-		items.add(item);
-		item = new Item();
-		item.id = 4;
-		item.name = "copper plate";
-		item.color = new Vector3f(0.8f, 0.2f, 0.2f);
-		items.add(item);
-		item = new Item();
-		item.id = 5;
-		item.name = "science stuff";
-		item.color = new Vector3f(0.2f, 0.8f, 0.2f);
-		items.add(item);
+		items.add(new Item(0, "iron ore", new Vector3f(0.2f, 0.2f, 0.5f)));
+		items.add(new Item(1, "copper ore", new Vector3f(0.5f, 0.2f, 0.2f)));
+		items.add(new Item(2, "coal", new Vector3f(0.05f, 0.05f, 0.05f)));
+		items.add(new Item(3, "iron plate", new Vector3f(0.2f, 0.2f, 0.8f)));
+		items.add(new Item(4, "copper plate", new Vector3f(0.8f, 0.2f, 0.2f)));
+		items.add(new Item(5, "science stuff", new Vector3f(0.2f, 0.8f, 0.2f)));
 		
 		recipes = new ArrayList<Recipe>();
 		ArrayList<ItemStack> recipeInput = new ArrayList<ItemStack>();
 		ArrayList<ItemStack> recipeOutput = new ArrayList<ItemStack>();
-		ItemStack stack = new ItemStack();
-		stack.item = App.items.get(0);
-		stack.amount = 1;
-		recipeInput.add(stack);
-		stack = new ItemStack();
-		stack.item = App.items.get(2);
-		stack.amount = 1;
-		recipeInput.add(stack);
-		stack = new ItemStack();
-		stack.item = App.items.get(3);
-		stack.amount = 1;
-		recipeOutput.add(stack);
-		recipes.add(new Recipe(recipeInput, recipeOutput, 1, 60));
+		recipeInput.add(new ItemStack(App.items.get(0), 1));
+		recipeInput.add(new ItemStack(App.items.get(2), 1));
+		recipeOutput.add(new ItemStack(App.items.get(3), 1));
+		recipes.add(new Recipe(recipeInput, recipeOutput, 1, 240));
 		
 		recipeInput = new ArrayList<ItemStack>();
 		recipeOutput = new ArrayList<ItemStack>();
-		stack = new ItemStack();
-		stack.item = App.items.get(1);
-		stack.amount = 1;
-		recipeInput.add(stack);
-		stack = new ItemStack();
-		stack.item = App.items.get(2);
-		stack.amount = 1;
-		recipeInput.add(stack);
-		stack = new ItemStack();
-		stack.item = App.items.get(4);
-		stack.amount = 1;
-		recipeOutput.add(stack);
-		recipes.add(new Recipe(recipeInput, recipeOutput, 1, 60));
+		recipeInput.add(new ItemStack(App.items.get(1), 1));
+		recipeInput.add(new ItemStack(App.items.get(2), 1));
+		recipeOutput.add(new ItemStack(App.items.get(4), 1));
+		recipes.add(new Recipe(recipeInput, recipeOutput, 1, 240));
 		
 		recipeInput = new ArrayList<ItemStack>();
 		recipeOutput = new ArrayList<ItemStack>();
-		stack = new ItemStack();
-		stack.item = App.items.get(3);
-		stack.amount = 2;
-		recipeInput.add(stack);
-		stack = new ItemStack();
-		stack.item = App.items.get(4);
-		stack.amount = 2;
-		recipeInput.add(stack);
-		stack = new ItemStack();
-		stack.item = App.items.get(5);
-		stack.amount = 1;
-		recipeOutput.add(stack);
-		recipes.add(new Recipe(recipeInput, recipeOutput, 2, 120));
+		recipeInput.add(new ItemStack(App.items.get(3), 2));
+		recipeInput.add(new ItemStack(App.items.get(4), 2));
+		recipeOutput.add(new ItemStack(App.items.get(5), 1));
+		recipes.add(new Recipe(recipeInput, recipeOutput, 1, 240));
 
 		ui = new Ui();
 		ui.init();
@@ -460,6 +424,7 @@ public class App {
 
 				text += player.selectedItem + ", " + player.itemRotation + "\n";
 				text += world.buildings.size() + "\n";
+				text += world.entities.size() + "\n";
 				text += ui.elements.size() + "\n";
 
 				updateMesh();

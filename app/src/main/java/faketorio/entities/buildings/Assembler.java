@@ -22,7 +22,7 @@ public class Assembler extends Building {
 		model = App.resources.assemblerModel.copy();
 		model.transform = new Matrix4f().translate(worldPos).translate(0.5f, 0.5f, 0.05f).rotate((float)Math.PI / 2f * rotation, 0f, 0f, 1f);
 		model.color = new Vector3f(0.2f, 0.2f, 0.2f);
-		model.meshColors.set(5, new Vector3f(0.6f, 0.6f, 0.6f));
+		model.meshColors.set(5, new Vector3f(0.4f, 0.4f, 0.4f));
 		name = "assembler";
 		inventory.stackSize = 2;
 		inventory.inventorySize = 100;
@@ -42,7 +42,7 @@ public class Assembler extends Building {
 					position = new Vector2f(screenTetherPos.x, screenTetherPos.y);
 				}
 				model = new Matrix4f().translate(new Vector3f(position.x, position.y, 1f)).scale(new Vector3f(size.x, size.y, 1f));
-				text = "" + name + " " + health + "/" + maxHealth + "\n";
+				text = "" + name + " " + health + "/" + maxHealth + " " + sleepTicks + " " + colorResetTicks + "\n";
 				text += recipe.output.get(0).item.name + "\n";
 				for (ItemStack stack : inputInventory.stacks) {
 					text += "i: " + stack.item.id + ": " + stack.item.name + ": " + stack.amount + "\n";
@@ -76,9 +76,11 @@ public class Assembler extends Building {
 		if (ghost) {
 			return;
 		}
-		
-		if (App.tick % 6 == 0) {
-			model.meshColors.set(5, new Vector3f(0.6f, 0.6f, 0.6f));
+
+		if (colorResetTicks > 0) {
+			colorResetTicks -= 1;
+		} else {
+			model.meshColors.set(5, new Vector3f(0.4f, 0.4f, 0.4f));
 		}
 		
 		if (sleepTicks > 0) {
@@ -87,36 +89,35 @@ public class Assembler extends Building {
 		}
 
 		boolean enoughInput = true;
-		if (App.tick % 12 == 0) {
-			for (ItemStack rstack : recipe.input) {
-				boolean found = false;
-				for (ItemStack istack : inputInventory.stacks) {
-					if (rstack.item.id == istack.item.id) {
-						if (istack.amount >= rstack.amount) {
-							found = true;
-						}
+		for (ItemStack rstack : recipe.input) {
+			boolean found = false;
+			for (ItemStack istack : inputInventory.stacks) {
+				if (rstack.item.id == istack.item.id) {
+					if (istack.amount >= rstack.amount) {
+						found = true;
 					}
 				}
-				if (!found) {
-					enoughInput = false;
-				}
 			}
-			boolean outputFull = false;
+			if (!found) {
+				enoughInput = false;
+			}
+		}
+		boolean outputFull = false;
+		for (ItemStack stack : recipe.output) {
+			if (!inventory.canBeAdded(stack.item.id, stack.amount)) {
+				outputFull = true;
+			}
+		}
+		if (enoughInput && !outputFull) {
+			for (ItemStack stack : recipe.input) {
+				inputInventory.removeItem(stack.item.id, stack.amount);
+			}
 			for (ItemStack stack : recipe.output) {
-				if (!inventory.canBeAdded(stack.item.id, stack.amount)) {
-					outputFull = true;
-				}
+				inventory.addItem(stack.item.id, stack.amount);
+				model.meshColors.set(5, stack.item.color);
+				colorResetTicks = 6-1;
 			}
-			if (enoughInput && !outputFull) {
-				for (ItemStack stack : recipe.input) {
-					inputInventory.removeItem(stack.item.id, stack.amount);
-				}
-				for (ItemStack stack : recipe.output) {
-					inventory.addItem(stack.item.id, stack.amount);
-					model.meshColors.set(5, stack.item.color);
-				}
-				sleepTicks = recipe.time-1;
-			}
+			sleepTicks = recipe.time-1;
 		}
 
 	}

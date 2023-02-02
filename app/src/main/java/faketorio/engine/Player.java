@@ -1,12 +1,9 @@
-package faketorio.entities;
+package faketorio.engine;
 
 import static org.lwjgl.glfw.GLFW.*;
 
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
-
-import faketorio.engine.App;
-import faketorio.engine.Model;
 
 public class Player {
 	public float speed = 5.0f;

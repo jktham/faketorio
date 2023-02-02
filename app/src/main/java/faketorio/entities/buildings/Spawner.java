@@ -13,8 +13,7 @@ public class Spawner extends Building {
 		super(tilePos, rotation);
 		model = App.resources.spawnerModel.copy();
 		model.transform = new Matrix4f().translate(worldPos).translate(0.5f, 0.5f, 0f).rotate((float)Math.PI / 2f * rotation, 0f, 0f, 1f);
-		model.color = new Vector3f(0.2f, 0.2f, 0.2f);
-		model.meshColors.set(0, new Vector3f(0.5f, 0.2f, 0.2f));
+		model.color = new Vector3f(0.5f, 0.2f, 0.2f);
 		name = "spawner";
 		inventory.stackSize = 1000;
 		inventory.inventorySize = 100;
@@ -33,10 +32,17 @@ public class Spawner extends Building {
 		}
 
 		App.world.entities.add(new Enemy(worldPos));
-		sleepTicks += 299;
+		sleepTicks = 300-1;
 	}
 
 	public Vector2i getOutputTilePos() {
 		return new Vector2i(-99999);
+	}
+
+	public boolean canBeAdded(int id, int amount, Building source) {
+		if (source != this) {
+			return false;
+		}
+		return inventory.canBeAdded(id, amount);
 	}
 }
