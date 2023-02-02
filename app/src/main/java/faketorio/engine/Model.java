@@ -2,6 +2,7 @@ package faketorio.engine;
 
 import static org.lwjgl.opengl.GL33.*;
 
+import java.nio.FloatBuffer;
 import java.util.ArrayList;
 
 import org.joml.Matrix4f;
@@ -33,6 +34,37 @@ public class Model {
 		transform = new Matrix4f();
 		color = new Vector3f(-1f);
 		tint = new Vector3f(-1f);
+	}
+
+	public Model(int shader, String meshPath) {
+		this();
+
+		this.shader = shader;
+		vao = glGenVertexArrays();
+		vbo = glGenBuffers();
+
+		glBindVertexArray(vao);
+		glBindBuffer(GL_ARRAY_BUFFER, vbo);
+
+		try (MemoryStack stack = MemoryStack.stackPush()) {
+			FloatBuffer mesh = App.resources.loadMesh(stack, meshPath, this);
+			glBufferData(GL_ARRAY_BUFFER, mesh, GL_STATIC_DRAW);
+		}
+
+		int floatSize = 4;
+		int aPosition = glGetAttribLocation(shader, "aPosition");
+		glEnableVertexAttribArray(aPosition);
+		glVertexAttribPointer(aPosition, 3, GL_FLOAT, false, 9 * floatSize, 0);
+
+		int aNormal = glGetAttribLocation(shader, "aNormal");
+		glEnableVertexAttribArray(aNormal);
+		glVertexAttribPointer(aNormal, 3, GL_FLOAT, false, 9 * floatSize, 3 * floatSize);
+
+		int aColor = glGetAttribLocation(shader, "aColor");
+		glEnableVertexAttribArray(aColor);
+		glVertexAttribPointer(aColor, 3, GL_FLOAT, false, 9 * floatSize, 6 * floatSize);
+
+		glBindVertexArray(0);
 	}
 
 	public Model copy() {

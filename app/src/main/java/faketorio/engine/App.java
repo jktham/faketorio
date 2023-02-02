@@ -119,6 +119,13 @@ public class App {
 				paused = !paused;
 			}
 			if (key == GLFW_KEY_L && action == GLFW_PRESS) {
+				while (!world.buildings.isEmpty()) {
+					world.destroy(world.buildings.get(0));
+				}
+				while (!world.entities.isEmpty()) {
+					world.kill(world.entities.get(0));
+				}
+
 				world.placeNew(new Vector2i(2, 5), 8, 1);
 				world.placeNew(new Vector2i(2, 4), 8, 1);
 				world.placeNew(new Vector2i(2, 3), 8, 1);
@@ -232,6 +239,7 @@ public class App {
 				world.placeNew(new Vector2i(12, -18), 11, 0);
 				world.placeNew(new Vector2i(13, -18), 11, 0);
 				world.placeNew(new Vector2i(14, -18), 11, 0);
+				world.placeNew(new Vector2i(9, -23), 13, 0);
 				world.placeNew(new Vector2i(8, -24), 13, 0);
 				world.placeNew(new Vector2i(10, -24), 13, 0);
 				world.placeNew(new Vector2i(7, -25), 13, 0);

@@ -18,6 +18,7 @@ import org.lwjgl.system.MemoryStack;
 public class Resources {
 	public int worldBaseShader;
 	public int worldInstancedShader;
+	public int worldLineShader;
 	public int uiBaseShader;
 	public int uiTexturedShader;
 
@@ -46,6 +47,7 @@ public class Resources {
 	public void init() {
 		worldBaseShader = compileShader("shaders/world_base");
 		worldInstancedShader = compileShader("shaders/world_instanced");
+		worldLineShader = compileShader("shaders/world_line");
 		uiBaseShader = compileShader("shaders/ui_base");
 		uiTexturedShader = compileShader("shaders/ui_textured");
 
@@ -53,23 +55,23 @@ public class Resources {
 		arialTexture = loadTexture("fonts/arial.png");
 
 		emptyModel = new Model();
-		cubeModel = loadModel(worldBaseShader, "models/cube.obj");
-		playerModel = loadModel(worldBaseShader, "models/player.obj");
-		triangleModel = loadModel(worldBaseShader, "models/triangle.obj");
-		sphereModel = loadModel(worldBaseShader, "models/sphere.obj");
-		minerModel = loadModel(worldBaseShader, "models/miner.obj");
-		monkeModel = loadModel(worldBaseShader, "models/monke.obj");
-		chestModel = loadModel(worldBaseShader, "models/chest.obj");
-		beltModel = loadModel(worldBaseShader, "models/belt.obj");
-		splitterModel = loadModel(worldBaseShader, "models/splitter.obj");
-		mergerModel = loadModel(worldBaseShader, "models/merger.obj");
-		throwerModel = loadModel(worldBaseShader, "models/thrower.obj");
-		extractorModel = loadModel(worldBaseShader, "models/extractor.obj");
-		assemblerModel = loadModel(worldBaseShader, "models/assembler.obj");
-		spawnerModel = loadModel(worldBaseShader, "models/spawner.obj");
-		enemyModel = loadModel(worldBaseShader, "models/enemy.obj");
-		wallModel = loadModel(worldBaseShader, "models/wall.obj");
-		turretModel = loadModel(worldBaseShader, "models/turret.obj");
+		cubeModel = new Model(worldBaseShader, "models/cube.obj");
+		playerModel = new Model(worldBaseShader, "models/player.obj");
+		triangleModel = new Model(worldBaseShader, "models/triangle.obj");
+		sphereModel = new Model(worldBaseShader, "models/sphere.obj");
+		minerModel = new Model(worldBaseShader, "models/miner.obj");
+		monkeModel = new Model(worldBaseShader, "models/monke.obj");
+		chestModel = new Model(worldBaseShader, "models/chest.obj");
+		beltModel = new Model(worldBaseShader, "models/belt.obj");
+		splitterModel = new Model(worldBaseShader, "models/splitter.obj");
+		mergerModel = new Model(worldBaseShader, "models/merger.obj");
+		throwerModel = new Model(worldBaseShader, "models/thrower.obj");
+		extractorModel = new Model(worldBaseShader, "models/extractor.obj");
+		assemblerModel = new Model(worldBaseShader, "models/assembler.obj");
+		spawnerModel = new Model(worldBaseShader, "models/spawner.obj");
+		enemyModel = new Model(worldBaseShader, "models/enemy.obj");
+		wallModel = new Model(worldBaseShader, "models/wall.obj");
+		turretModel = new Model(worldBaseShader, "models/turret.obj");
 	}
 
 	public int compileShader(String path) {
@@ -137,39 +139,6 @@ public class Resources {
 		stbi_image_free(image);
 
 		return texture;
-	}
-
-	public Model loadModel(int shader, String meshPath) {
-		Model model = new Model();
-
-		model.shader = shader;
-		model.vao = glGenVertexArrays();
-		model.vbo = glGenBuffers();
-
-		glBindVertexArray(model.vao);
-		glBindBuffer(GL_ARRAY_BUFFER, model.vbo);
-
-		try (MemoryStack stack = MemoryStack.stackPush()) {
-			FloatBuffer mesh = loadMesh(stack, meshPath, model);
-			glBufferData(GL_ARRAY_BUFFER, mesh, GL_STATIC_DRAW);
-		}
-
-		int floatSize = 4;
-		int aPosition = glGetAttribLocation(shader, "aPosition");
-		glEnableVertexAttribArray(aPosition);
-		glVertexAttribPointer(aPosition, 3, GL_FLOAT, false, 9 * floatSize, 0);
-
-		int aNormal = glGetAttribLocation(shader, "aNormal");
-		glEnableVertexAttribArray(aNormal);
-		glVertexAttribPointer(aNormal, 3, GL_FLOAT, false, 9 * floatSize, 3 * floatSize);
-
-		int aColor = glGetAttribLocation(shader, "aColor");
-		glEnableVertexAttribArray(aColor);
-		glVertexAttribPointer(aColor, 3, GL_FLOAT, false, 9 * floatSize, 6 * floatSize);
-
-		glBindVertexArray(0);
-
-		return model;
 	}
 
 	public FloatBuffer loadMesh(MemoryStack stack, String path, Model model) {
